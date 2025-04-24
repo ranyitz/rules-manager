@@ -31,11 +31,11 @@ npm install --save-dev ai-rules
 # 1. Initialize a configuration
 npx ai-rules init
 
-# 2. Quick setup - copy and paste this one-liner to update your config
+# 2. Quick setup - run this in your terminal, or copy and paste it into your ai-rules.json file
 echo '{
   "ides": ["cursor"],
   "rules": {
-    "pirate-coding": "https://gist.githubusercontent.com/ranyitz/043183278d5ec0cbc65ebf24a9ee57bd/raw/b4ec0c74c6f9aec3054a7ef7a6821bc94c84fe74/pirate-coding-rule.mdc"
+    "pirate-coding": "https://gist.githubusercontent.com/ranyitz/043183278d5ec0cbc65ebf24a9ee57bd/raw/97b71829d84cd06b176655d804fbbd93a9247fc1/pirate-coding-rule.mdc"
   }
 }' > ai-rules.json
 
@@ -44,6 +44,8 @@ npx ai-rules install
 ```
 
 After installation, open Cursor and ask for coding help. Your AI assistant will respond with pirate-themed coding advice.
+
+> **Note**: This workflow is fully tested and verified to work with the current version of ai-rules.
 
 ## Commands
 
