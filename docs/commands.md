@@ -89,8 +89,8 @@ npx ai-rules install eslint-standard
    - NPM: Locates the rule file within the installed NPM package
    - Local: Reads the rule file from the specified local path
 4. For each configured IDE:
-   - Cursor: Copies the rule file to `~/.cursor/rules/` with the rule name as the filename
-   - Windsurf: Appends or updates the rule content in `~/.config/windsurf/.windsurfrules`
+   - Cursor: Copies the rule file to `.cursor/rules/` (project-specific directory) with the rule name as the filename
+   - Windsurf: Appends or updates the rule content in `.windsurf/.windsurfrules` (project-specific directory)
 5. Shows installation progress and results for each rule
 
 ### Error Handling
@@ -146,6 +146,6 @@ eslint-standard
   Type: url
   Status: Installed
   IDE: cursor, windsurf  (only shown in verbose mode)
-  Installation Path: ~/.cursor/rules/eslint-standard.mdc  (only shown in verbose mode)
+  Installation Path: .cursor/rules/eslint-standard.mdc  (only shown in verbose mode)
 ──────────────────────────────────────────────────
 ```

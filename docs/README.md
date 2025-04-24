@@ -104,15 +104,14 @@ npx ai-rules list --verbose
 
 ### Fun Example: Pirate Coding Assistant
 
-Looking to add some humor to your coding experience? Try this pirate-themed coding assistant:
+Looking to add some humor to your coding experience? Try this pirate-themed coding assistant with just three simple commands:
 
 ```bash
-# Initialize a configuration
+# 1. Initialize (you can skip this if you've already done it)
 npx ai-rules init
 
-# Create a pirate coding rule configuration
-cat > ai-rules.json << EOF
-{
+# 2. Quick setup - one command to configure the pirate rule
+npx ai-rules init --force && echo '{
   "ides": ["cursor"],
   "rules": {
     "pirate-coding": {
@@ -120,10 +119,9 @@ cat > ai-rules.json << EOF
       "type": "url"
     }
   }
-}
-EOF
+}' > ai-rules.json
 
-# Install the pirate rule
+# 3. Install the rule
 npx ai-rules install
 ```
 

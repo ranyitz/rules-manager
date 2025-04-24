@@ -31,7 +31,7 @@ function findNpmPackage(packageName: string): string | null {
 
     return null;
   } catch (error) {
-    console.error("Error finding npm package:", error);
+    console.log("Error finding npm package:", error);
     return null;
   }
 }
@@ -51,7 +51,7 @@ export function installNpmRule(
     const packagePath = findNpmPackage(source);
 
     if (!packagePath) {
-      console.error(`Error: Package ${source} not found in node_modules.`);
+      console.log(`Error: Package ${source} not found in node_modules.`);
       console.log("Make sure the package is installed as a dependency.");
       return false;
     }
@@ -60,7 +60,7 @@ export function installNpmRule(
     const ruleFile = path.join(packagePath, `${ruleName}.mdc`);
 
     if (!fs.existsSync(ruleFile)) {
-      console.error(`Error: Rule file ${ruleName}.mdc not found in package.`);
+      console.log(`Error: Rule file ${ruleName}.mdc not found in package.`);
       return false;
     }
 
@@ -92,7 +92,7 @@ export function installNpmRule(
         fs.symlinkSync(ruleFile, targetFile);
         console.log(`Linked to Cursor: ${targetFile} -> ${ruleFile}`);
       } else if (ide === "windsurf") {
-        // For Windsurf, append to the rules file
+        // For Windsurf, append to the rules file in project directory
         const rulesDir = idePaths[ide];
         fs.ensureDirSync(rulesDir);
 
@@ -113,7 +113,7 @@ export function installNpmRule(
     console.log("Rule installed successfully!");
     return true;
   } catch (error) {
-    console.error("Error installing rule from npm package:", error);
+    console.log("Error installing rule from npm package:", error);
     return false;
   }
 }

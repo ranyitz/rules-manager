@@ -2,15 +2,10 @@
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
-  roots: ["<rootDir>/src"],
-  testMatch: ["**/__tests__/**/*.ts", "**/?(*.)+(spec|test).ts"],
-  collectCoverageFrom: [
-    "src/**/*.ts",
-    "!src/**/*.d.ts",
-    "!src/types/**/*.ts",
-    "!src/**/__tests__/**/*.ts",
-  ],
+  testMatch: ["**/tests/e2e/**/*.test.ts"],
   verbose: true,
   clearMocks: true,
-  resetMocks: true,
+  resetMocks: false,
+  testTimeout: 30000, // Longer timeout for e2e tests
+  globalSetup: "<rootDir>/tests/e2e/global-setup.ts", // Add global setup
 };

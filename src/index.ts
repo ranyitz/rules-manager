@@ -1,24 +1,74 @@
 #!/usr/bin/env node
 
-import args from "args";
+import arg from "arg";
+import chalk from "chalk";
 import { initCommand } from "./commands/init";
 import { installCommand } from "./commands/install";
 import { listCommand } from "./commands/list";
 
 // Define version from package.json
 const pkg = require("../package.json");
-args.version(pkg.version);
-
-// Register commands
-args
-  .command("init", "Initialize a new ai-rules configuration file", initCommand)
-  .command("install", "Install rules from configured sources", installCommand)
-  .command("list", "List all configured rules and their status", listCommand);
 
 // Parse arguments
-const flags = args.parse(process.argv);
+const args = arg(
+  {
+    "--help": Boolean,
+    "--version": Boolean,
+    "-h": "--help",
+    "-v": "--version",
+  },
+  {
+    permissive: true,
+    argv: process.argv.slice(2),
+  }
+);
 
-// Show help when no command is provided
-if (!args.sub.length) {
-  args.showHelp();
+// Show version
+if (args["--version"]) {
+  console.log(pkg.version);
+  process.exit(0);
+}
+
+// Get the command (first non-flag argument)
+const command = args._.length > 0 ? args._[0] : null;
+const commandArgs = args._.slice(1);
+
+// Execute the appropriate command
+switch (command) {
+  case "init":
+    initCommand();
+    break;
+  case "install":
+    installCommand();
+    break;
+  case "list":
+    listCommand();
+    break;
+  default:
+    // Show help
+    showHelp();
+    break;
+}
+
+function showHelp() {
+  console.log(`
+${chalk.bold("ai-rules")} - A CLI tool for managing AI IDE rules
+
+${chalk.bold("USAGE")}
+  $ ai-rules [command] [options]
+
+${chalk.bold("COMMANDS")}
+  init                Initialize a new ai-rules configuration file
+  install             Install rules from configured sources
+  list                List all configured rules and their status
+
+${chalk.bold("OPTIONS")}
+  -h, --help          Show this help message
+  -v, --version       Show version number
+
+${chalk.bold("EXAMPLES")}
+  $ ai-rules init
+  $ ai-rules install
+  $ ai-rules list
+`);
 }

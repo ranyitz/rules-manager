@@ -1,6 +1,7 @@
 import fs from "fs-extra";
 import path from "path";
 import chalk from "chalk";
+import arg from "arg";
 
 // Default configuration template
 const defaultConfig = {
@@ -14,14 +15,27 @@ const defaultConfig = {
 };
 
 export function initCommand(): void {
+  // Parse command-specific arguments
+  const args = arg(
+    {
+      "--force": Boolean,
+      "-f": "--force",
+    },
+    {
+      permissive: true,
+      argv: process.argv.slice(3), // Skip the first two args and the command name
+    }
+  );
+
   const configPath = path.join(process.cwd(), "ai-rules.json");
+  const forceOverwrite = args["--force"] || false;
 
   // Check if config file already exists
-  if (fs.existsSync(configPath)) {
+  if (fs.existsSync(configPath) && !forceOverwrite) {
     console.log(chalk.yellow("Configuration file already exists!"));
     console.log(
       chalk.yellow(
-        "To overwrite, delete the existing ai-rules.json file first."
+        "Use --force flag to overwrite the existing ai-rules.json file."
       )
     );
     return;

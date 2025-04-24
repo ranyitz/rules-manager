@@ -15,7 +15,6 @@ export default async function globalSetup() {
   try {
     // Remove the entire tmp-test directory
     await rimraf(tmpTestDir);
-    console.log("✅ tmp-test directory cleanup complete!");
   } catch (error) {
     console.error("❌ Error cleaning up tmp-test directory:", error);
   }

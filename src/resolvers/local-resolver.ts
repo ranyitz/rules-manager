@@ -20,7 +20,7 @@ export function installLocalRule(
 
     // Check if source file exists
     if (!fs.existsSync(sourcePath)) {
-      console.error(`Error: Source file ${sourcePath} not found.`);
+      console.log(`Error: Source file ${sourcePath} not found.`);
       return false;
     }
 
@@ -45,7 +45,7 @@ export function installLocalRule(
         fs.copyFileSync(sourcePath, ruleFile);
         console.log(`Copied to Cursor: ${ruleFile}`);
       } else if (ide === "windsurf") {
-        // For Windsurf, append to the rules file
+        // For Windsurf, append to the rules file in project directory
         const rulesDir = idePaths[ide];
         fs.ensureDirSync(rulesDir);
 
@@ -66,7 +66,7 @@ export function installLocalRule(
     console.log("Rule installed successfully!");
     return true;
   } catch (error) {
-    console.error("Error installing rule from local file:", error);
+    console.log("Error installing rule from local file:", error);
     return false;
   }
 }

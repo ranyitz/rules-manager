@@ -19,7 +19,7 @@ export async function installUrlRule(
     const ruleContent = response.data;
 
     if (!ruleContent) {
-      console.error("Error: Empty rule content");
+      console.log("Error: Empty rule content");
       return false;
     }
 
@@ -41,7 +41,7 @@ export async function installUrlRule(
         fs.writeFileSync(ruleFile, ruleContent);
         console.log(`Installed to Cursor: ${ruleFile}`);
       } else if (ide === "windsurf") {
-        // For Windsurf, append to the rules file
+        // For Windsurf, append to the rules file in project directory
         const rulesDir = idePaths[ide];
         fs.ensureDirSync(rulesDir);
 
@@ -62,7 +62,7 @@ export async function installUrlRule(
     console.log("Rule installed successfully!");
     return true;
   } catch (error) {
-    console.error("Error installing rule from URL:", error);
+    console.log("Error installing rule from URL:", error);
     return false;
   }
 }

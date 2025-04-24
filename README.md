@@ -27,154 +27,29 @@ npm install --save-dev ai-rules
 
 ## Getting Started
 
-Here's a quick example to get you started using ai-rules with a pre-configured rule:
-
 ```bash
-# Step 1: Create a new directory for your project (optional)
-mkdir my-ai-rules-project && cd my-ai-rules-project
-
-# Step 2: Initialize a new configuration
+# 1. Initialize a configuration
 npx ai-rules init
 
-# Step 3: Edit the ai-rules.json file to use a ready-made TypeScript best practices rule
-cat > ai-rules.json << EOF
-{
-  "ides": ["cursor", "windsurf"],
-  "rules": {
-    "typescript-best-practices": {
-      "source": "https://gist.githubusercontent.com/ranyitz/3f48ef083921fe81b7963b1f369ea70b/raw/a08d68545bd13c3abc92d6a3c8e9ed87c6ffbf6a/typescript-best-practices.mdc",
-      "type": "url"
-    }
-  }
-}
-EOF
-
-# Step 4: Install the rule to your IDE
-npx ai-rules install
-
-# Step 5: Verify the installation
-npx ai-rules list --verbose
-```
-
-After running these commands, you'll have a TypeScript best practices rule installed that helps you write better TypeScript code in your IDE.
-
-Try it out by opening a TypeScript file in your IDE and asking for coding assistance!
-
-## More Examples
-
-### Example: Installing Multiple Rules
-
-You can install multiple rules at once by adding them to your configuration file:
-
-```bash
-# Initialize a configuration
+# 2. Quick setup - copy and paste this one-liner to update your config
 npx ai-rules init
 
-# Create a configuration with multiple rules
-cat > ai-rules.json << EOF
-{
-  "ides": ["cursor", "windsurf"],
-  "rules": {
-    "typescript-best-practices": {
-      "source": "https://gist.githubusercontent.com/ranyitz/3f48ef083921fe81b7963b1f369ea70b/raw/a08d68545bd13c3abc92d6a3c8e9ed87c6ffbf6a/typescript-best-practices.mdc",
-      "type": "url"
-    },
-    "react-best-practices": {
-      "source": "https://gist.githubusercontent.com/ranyitz/29c1d1d0b9c5b3a3ad4d6359b2f2a40e/raw/d0e63c5c0efffca78d2112618c993c5b7b1c2bab/react-best-practices.mdc",
-      "type": "url"
-    }
-  }
-}
-EOF
-
-# Install all rules
-npx ai-rules install
-```
-
-This example installs both TypeScript and React best practices rules, allowing your AI assistant to provide better guidance for both technologies.
-
-### Example: Working with Local Rules
-
-You can also use local rule files:
-
-```bash
-# Create a rule file
-mkdir -p rules
-cat > rules/custom-rule.mdc << EOF
-# My Custom Rule
-
-When writing code, focus on:
-1. Readability
-2. Maintainability
-3. Performance
-
-Follow these principles whenever providing code suggestions.
-EOF
-
-# Add the local rule to your configuration
-cat > ai-rules.json << EOF
-{
-  "ides": ["cursor", "windsurf"],
-  "rules": {
-    "my-custom-rule": {
-      "source": "./rules/custom-rule.mdc",
-      "type": "local"
-    }
-  }
-}
-EOF
-
-# Install the local rule
-npx ai-rules install
-```
-
-### Fun Example: Pirate Coding Assistant
-
-Want to add some fun to your coding experience? Try this pirate-themed coding assistant:
-
-```bash
-# Initialize a configuration
-npx ai-rules init
-
-# Create a pirate coding rule configuration
-cat > ai-rules.json << EOF
-{
+# 3. Copy and paste this to the terminal to update your config manually
+echo '{
   "ides": ["cursor"],
   "rules": {
     "pirate-coding": {
-      "source": "https://gist.githubusercontent.com/ranyitz/3022e7261b62c4e4f2d20cfd73d75da8/raw/4bea8f74af8dc4bc8dcf6fd9df9f45d9fc3cabe7/pirate-coding.mdc",
+      "source": "https://gist.githubusercontent.com/ranyitz/043183278d5ec0cbc65ebf24a9ee57bd/raw/b4ec0c74c6f9aec3054a7ef7a6821bc94c84fe74/pirate-coding-rule.mdc",
       "type": "url"
     }
   }
-}
-EOF
+}' > ai-rules.json
 
-# Install the pirate rule
+# 4. Install the rule
 npx ai-rules install
 ```
 
-After installation, open Cursor and ask for coding help. Your AI assistant will respond with pirate-themed coding advice, such as:
-
-- "Arr, that be a mighty fine function ye wrote there, matey!"
-- "Shiver me timbers! Ye forgot to close yer brackets, ye scallywag!"
-- "This code be needin' some refactorin', or I'll make ye walk the plank!"
-
-Great for bringing some humor to your coding sessions or for demo purposes!
-
-## Quick Start
-
-```bash
-# Initialize a new configuration
-npx ai-rules init
-
-# Edit your ai-rules.json file to add rules
-
-# Install rules to your IDEs
-npx ai-rules install
-
-# List your rules and their status
-npx ai-rules list
-```
+After installation, open Cursor and ask for coding help. Your AI assistant will respond with pirate-themed coding advice.
 
 ## Commands
 
@@ -352,8 +227,8 @@ Rules stored locally in your project or filesystem
 
 Default installation locations by IDE:
 
-- **Cursor**: `~/.cursor/rules/`
-- **Windsurf**: `~/.config/windsurf/.windsurfrules`
+- **Cursor**: `.cursor/rules/` (project-specific directory)
+- **Windsurf**: `.windsurf/.windsurfrules` (project-specific directory)
 
 ## Contributing
 

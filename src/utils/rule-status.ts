@@ -6,11 +6,11 @@ import os from "node:os";
  * Get the IDE-specific rule installation paths
  */
 export function getIdePaths(): Record<string, string> {
-  const homeDir = os.homedir();
+  const projectDir = process.cwd(); // Get current working directory (project root)
 
   return {
-    cursor: path.join(homeDir, ".cursor", "rules"),
-    windsurf: path.join(homeDir, ".config", "windsurf"),
+    cursor: path.join(projectDir, ".cursor", "rules"),
+    windsurf: path.join(projectDir, ".windsurf"),
   };
 }
 
