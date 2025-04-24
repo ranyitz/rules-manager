@@ -1,62 +1,205 @@
 # ai-rules
 
-A TypeScript CLI tool for managing AI IDE rules across different projects and teams.
+A CLI tool for managing AI IDE rules across different projects and teams.
 
 ## Overview
 
-ai-rules helps developers manage, share, and synchronize AI assistant rules across different projects and IDEs. It supports rules from multiple sources including public URLs, npm packages, and local files.
+ai-rules helps developers manage, share, and synchronize AI assistant rules across different projects and IDEs. It provides a unified way to maintain consistent AI behaviors across your development environments, making it easier to:
+
+- Share rules between team members
+- Maintain consistent AI assistant behavior across projects
+- Version control your AI assistant configurations
+- Distribute rules from multiple sources
+
+The tool supports rules from multiple sources including public URLs, npm packages, and local files.
 
 ## Installation
 
 ```bash
+# Global installation (recommended)
 npm install -g ai-rules
+
+# Or install locally in a project
+npm install --save-dev ai-rules
 ```
 
-## Usage
-
-### Initialize a new configuration
+## Quick Start
 
 ```bash
+# Initialize a new configuration
 ai-rules init
-```
 
-This creates a new `ai-rules.json` configuration file in your current project.
+# Edit your ai-rules.json file to add rules
 
-### Install rules from configured sources
-
-```bash
+# Install rules to your IDEs
 ai-rules install
-```
 
-This command downloads, links, or copies rules from the configured sources to the appropriate IDE locations.
-
-### List configured rules
-
-```bash
+# List your rules and their status
 ai-rules list
 ```
 
-Displays all configured rules, their sources, and installation status.
+## Commands
+
+### `init`
+
+Initializes a new configuration file in your current directory.
+
+```bash
+ai-rules init [options]
+```
+
+**Options:**
+
+- `--force`: Overwrites existing configuration file if it exists
+
+**Example:**
+
+```bash
+# Create a new configuration file
+ai-rules init
+
+# Force create a new configuration file, overwriting any existing one
+ai-rules init --force
+```
+
+### `install`
+
+Installs rules from your configuration to the appropriate IDE locations.
+
+```bash
+ai-rules install [rule-name] [options]
+```
+
+**Options:**
+
+- `[rule-name]`: Optional - installs a specific rule instead of all rules
+
+**Examples:**
+
+```bash
+# Install all configured rules
+ai-rules install
+
+# Install a specific rule
+ai-rules install eslint-standard
+```
+
+### `list`
+
+Lists all configured rules and their installation status.
+
+```bash
+ai-rules list [options]
+```
+
+**Options:**
+
+- `--verbose`, `-v`: Shows additional details about each rule
+
+**Examples:**
+
+```bash
+# List all rules
+ai-rules list
+
+# List rules with detailed information
+ai-rules list --verbose
+```
 
 ## Configuration
 
-ai-rules uses a JSON configuration file (`ai-rules.json`) with the following structure:
+ai-rules uses a JSON configuration file (`ai-rules.json`) in your project directory.
+
+### Configuration Structure
 
 ```json
 {
   "ides": ["cursor", "windsurf"],
   "rules": {
-    "eslint-standard": {
-      "source": "https://gist.github.com/user/abc123def456",
+    "rule-name": {
+      "source": "source-location",
+      "type": "source-type"
+    }
+  }
+}
+```
+
+### Configuration Fields
+
+- **ides**: Array of IDE names where rules should be installed
+- **rules**: Object containing rule configurations
+  - **rule-name**: A unique identifier for the rule
+    - **source**: Location of the rule file
+    - **type**: Type of source (`url`, `npm`, or `local`)
+
+### Rule Source Types
+
+#### URL Source
+
+Rules hosted on public URLs (GitHub, Gists, etc.)
+
+```json
+"eslint-standard": {
+  "source": "https://gist.github.com/user/abc123def456",
+  "type": "url"
+}
+```
+
+#### NPM Source
+
+Rules provided by NPM packages
+
+```json
+"react-best-practices": {
+  "source": "@company/ai-rules-react",
+  "type": "npm"
+}
+```
+
+#### Local Source
+
+Rules stored locally in your project or filesystem
+
+```json
+"personal-rules": {
+  "source": "./rules/custom.mdc",
+  "type": "local"
+}
+```
+
+## Example Configurations
+
+### Basic Configuration
+
+```json
+{
+  "ides": ["cursor"],
+  "rules": {
+    "formatting": {
+      "source": "https://example.com/rules/formatting.mdc",
+      "type": "url"
+    }
+  }
+}
+```
+
+### Multiple Rules Configuration
+
+```json
+{
+  "ides": ["cursor", "windsurf"],
+  "rules": {
+    "typescript-best-practices": {
+      "source": "https://github.com/user/typescript-rules/raw/main/typescript.mdc",
       "type": "url"
     },
-    "react-best-practices": {
-      "source": "@company/ai-rules-react",
-      "type": "npm"
-    },
-    "personal-rules": {
-      "source": "./rules/custom.mdc",
+    "project-specific": {
+      "source": "./rules/project-rules.mdc",
       "type": "local"
+    },
+    "team-standards": {
+      "source": "@company/coding-standards",
+      "type": "npm"
     }
   }
 }
@@ -64,8 +207,19 @@ ai-rules uses a JSON configuration file (`ai-rules.json`) with the following str
 
 ## Supported IDEs
 
-- Cursor (individual .mdc files)
-- Windsurf (concatenated .windsurfrules file)
+- **Cursor**: Rules are installed as individual `.mdc` files in the Cursor rules directory
+- **Windsurf**: Rules are concatenated into a single `.windsurfrules` file in the Windsurf configuration directory
+
+## Installation Locations
+
+Default installation locations by IDE:
+
+- **Cursor**: `~/.cursor/rules/`
+- **Windsurf**: `~/.config/windsurf/.windsurfrules`
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
