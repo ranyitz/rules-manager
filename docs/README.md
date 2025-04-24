@@ -30,25 +30,25 @@ The following examples demonstrate common use cases for ai-rules:
 
 ```bash
 # Initialize a new configuration
-ai-rules init
+npx ai-rules init
 
 # Edit your ai-rules.json file to add rules
 
 # Install rules to your IDEs
-ai-rules install
+npx ai-rules install
 
 # List your rules and their status
-ai-rules list
+npx ai-rules list
 ```
 
 ### Using a Single Rule
 
 ```bash
 # Install a specific rule
-ai-rules install my-rule
+npx ai-rules install my-rule
 
 # Check if the rule was installed correctly
-ai-rules list --verbose
+npx ai-rules list --verbose
 ```
 
 ## Additional Resources

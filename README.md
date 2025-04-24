@@ -13,13 +13,15 @@ ai-rules helps developers manage, share, and synchronize AI assistant rules acro
 
 The tool supports rules from multiple sources including public URLs, npm packages, and local files.
 
-## Installation
+## Installation & Usage
+
+ai-rules can be used directly with npx without installing it globally:
 
 ```bash
-# Global installation (recommended)
-npm install -g ai-rules
+# Use directly with npx
+npx ai-rules <command>
 
-# Or install locally in a project
+# Or install locally in a project if needed
 npm install --save-dev ai-rules
 ```
 
@@ -27,15 +29,15 @@ npm install --save-dev ai-rules
 
 ```bash
 # Initialize a new configuration
-ai-rules init
+npx ai-rules init
 
 # Edit your ai-rules.json file to add rules
 
 # Install rules to your IDEs
-ai-rules install
+npx ai-rules install
 
 # List your rules and their status
-ai-rules list
+npx ai-rules list
 ```
 
 ## Commands
@@ -45,7 +47,7 @@ ai-rules list
 Initializes a new configuration file in your current directory.
 
 ```bash
-ai-rules init [options]
+npx ai-rules init [options]
 ```
 
 **Options:**
@@ -56,10 +58,10 @@ ai-rules init [options]
 
 ```bash
 # Create a new configuration file
-ai-rules init
+npx ai-rules init
 
 # Force create a new configuration file, overwriting any existing one
-ai-rules init --force
+npx ai-rules init --force
 ```
 
 ### `install`
@@ -67,7 +69,7 @@ ai-rules init --force
 Installs rules from your configuration to the appropriate IDE locations.
 
 ```bash
-ai-rules install [rule-name] [options]
+npx ai-rules install [rule-name] [options]
 ```
 
 **Options:**
@@ -78,10 +80,10 @@ ai-rules install [rule-name] [options]
 
 ```bash
 # Install all configured rules
-ai-rules install
+npx ai-rules install
 
 # Install a specific rule
-ai-rules install eslint-standard
+npx ai-rules install eslint-standard
 ```
 
 ### `list`
@@ -89,7 +91,7 @@ ai-rules install eslint-standard
 Lists all configured rules and their installation status.
 
 ```bash
-ai-rules list [options]
+npx ai-rules list [options]
 ```
 
 **Options:**
@@ -100,10 +102,10 @@ ai-rules list [options]
 
 ```bash
 # List all rules
-ai-rules list
+npx ai-rules list
 
 # List rules with detailed information
-ai-rules list --verbose
+npx ai-rules list --verbose
 ```
 
 ## Configuration

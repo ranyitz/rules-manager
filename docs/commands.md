@@ -16,7 +16,7 @@ The `init` command initializes a new configuration file in your project director
 ### Usage
 
 ```bash
-ai-rules init [options]
+npx ai-rules init [options]
 ```
 
 ### Options
@@ -27,10 +27,10 @@ ai-rules init [options]
 
 ```bash
 # Create a new configuration file
-ai-rules init
+npx ai-rules init
 
 # Force create a new configuration file, overwriting any existing one
-ai-rules init --force
+npx ai-rules init --force
 ```
 
 ### Behavior
@@ -63,7 +63,7 @@ The `install` command processes rules from your configuration and installs them 
 ### Usage
 
 ```bash
-ai-rules install [rule-name] [options]
+npx ai-rules install [rule-name] [options]
 ```
 
 ### Options
@@ -74,10 +74,10 @@ ai-rules install [rule-name] [options]
 
 ```bash
 # Install all configured rules
-ai-rules install
+npx ai-rules install
 
 # Install a specific rule
-ai-rules install eslint-standard
+npx ai-rules install eslint-standard
 ```
 
 ### Behavior
@@ -106,7 +106,7 @@ The `list` command displays all configured rules and their installation status.
 ### Usage
 
 ```bash
-ai-rules list [options]
+npx ai-rules list [options]
 ```
 
 ### Options
@@ -117,10 +117,10 @@ ai-rules list [options]
 
 ```bash
 # List all rules with basic information
-ai-rules list
+npx ai-rules list
 
 # List rules with detailed information
-ai-rules list --verbose
+npx ai-rules list --verbose
 ```
 
 ### Behavior
