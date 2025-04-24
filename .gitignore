@@ -23,6 +23,9 @@ Thumbs.db
 # Test coverage
 coverage/
 
+# Temporary test directory
+tmp-test/
+
 # Environment variables
 .env
 .env.local
