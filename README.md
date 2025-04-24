@@ -128,6 +128,39 @@ EOF
 npx ai-rules install
 ```
 
+### Fun Example: Pirate Coding Assistant
+
+Want to add some fun to your coding experience? Try this pirate-themed coding assistant:
+
+```bash
+# Initialize a configuration
+npx ai-rules init
+
+# Create a pirate coding rule configuration
+cat > ai-rules.json << EOF
+{
+  "ides": ["cursor"],
+  "rules": {
+    "pirate-coding": {
+      "source": "https://gist.githubusercontent.com/ranyitz/3022e7261b62c4e4f2d20cfd73d75da8/raw/4bea8f74af8dc4bc8dcf6fd9df9f45d9fc3cabe7/pirate-coding.mdc",
+      "type": "url"
+    }
+  }
+}
+EOF
+
+# Install the pirate rule
+npx ai-rules install
+```
+
+After installation, open Cursor and ask for coding help. Your AI assistant will respond with pirate-themed coding advice, such as:
+
+- "Arr, that be a mighty fine function ye wrote there, matey!"
+- "Shiver me timbers! Ye forgot to close yer brackets, ye scallywag!"
+- "This code be needin' some refactorin', or I'll make ye walk the plank!"
+
+Great for bringing some humor to your coding sessions or for demo purposes!
+
 ## Quick Start
 
 ```bash

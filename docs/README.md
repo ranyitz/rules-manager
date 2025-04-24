@@ -102,6 +102,45 @@ npx ai-rules install my-rule
 npx ai-rules list --verbose
 ```
 
+### Fun Example: Pirate Coding Assistant
+
+Looking to add some humor to your coding experience? Try this pirate-themed coding assistant:
+
+```bash
+# Initialize a configuration
+npx ai-rules init
+
+# Create a pirate coding rule configuration
+cat > ai-rules.json << EOF
+{
+  "ides": ["cursor"],
+  "rules": {
+    "pirate-coding": {
+      "source": "https://gist.githubusercontent.com/ranyitz/3022e7261b62c4e4f2d20cfd73d75da8/raw/4bea8f74af8dc4bc8dcf6fd9df9f45d9fc3cabe7/pirate-coding.mdc",
+      "type": "url"
+    }
+  }
+}
+EOF
+
+# Install the pirate rule
+npx ai-rules install
+```
+
+Once installed, your AI coding assistant will talk like a pirate while providing coding advice. For example:
+
+- "Ahoy there! Let me help ye with that JavaScript code, me hearty!"
+- "By Blackbeard's beard! Ye've got an uncaught exception that needs fixin'!"
+- "That be a mighty fine algorithm, but it runs slower than a three-legged parrot!"
+
+This example is perfect for:
+
+- Demonstrations and presentations
+- Adding humor to team coding sessions
+- Teaching programming concepts in an engaging way
+
+You'll notice the difference immediately as your AI assistant adopts a pirate persona while still providing helpful coding advice.
+
 ## Additional Resources
 
 - [GitHub Repository](https://github.com/user/ai-rules): Source code and issue tracking
