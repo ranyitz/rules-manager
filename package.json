@@ -1,6 +1,37 @@
 {
   "name": "ai-rules",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT"
+  "version": "0.1.0",
+  "description": "A TypeScript CLI tool for managing AI IDE rules across different projects and teams",
+  "main": "dist/index.js",
+  "bin": {
+    "ai-rules": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ai",
+    "ide",
+    "rules",
+    "cursor",
+    "windsurf",
+    "cli"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "args": "^5.0.3",
+    "axios": "^1.6.2",
+    "chalk": "^4.1.2",
+    "fs-extra": "^11.1.1"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.9.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
 }
