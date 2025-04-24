@@ -66,9 +66,6 @@ describe("ai-rules install command", () => {
     // Run the install command without arguments
     const { stdout, stderr } = await runCommand("install");
 
-    console.log("STDOUT:", stdout);
-    console.log("STDERR:", stderr);
-
     // Should show installation started
     expect(stdout).toContain("Installing rules");
   });
@@ -76,9 +73,6 @@ describe("ai-rules install command", () => {
   test("should show error when config doesn't exist", async () => {
     // Run install without first creating a config
     const { stdout, stderr } = await runCommand("install test-rule");
-
-    console.log("STDOUT:", stdout);
-    console.log("STDERR:", stderr);
 
     // Should mention config file or initialization
     expect(stdout).toMatch(/config|configuration|initialize|init/i);
@@ -95,9 +89,6 @@ describe("ai-rules install command", () => {
     const { stdout, stderr } = await runCommand(
       "install test-rule --local ./rules/test-rule.mdc"
     );
-
-    console.log("STDOUT:", stdout);
-    console.log("STDERR:", stderr);
 
     // Check if the rule file was created
     expect(stdout).toContain("Rule installed successfully");
@@ -118,13 +109,6 @@ describe("ai-rules install command", () => {
 
     // Run the install command
     const { stdout, stderr, code } = await runCommand("install");
-
-    console.log("STDOUT:", stdout);
-    console.log("STDERR:", stderr);
-
-    // Log the test directory structure for debugging
-    console.log("Directory structure:", getDirectoryStructure());
-    console.log("Test directory:", testDir);
 
     // Command should run successfully
     expect(code).toBe(0);
@@ -167,9 +151,6 @@ describe("ai-rules install command", () => {
 
     // Run the install command
     const { stdout, stderr, code } = await runCommand("install");
-
-    console.log("STDOUT:", stdout);
-    console.log("STDERR:", stderr);
 
     // Command should still succeed but log errors
     expect(code).toBe(0);
