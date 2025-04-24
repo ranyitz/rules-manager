@@ -99,10 +99,7 @@ describe("ai-rules install command", () => {
     const installConfig = {
       ides: ["cursor", "windsurf"],
       rules: {
-        "local-rule": {
-          source: "./rules/local-rule.mdc",
-          type: "local",
-        },
+        "local-rule": "./rules/local-rule.mdc",
       },
     };
     fs.writeJsonSync(path.join(testDir, "ai-rules.json"), installConfig);
@@ -141,10 +138,7 @@ describe("ai-rules install command", () => {
     const badConfig = {
       ides: ["cursor"],
       rules: {
-        "missing-rule": {
-          source: "./rules/does-not-exist.mdc",
-          type: "local",
-        },
+        "missing-rule": "./rules/does-not-exist.mdc",
       },
     };
     fs.writeJsonSync(path.join(testDir, "ai-rules.json"), badConfig);

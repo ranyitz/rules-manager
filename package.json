@@ -13,7 +13,9 @@
     "dev": "ts-node src/index.ts",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:all": "npm run build && npm run test"
+    "test:all": "npm run build && npm run test",
+    "test:unit": "jest --config jest.unit.config.js",
+    "test:e2e": "jest tests/e2e"
   },
   "keywords": [
     "ai",

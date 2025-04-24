@@ -6,6 +6,7 @@ import { getConfig } from "../utils/config";
 import { installUrlRule } from "../resolvers/url-resolver";
 import { installNpmRule } from "../resolvers/npm-resolver";
 import { installLocalRule } from "../resolvers/local-resolver";
+import { detectRuleType } from "../utils/rule-detector";
 
 export function installCommand(): void {
   // Parse command-specific arguments
@@ -59,7 +60,7 @@ export function installCommand(): void {
     console.log(chalk.blue("Installing rules..."));
 
     // Process each rule (or just the specific one if provided)
-    for (const [ruleName, rule] of Object.entries(config.rules)) {
+    for (const [ruleName, source] of Object.entries(config.rules)) {
       // Skip if a specific rule was requested and this isn't it
       if (specificRule && ruleName !== specificRule) {
         continue;
@@ -67,18 +68,21 @@ export function installCommand(): void {
 
       console.log(`\nProcessing rule: ${chalk.green(ruleName)}`);
 
-      switch (rule.type) {
+      // Detect rule type from the source string
+      const ruleType = detectRuleType(source);
+
+      switch (ruleType) {
         case "url":
-          installUrlRule(ruleName, rule.source, config.ides);
+          installUrlRule(ruleName, source, config.ides);
           break;
         case "npm":
-          installNpmRule(ruleName, rule.source, config.ides);
+          installNpmRule(ruleName, source, config.ides);
           break;
         case "local":
-          installLocalRule(ruleName, rule.source, config.ides);
+          installLocalRule(ruleName, source, config.ides);
           break;
         default:
-          console.log(chalk.yellow(`Unknown rule type: ${rule.type}`));
+          console.log(chalk.yellow(`Unknown rule type: ${ruleType}`));
       }
     }
 
@@ -90,9 +94,8 @@ export function installCommand(): void {
       return;
     }
 
-    console.log(chalk.green("\n✓ Rule installation complete!"));
+    console.log(chalk.green("\nRules installation complete!"));
   } catch (error) {
-    console.error(chalk.red("Error installing rules:"));
-    console.error(error);
+    console.error(chalk.red("Error during rule installation:"), error);
   }
 }

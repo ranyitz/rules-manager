@@ -1,4 +1,4 @@
-# ai-rules
+# 📜 ai-rules
 
 A CLI tool for managing AI IDE rules across different projects and teams.
 
@@ -38,10 +38,7 @@ npx ai-rules init
 echo '{
   "ides": ["cursor"],
   "rules": {
-    "pirate-coding": {
-      "source": "https://gist.githubusercontent.com/ranyitz/043183278d5ec0cbc65ebf24a9ee57bd/raw/b4ec0c74c6f9aec3054a7ef7a6821bc94c84fe74/pirate-coding-rule.mdc",
-      "type": "url"
-    }
+    "pirate-coding": "https://gist.githubusercontent.com/ranyitz/043183278d5ec0cbc65ebf24a9ee57bd/raw/b4ec0c74c6f9aec3054a7ef7a6821bc94c84fe74/pirate-coding-rule.mdc"
   }
 }' > ai-rules.json
 
@@ -129,10 +126,7 @@ ai-rules uses a JSON configuration file (`ai-rules.json`) in your project direct
 {
   "ides": ["cursor", "windsurf"],
   "rules": {
-    "rule-name": {
-      "source": "source-location",
-      "type": "source-type"
-    }
+    "rule-name": "source-location"
   }
 }
 ```
@@ -142,20 +136,18 @@ ai-rules uses a JSON configuration file (`ai-rules.json`) in your project direct
 - **ides**: Array of IDE names where rules should be installed
 - **rules**: Object containing rule configurations
   - **rule-name**: A unique identifier for the rule
-    - **source**: Location of the rule file
-    - **type**: Type of source (`url`, `npm`, or `local`)
+  - **source-location**: Location of the rule file (URL, npm package name, or local path)
 
 ### Rule Source Types
+
+The type of rule is automatically detected based on the source format:
 
 #### URL Source
 
 Rules hosted on public URLs (GitHub, Gists, etc.)
 
 ```json
-"eslint-standard": {
-  "source": "https://gist.github.com/user/abc123def456",
-  "type": "url"
-}
+"eslint-standard": "https://gist.github.com/user/abc123def456"
 ```
 
 #### NPM Source
@@ -163,10 +155,7 @@ Rules hosted on public URLs (GitHub, Gists, etc.)
 Rules provided by NPM packages
 
 ```json
-"react-best-practices": {
-  "source": "@company/ai-rules-react",
-  "type": "npm"
-}
+"react-best-practices": "@company/ai-rules-react"
 ```
 
 #### Local Source
@@ -174,10 +163,7 @@ Rules provided by NPM packages
 Rules stored locally in your project or filesystem
 
 ```json
-"personal-rules": {
-  "source": "./rules/custom.mdc",
-  "type": "local"
-}
+"personal-rules": "./rules/custom.mdc"
 ```
 
 ## Example Configurations
@@ -188,10 +174,7 @@ Rules stored locally in your project or filesystem
 {
   "ides": ["cursor"],
   "rules": {
-    "formatting": {
-      "source": "https://example.com/rules/formatting.mdc",
-      "type": "url"
-    }
+    "formatting": "https://example.com/rules/formatting.mdc"
   }
 }
 ```
@@ -202,18 +185,9 @@ Rules stored locally in your project or filesystem
 {
   "ides": ["cursor", "windsurf"],
   "rules": {
-    "typescript-best-practices": {
-      "source": "https://github.com/user/typescript-rules/raw/main/typescript.mdc",
-      "type": "url"
-    },
-    "project-specific": {
-      "source": "./rules/project-rules.mdc",
-      "type": "local"
-    },
-    "team-standards": {
-      "source": "@company/coding-standards",
-      "type": "npm"
-    }
+    "typescript-best-practices": "https://github.com/user/typescript-rules/raw/main/typescript.mdc",
+    "project-specific": "./rules/project-rules.mdc",
+    "team-standards": "@company/coding-standards"
   }
 }
 ```
@@ -233,6 +207,25 @@ Default installation locations by IDE:
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Development
+
+### Testing
+
+The project includes both unit tests and end-to-end (E2E) tests:
+
+```bash
+# Run all tests
+npm test
+
+# Run only unit tests
+npm run test:unit
+
+# Run only E2E tests
+npm run test:e2e
+```
+
+Unit tests are fast and test individual functions, while E2E tests test the CLI commands in a real environment.
 
 ## License
 

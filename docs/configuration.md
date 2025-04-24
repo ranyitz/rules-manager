@@ -14,14 +14,8 @@ The configuration file uses JSON format with the following structure:
 {
   "ides": ["ide1", "ide2", ...],
   "rules": {
-    "rule-name-1": {
-      "source": "source-location",
-      "type": "source-type"
-    },
-    "rule-name-2": {
-      "source": "source-location",
-      "type": "source-type"
-    }
+    "rule-name-1": "source-location-1",
+    "rule-name-2": "source-location-2"
   }
 }
 ```
@@ -49,71 +43,59 @@ To target only a specific IDE:
 
 ### rules
 
-The `rules` field is an object containing rule configurations. Each key in this object is a unique name for the rule, and its value is an object with the following properties:
-
-- `source`: The location of the rule file
-- `type`: The type of source (`url`, `npm`, or `local`)
+The `rules` field is an object containing rule configurations. Each key in this object is a unique name for the rule, and its value is a string representing the source location.
 
 Example:
 
 ```json
 "rules": {
-  "eslint-standard": {
-    "source": "https://example.com/rules/eslint.mdc",
-    "type": "url"
-  }
+  "eslint-standard": "https://example.com/rules/eslint.mdc"
 }
 ```
 
 ## Rule Source Types
 
-### URL Sources (`"type": "url"`)
+The type of rule is automatically detected based on the format of the source string:
 
-Rules hosted on public URLs such as GitHub, Gists, or any web-accessible location.
+### URL Sources
+
+Rules hosted on public URLs such as GitHub, Gists, or any web-accessible location. Any source starting with `http://` or `https://` is detected as a URL.
 
 Example:
 
 ```json
-"typescript-rules": {
-  "source": "https://github.com/user/typescript-rules/raw/main/typescript.mdc",
-  "type": "url"
-}
+"typescript-rules": "https://github.com/user/typescript-rules/raw/main/typescript.mdc"
 ```
 
 URLs must be direct links to the rule file content. For GitHub repositories, use the "raw" URL format.
 
-### NPM Sources (`"type": "npm"`)
+### NPM Sources
 
-Rules provided by NPM packages. The package must be installed either globally or in your project's `node_modules`.
+Rules provided by NPM packages. The package must be installed either globally or in your project's `node_modules`. Sources that start with `@` or don't contain path separators are detected as NPM packages.
 
 Example:
 
 ```json
-"company-standards": {
-  "source": "@company/ai-rules-package",
-  "type": "npm"
-}
+"company-standards": "@company/ai-rules-package"
 ```
 
 NPM package sources should follow the NPM package naming conventions. The package is expected to have a `.mdc` file with the same name as the rule (or in a predefined location within the package).
 
-### Local Sources (`"type": "local"`)
+### Local Sources
 
-Rules stored locally in your project or filesystem.
+Rules stored locally in your project or filesystem. Any path containing slashes or backslashes is detected as a local file path.
 
 Example:
 
 ```json
-"project-rules": {
-  "source": "./rules/project-specific.mdc",
-  "type": "local"
-}
+"project-rules": "./rules/project-specific.mdc"
 ```
 
 Local paths can be:
 
 - Relative to the configuration file (starting with `./` or `../`)
 - Absolute paths (starting with `/`)
+- Relative paths without the leading `./`
 
 ## Complete Configuration Examples
 
@@ -123,10 +105,7 @@ Local paths can be:
 {
   "ides": ["cursor"],
   "rules": {
-    "formatting": {
-      "source": "https://example.com/rules/formatting.mdc",
-      "type": "url"
-    }
+    "formatting": "https://example.com/rules/formatting.mdc"
   }
 }
 ```
@@ -137,18 +116,9 @@ Local paths can be:
 {
   "ides": ["cursor", "windsurf"],
   "rules": {
-    "typescript-best-practices": {
-      "source": "https://github.com/user/typescript-rules/raw/main/typescript.mdc",
-      "type": "url"
-    },
-    "project-specific": {
-      "source": "./rules/project-rules.mdc",
-      "type": "local"
-    },
-    "team-standards": {
-      "source": "@company/coding-standards",
-      "type": "npm"
-    }
+    "typescript-best-practices": "https://github.com/user/typescript-rules/raw/main/typescript.mdc",
+    "project-specific": "./rules/project-rules.mdc",
+    "team-standards": "@company/coding-standards"
   }
 }
 ```
@@ -159,18 +129,9 @@ Local paths can be:
 {
   "ides": ["cursor", "windsurf"],
   "rules": {
-    "company-style": {
-      "source": "@acme/ai-rules-standard",
-      "type": "npm"
-    },
-    "department-specific": {
-      "source": "@acme/ai-rules-engineering",
-      "type": "npm"
-    },
-    "project-overrides": {
-      "source": "./project-rules.mdc",
-      "type": "local"
-    }
+    "company-style": "@acme/ai-rules-standard",
+    "department-specific": "@acme/ai-rules-engineering",
+    "project-overrides": "./project-rules.mdc"
   }
 }
 ```

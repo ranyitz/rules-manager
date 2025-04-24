@@ -2,6 +2,7 @@ import chalk from "chalk";
 import arg from "arg";
 import { getConfig } from "../utils/config";
 import { checkRuleStatus } from "../utils/rule-status";
+import { detectRuleType } from "../utils/rule-detector";
 
 export function listCommand(): void {
   // Parse command-specific arguments
@@ -41,15 +42,16 @@ export function listCommand(): void {
     console.log(chalk.dim("─".repeat(50)));
 
     // List each rule
-    for (const [ruleName, rule] of Object.entries(config.rules)) {
-      const status = checkRuleStatus(ruleName, rule.type, config.ides);
+    for (const [ruleName, source] of Object.entries(config.rules)) {
+      const ruleType = detectRuleType(source);
+      const status = checkRuleStatus(ruleName, ruleType, config.ides);
       const statusColor = status
         ? chalk.green("Installed")
         : chalk.yellow("Not installed");
 
       console.log(`${chalk.bold(ruleName)}`);
-      console.log(`  Source: ${rule.source}`);
-      console.log(`  Type: ${rule.type}`);
+      console.log(`  Source: ${source}`);
+      console.log(`  Type: ${ruleType} (auto-detected)`);
       console.log(`  Status: ${statusColor}`);
 
       // Show additional details if verbose mode is enabled
@@ -59,7 +61,7 @@ export function listCommand(): void {
           console.log(
             `  Installation Path: ${getInstallPath(
               ruleName,
-              rule.type,
+              ruleType,
               config.ides[0]
             )}`
           );
@@ -69,24 +71,20 @@ export function listCommand(): void {
       console.log(chalk.dim("─".repeat(50)));
     }
   } catch (error) {
-    console.error(chalk.red("Error listing rules:"));
-    console.error(error);
+    console.error(chalk.red("Error listing rules:"), error);
   }
 }
 
-// Helper function to get installation path (placeholder - implement as needed)
+// Helper function to get installation path (simplified for brevity)
 function getInstallPath(
   ruleName: string,
   ruleType: string,
   ide: string
 ): string {
-  const projectDir = process.cwd(); // Get current working directory (project root)
-
   if (ide === "cursor") {
-    return `${projectDir}/.cursor/rules/${ruleName}.mdc`;
+    return `.cursor/rules/${ruleName}.mdc`;
   } else if (ide === "windsurf") {
-    return `${projectDir}/.windsurf/.windsurfrules`;
+    return `.windsurf/.windsurfrules`;
   }
-
-  return "Unknown path";
+  return "Unknown location";
 }

@@ -1,17 +1,8 @@
 {
   "ides": ["cursor", "windsurf"],
   "rules": {
-    "code-formatting": {
-      "source": "https://example.com/rules/formatting.mdc",
-      "type": "url"
-    },
-    "typescript-best-practices": {
-      "source": "@company/rules-ts-best-practices",
-      "type": "npm"
-    },
-    "local-rule": {
-      "source": "./rules/local-rule.mdc",
-      "type": "local"
-    }
+    "code-formatting": "https://example.com/rules/formatting.mdc",
+    "typescript-best-practices": "@company/rules-ts-best-practices",
+    "local-rule": "./rules/local-rule.mdc"
   }
 }

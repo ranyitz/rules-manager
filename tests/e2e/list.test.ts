@@ -18,9 +18,9 @@ describe("ai-rules list command", () => {
     // Create a config file with multiple rules manually
     const config = JSON.parse(readTestFile("ai-rules.json"));
     config.rules = {
-      rule1: { source: "https://example.com/rule1.mdc", type: "url" },
-      rule2: { source: "https://example.com/rule2.mdc", type: "url" },
-      rule3: { source: "https://example.com/rule3.mdc", type: "url" },
+      rule1: "https://example.com/rule1.mdc",
+      rule2: "https://example.com/rule2.mdc",
+      rule3: "https://example.com/rule3.mdc",
     };
     fs.writeFileSync(
       path.join(testDir, "ai-rules.json"),
@@ -68,7 +68,7 @@ describe("ai-rules list command", () => {
     // Create a config file with a single rule
     const config = JSON.parse(readTestFile("ai-rules.json"));
     config.rules = {
-      "test-rule": { source: "https://example.com/test-rule.mdc", type: "url" },
+      "test-rule": "https://example.com/test-rule.mdc",
     };
     fs.writeFileSync(
       path.join(testDir, "ai-rules.json"),
@@ -98,10 +98,7 @@ describe("ai-rules list command", () => {
     // Create a config file with a single rule
     const config = JSON.parse(readTestFile("ai-rules.json"));
     config.rules = {
-      "test-rule-extra": {
-        source: "https://example.com/test-rule-extra.mdc",
-        type: "url",
-      },
+      "test-rule-extra": "https://example.com/test-rule-extra.mdc",
     };
     fs.writeFileSync(
       path.join(testDir, "ai-rules.json"),

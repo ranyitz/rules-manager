@@ -1,8 +1,5 @@
 // Configuration interfaces
-export interface Rule {
-  source: string;
-  type: "url" | "npm" | "local";
-}
+export type Rule = string;
 
 export interface Rules {
   [ruleName: string]: Rule;

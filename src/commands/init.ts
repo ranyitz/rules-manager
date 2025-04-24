@@ -7,10 +7,7 @@ import arg from "arg";
 const defaultConfig = {
   ides: ["cursor", "windsurf"],
   rules: {
-    "example-rule": {
-      source: "https://example.com/rule.mdc",
-      type: "url",
-    },
+    "example-rule": "https://example.com/rule.mdc",
   },
 };
 
@@ -44,7 +41,7 @@ export function initCommand(): void {
   try {
     // Create config file
     fs.writeJsonSync(configPath, defaultConfig, { spaces: 2 });
-    console.log(chalk.green("✓ Configuration file created successfully!"));
+    console.log(chalk.green("Configuration file created successfully!"));
     console.log(`Configuration file location: ${chalk.blue(configPath)}`);
     console.log(`\nNext steps:`);
     console.log(
@@ -52,7 +49,6 @@ export function initCommand(): void {
     );
     console.log(`  2. Run ${chalk.blue("ai-rules install")} to install rules`);
   } catch (error) {
-    console.error(chalk.red("Error creating configuration file:"));
-    console.error(error);
+    console.error(chalk.red("Error creating configuration file:"), error);
   }
 }
