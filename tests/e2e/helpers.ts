@@ -27,6 +27,28 @@ export let testDir = testRootDir;
 export const fixturesDir = path.join(projectRoot, "tests/fixtures");
 
 /**
+ * Sanitize a filename to be safe for directories
+ */
+function sanitizeFilename(name: string): string {
+  // Special case for test names that include the command name
+  name = name
+    .replace(/ai-rules[- ]?/gi, "") // Remove "ai-rules" prefix
+    .replace(/init[- ]?command[- ]?/gi, "") // Remove "init command" part
+    .replace(/install[- ]?command[- ]?/gi, "") // Remove "install command" part
+    .replace(/list[- ]?command[- ]?/gi, "") // Remove "list command" part
+    .replace(/should[- ]?/gi, "") // Remove any 'should' part
+    .replace(/^(a|the)[- ]?/gi, "") // Remove leading "a" or "the"
+    .replace(/\.test\.ts$/, ""); // Remove .test.ts extension
+
+  // General sanitization
+  return name
+    .replace(/[^a-z0-9-]/gi, "-") // Replace non-alphanumeric chars with dashes
+    .replace(/-+/g, "-") // Replace multiple dashes with a single dash
+    .replace(/^-|-$/g, "") // Remove leading/trailing dashes
+    .toLowerCase();
+}
+
+/**
  * Setup a test directory for a specific test
  * @param testFilename The name of the test file
  * @param testName The name of the individual test
@@ -44,20 +66,18 @@ export async function setupTestDir(
     return testDir;
   }
 
-  // Sanitize filenames
-  const sanitizedFilename = testFilename
-    ? sanitizeFilename(testFilename)
-    : "unknown-file";
+  // Get the command name from the test filename (e.g., "init" from "init.test.ts")
+  const commandName = testFilename
+    ? testFilename.replace(/\.test\.ts$/, "")
+    : "unknown";
+
+  // Sanitize test name
   const sanitizedTestName = testName
     ? sanitizeFilename(testName)
     : "unknown-test";
 
-  // Create a directory path with file and test name
-  const newTestDir = path.join(
-    testRootDir,
-    sanitizedFilename,
-    sanitizedTestName
-  );
+  // Create a directory path with just the command name and sanitized test name
+  const newTestDir = path.join(testRootDir, commandName, sanitizedTestName);
 
   // Remove any existing test directory
   await rimraf(newTestDir);
@@ -69,16 +89,6 @@ export async function setupTestDir(
   testDir = newTestDir;
 
   return testDir;
-}
-
-/**
- * Sanitize a filename to be safe for directories
- */
-function sanitizeFilename(name: string): string {
-  return name
-    .replace(/\.test\.ts$/, "") // Remove .test.ts extension
-    .replace(/[^a-z0-9-]/gi, "-") // Replace non-alphanumeric chars with dashes
-    .toLowerCase();
 }
 
 /**

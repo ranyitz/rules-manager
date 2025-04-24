@@ -3,17 +3,15 @@ import fs from "fs-extra";
 import { setupTestDir, runCommand, testDir, readTestFile } from "./helpers";
 
 describe("ai-rules list command", () => {
+  beforeEach(async () => {
+    // Setup a clean test directory for each test with proper scoping
+    await setupTestDir("list.test.ts", expect.getState().currentTestName);
+  });
+
   // Get the current filename for our directory structure
   const testFilename = path.basename(__filename);
 
-  beforeEach(async () => {
-    // Don't setup test directories here since we'll do it per test
-  });
-
   test("should list all rules in the config", async () => {
-    // Setup a dedicated test directory
-    await setupTestDir(testFilename, "list-all-rules");
-
     // Initialize the config
     await runCommand("init");
 
@@ -42,9 +40,6 @@ describe("ai-rules list command", () => {
   });
 
   test("should show message when no rules exist", async () => {
-    // Setup a dedicated test directory
-    await setupTestDir(testFilename, "no-rules-exist");
-
     // Initialize the config
     await runCommand("init");
 
@@ -67,9 +62,6 @@ describe("ai-rules list command", () => {
   });
 
   test("should format output correctly", async () => {
-    // Setup a dedicated test directory
-    await setupTestDir(testFilename, "format-output");
-
     // Initialize the config
     await runCommand("init");
 
@@ -100,9 +92,6 @@ describe("ai-rules list command", () => {
   });
 
   test("should handle list command with additional arguments", async () => {
-    // Setup a dedicated test directory
-    await setupTestDir(testFilename, "additional-args");
-
     // Initialize the config
     await runCommand("init");
 
