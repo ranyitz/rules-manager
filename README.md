@@ -25,6 +25,109 @@ npx ai-rules <command>
 npm install --save-dev ai-rules
 ```
 
+## Getting Started
+
+Here's a quick example to get you started using ai-rules with a pre-configured rule:
+
+```bash
+# Step 1: Create a new directory for your project (optional)
+mkdir my-ai-rules-project && cd my-ai-rules-project
+
+# Step 2: Initialize a new configuration
+npx ai-rules init
+
+# Step 3: Edit the ai-rules.json file to use a ready-made TypeScript best practices rule
+cat > ai-rules.json << EOF
+{
+  "ides": ["cursor", "windsurf"],
+  "rules": {
+    "typescript-best-practices": {
+      "source": "https://gist.githubusercontent.com/ranyitz/3f48ef083921fe81b7963b1f369ea70b/raw/a08d68545bd13c3abc92d6a3c8e9ed87c6ffbf6a/typescript-best-practices.mdc",
+      "type": "url"
+    }
+  }
+}
+EOF
+
+# Step 4: Install the rule to your IDE
+npx ai-rules install
+
+# Step 5: Verify the installation
+npx ai-rules list --verbose
+```
+
+After running these commands, you'll have a TypeScript best practices rule installed that helps you write better TypeScript code in your IDE.
+
+Try it out by opening a TypeScript file in your IDE and asking for coding assistance!
+
+## More Examples
+
+### Example: Installing Multiple Rules
+
+You can install multiple rules at once by adding them to your configuration file:
+
+```bash
+# Initialize a configuration
+npx ai-rules init
+
+# Create a configuration with multiple rules
+cat > ai-rules.json << EOF
+{
+  "ides": ["cursor", "windsurf"],
+  "rules": {
+    "typescript-best-practices": {
+      "source": "https://gist.githubusercontent.com/ranyitz/3f48ef083921fe81b7963b1f369ea70b/raw/a08d68545bd13c3abc92d6a3c8e9ed87c6ffbf6a/typescript-best-practices.mdc",
+      "type": "url"
+    },
+    "react-best-practices": {
+      "source": "https://gist.githubusercontent.com/ranyitz/29c1d1d0b9c5b3a3ad4d6359b2f2a40e/raw/d0e63c5c0efffca78d2112618c993c5b7b1c2bab/react-best-practices.mdc",
+      "type": "url"
+    }
+  }
+}
+EOF
+
+# Install all rules
+npx ai-rules install
+```
+
+This example installs both TypeScript and React best practices rules, allowing your AI assistant to provide better guidance for both technologies.
+
+### Example: Working with Local Rules
+
+You can also use local rule files:
+
+```bash
+# Create a rule file
+mkdir -p rules
+cat > rules/custom-rule.mdc << EOF
+# My Custom Rule
+
+When writing code, focus on:
+1. Readability
+2. Maintainability
+3. Performance
+
+Follow these principles whenever providing code suggestions.
+EOF
+
+# Add the local rule to your configuration
+cat > ai-rules.json << EOF
+{
+  "ides": ["cursor", "windsurf"],
+  "rules": {
+    "my-custom-rule": {
+      "source": "./rules/custom-rule.mdc",
+      "type": "local"
+    }
+  }
+}
+EOF
+
+# Install the local rule
+npx ai-rules install
+```
+
 ## Quick Start
 
 ```bash
