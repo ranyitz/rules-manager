@@ -4,24 +4,22 @@ A CLI tool for managing AI IDE rules across different projects and teams.
 
 ## Overview
 
-ai-rules helps developers manage, share, and synchronize AI assistant rules across different projects and IDEs. It provides a unified way to maintain consistent AI behaviors across your development environments, making it easier to:
+ai-rules helps developers manage, share, and synchronize AI assistant rules across different projects and IDEs.
 
-- Share rules between team members
+## Features
+
+- Share rules between team repositories
 - Maintain consistent AI assistant behavior across projects
-- Version control your AI assistant configurations
-- Distribute rules from multiple sources
-
-The tool supports rules from multiple sources including public URLs, npm packages, and local files.
+- Install rules from multiple sources (URLs, npm packages, local files)
+- Keep rules up to date with a remote source
 
 ## Installation & Usage
-
-ai-rules can be used directly with npx without installing it globally:
 
 ```bash
 # Use directly with npx
 npx ai-rules <command>
 
-# Or install locally in a project if needed
+# Or install locally in a project
 npm install --save-dev ai-rules
 ```
 
@@ -46,139 +44,6 @@ npx ai-rules install
 After installation, open Cursor and ask for coding help. Your AI assistant will respond with pirate-themed coding advice.
 
 > **Note**: This workflow is fully tested and verified to work with the current version of ai-rules.
-
-## Commands
-
-### Global Options
-
-These options are available for all commands:
-
-- `--help`, `-h`: Show help information
-- `--version`, `-v`: Show version information
-
-### `init`
-
-Initializes a new configuration file in your current directory.
-
-```bash
-npx ai-rules init [options]
-```
-
-**Options:**
-
-- `--force`: Overwrites existing configuration file if it exists
-
-**Example:**
-
-```bash
-# Create a new configuration file
-npx ai-rules init
-
-# Force create a new configuration file, overwriting any existing one
-npx ai-rules init --force
-```
-
-**Behavior:**
-
-1. Checks if `ai-rules.json` exists in the current directory
-2. If it exists and `--force` is not provided, shows a message and exits
-3. If it doesn't exist or `--force` is provided, creates a new configuration file with default settings
-4. Shows a success message with the location of the new configuration file
-
-**Default Configuration:**
-
-```json
-{
-  "ides": ["cursor", "windsurf"],
-  "rules": {
-    "example-rule": {
-      "source": "https://example.com/rule.mdc",
-      "type": "url"
-    }
-  }
-}
-```
-
-### `install`
-
-Installs rules from your configuration to the appropriate IDE locations.
-
-```bash
-npx ai-rules install [rule-name] [options]
-```
-
-**Options:**
-
-- `[rule-name]`: Optional - installs a specific rule instead of all rules
-
-**Examples:**
-
-```bash
-# Install all configured rules
-npx ai-rules install
-
-# Install a specific rule
-npx ai-rules install eslint-standard
-```
-
-**Behavior:**
-
-1. Loads the configuration file (`ai-rules.json`) from the current directory
-2. For each rule (or the specified rule), determines the source type (URL, NPM, local)
-3. Retrieves the rule content based on the source type
-4. For each configured IDE:
-   - Cursor: Copies the rule file to `.cursor/rules/` with the rule name as the filename
-   - Windsurf: Appends or updates the rule content in `.windsurf/.windsurfrules`
-5. Shows installation progress and results for each rule
-
-### `list`
-
-Lists all configured rules and their installation status.
-
-```bash
-npx ai-rules list [options]
-```
-
-**Options:**
-
-- `--verbose`, `-v`: Shows additional details about each rule
-
-**Examples:**
-
-```bash
-# List all rules
-npx ai-rules list
-
-# List rules with detailed information
-npx ai-rules list --verbose
-```
-
-**Behavior:**
-
-1. Loads the configuration file from the current directory
-2. Checks the installation status of each rule in the configured IDEs
-3. Displays a formatted list of rules with:
-   - Rule name
-   - Source location
-   - Source type
-   - Installation status
-4. In verbose mode, also shows:
-   - List of configured IDEs
-   - Installation paths for each IDE (if installed)
-
-**Output Format:**
-
-```
-Configured Rules:
-──────────────────────────────────────────────────
-eslint-standard
-  Source: https://gist.github.com/user/abc123def456
-  Type: url
-  Status: Installed
-  IDE: cursor, windsurf  (only shown in verbose mode)
-  Installation Path: .cursor/rules/eslint-standard.mdc  (only shown in verbose mode)
-──────────────────────────────────────────────────
-```
 
 ## Configuration
 
@@ -272,39 +137,208 @@ Local paths can be:
 }
 ```
 
-### Corporate Setup with NPM Package
-
-```json
-{
-  "ides": ["cursor", "windsurf"],
-  "rules": {
-    "company-style": "@acme/ai-rules-standard",
-    "department-specific": "@acme/ai-rules-engineering",
-    "project-overrides": "./project-rules.mdc"
-  }
-}
-```
-
 ## Supported IDEs
 
 - **Cursor**: Rules are installed as individual `.mdc` files in the Cursor rules directory
 - **Windsurf**: Rules are concatenated into a single `.windsurfrules` file in the Windsurf configuration directory
 
-## Installation Locations
+## Recipes
 
-Default installation locations by IDE:
+### Automatic Rule Updates from Gists
 
-- **Cursor**: `.cursor/rules/` (project-specific directory)
-- **Windsurf**: `.windsurf/.windsurfrules` (project-specific directory)
+You can set up your project for automatic rule updates by leveraging GitHub Gists without commit hashes and npm scripts:
 
-## Best Practices
+```json
+{
+  "ides": ["cursor"],
+  "rules": {
+    "team-standards": "https://gist.githubusercontent.com/username/gistid/raw/team-standards.mdc"
+  }
+}
+```
 
-1. **Use descriptive rule names**: Choose rule names that clearly describe the purpose or content of the rule.
-2. **Consider rule priority**: Rules are processed in the order they appear in the configuration. For Windsurf, which concatenates rules, this order matters.
-3. **Version control your configuration**: Include your `ai-rules.json` in version control to share consistent rules with your team.
-4. **Use NPM packages for team standards**: For team or organization-wide rules, consider distributing them as an NPM package.
-5. **Document your rules**: Include comments in your rule files to explain their purpose and any special considerations.
-6. **Keep rules specific and focused**: Create separate rules for different concerns rather than one large rule file.
+Note that the URL doesn't include a specific commit hash. This means it will always fetch the latest version of the Gist.
+
+1. **Point to the raw Gist URL without a commit hash**:
+   ```
+   https://gist.githubusercontent.com/username/gistid/raw/filename.mdc
+   ```
+2. **Add a postinstall script** to your package.json:
+
+   ```json
+   {
+     "scripts": {
+       "postinstall": "ai-rules install"
+     }
+   }
+   ```
+
+3. **Update your Gist** whenever you need to modify the rules.
+
+With this setup, every time someone runs `npm install` in your project, they'll automatically get the latest version of your rules. This is particularly useful for team environments where you want to ensure everyone is using the same, up-to-date AI assistant configurations.
+
+### NPM Package Rules
+
+You can create, publish, and use dedicated npm packages to distribute AI rules across multiple projects. This is especially useful for organizations that want to maintain consistent AI assistant behavior across teams.
+
+Considering the following npm package:
+
+```
+ai-rules-myteam/
+├── package.json
+└── rules/
+    ├── typescript.mdc
+    ├── react.mdc
+    └── general.mdc
+```
+
+1. **Use Rules from an NPM Package**
+
+In your project's `ai-rules.json`, reference the package and the specific rule:
+
+```json
+{
+  "ides": ["cursor"],
+  "rules": {
+    "typescript": "@myteam/ai-rules/rules/typescript.mdc",
+    "react": "@myteam/ai-rules/rules/react.mdc"
+  }
+}
+```
+
+When specifying a rule from an npm package:
+
+- Include the package name (`@myteam/ai-rules`)
+- Add the path to the specific rule file inside the package (`/rules/typescript.mdc`)
+
+2. **Add a postinstall script** to your package.json:
+
+   ```json
+   {
+     "scripts": {
+       "postinstall": "ai-rules install"
+     }
+   }
+   ```
+
+## Commands
+
+### Global Options
+
+These options are available for all commands:
+
+- `--help`, `-h`: Show help information
+- `--version`, `-v`: Show version information
+
+### `init`
+
+Initializes a new configuration file in your current directory.
+
+```bash
+npx ai-rules init [options]
+```
+
+**Options:**
+
+- `--force`: Overwrites existing configuration file if it exists
+
+**Example:**
+
+```bash
+# Create a new configuration file
+npx ai-rules init
+
+# Force create a new configuration file, overwriting any existing one
+npx ai-rules init --force
+```
+
+**Behavior:**
+
+1. Checks if `ai-rules.json` exists in the current directory
+2. If it exists and `--force` is not provided, shows a message and exits
+3. If it doesn't exist or `--force` is provided, creates a new configuration file with default settings
+4. Shows a success message with the location of the new configuration file
+
+### `install`
+
+Installs rules from your configuration to the appropriate IDE locations.
+
+```bash
+npx ai-rules install [rule-name] [options]
+```
+
+**Options:**
+
+- `[rule-name]`: Optional - installs a specific rule instead of all rules
+
+**Examples:**
+
+```bash
+# Install all configured rules
+npx ai-rules install
+
+# Install a specific rule
+npx ai-rules install eslint-standard
+```
+
+**Behavior:**
+
+1. Loads the configuration file (`ai-rules.json`) from the current directory
+2. For each rule (or the specified rule), determines the source type (URL, NPM, local)
+3. Retrieves the rule content based on the source type
+4. For each configured IDE:
+   - Cursor: Copies the rule file to `.cursor/rules/` with the rule name as the filename
+   - Windsurf: Appends or updates the rule content in `.windsurf/.windsurfrules`
+5. Shows installation progress and results for each rule
+
+### `list`
+
+Lists all configured rules and their installation status.
+
+```bash
+npx ai-rules list [options]
+```
+
+**Options:**
+
+- `--verbose`, `-v`: Shows additional details about each rule
+
+**Examples:**
+
+```bash
+# List all rules
+npx ai-rules list
+
+# List rules with detailed information
+npx ai-rules list --verbose
+```
+
+**Behavior:**
+
+1. Loads the configuration file from the current directory
+2. Checks the installation status of each rule in the configured IDEs
+3. Displays a formatted list of rules with:
+   - Rule name
+   - Source location
+   - Source type
+   - Installation status
+4. In verbose mode, also shows:
+   - List of configured IDEs
+   - Installation paths for each IDE (if installed)
+
+**Output Format:**
+
+```
+Configured Rules:
+──────────────────────────────────────────────────
+eslint-standard
+  Source: https://gist.github.com/user/abc123def456
+  Type: url
+  Status: Installed
+  IDE: cursor, windsurf  (only shown in verbose mode)
+  Installation Path: .cursor/rules/eslint-standard.mdc  (only shown in verbose mode)
+──────────────────────────────────────────────────
+```
 
 ## Contributing
 
