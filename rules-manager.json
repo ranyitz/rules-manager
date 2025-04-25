@@ -1,0 +1,8 @@
+{
+  "ides": [
+    "cursor"
+  ],
+  "rules": {
+    "pirate-coding": "pirate-coding-rule/rule.mdc"
+  }
+}

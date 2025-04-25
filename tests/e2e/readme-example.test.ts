@@ -17,12 +17,24 @@ describe("README example workflow", () => {
     // Create mock project-specific directories for IDEs
     fs.mkdirSync(path.join(testDir, ".cursor/rules"), { recursive: true });
 
-    // Create rules directory
-    fs.mkdirSync(path.join(testDir, "rules"), { recursive: true });
+    // Create a mock node_modules structure for the pirate-coding-rule package
+    const npmPackagePath = path.join(
+      testDir,
+      "node_modules",
+      "pirate-coding-rule"
+    );
+    fs.mkdirSync(npmPackagePath, { recursive: true });
 
-    // Create a pirate rule file
+    // Create package.json for the mock npm package
+    fs.writeJsonSync(path.join(npmPackagePath, "package.json"), {
+      name: "pirate-coding-rule",
+      version: "1.0.0",
+      main: "index.js",
+    });
+
+    // Create the rule file in the npm package
     fs.writeFileSync(
-      path.join(testDir, "rules", "pirate-coding-rule.mdc"),
+      path.join(npmPackagePath, "rule.mdc"),
       `---
 description: Pirate assistant rules
 globs: 
@@ -31,18 +43,25 @@ alwaysApply: true
 # Pirate Coding Assistant Rules
 Arr matey! This be a rule for pirate-themed coding!`
     );
+
+    // Create a dummy index.js file
+    fs.writeFileSync(
+      path.join(npmPackagePath, "index.js"),
+      "// This is a dummy file for the package"
+    );
   });
 
   test("should follow complete README example flow with simplified command", async () => {
     // Install the rule directly using the simplified command from README
     const installResult = await runCommand(
-      "install pirate-coding ./rules/pirate-coding-rule.mdc"
+      "install pirate-coding pirate-coding-rule/rule.mdc"
     );
 
     // Command should run successfully
     expect(installResult.code).toBe(0);
+
     expect(installResult.stdout).toContain(
-      "Installing rule pirate-coding from ./rules/pirate-coding-rule.mdc"
+      "Installing rule pirate-coding from pirate-coding-rule/rule.mdc"
     );
     expect(installResult.stdout).toContain(
       "Configuration file not found. Creating a new one"
@@ -57,9 +76,7 @@ Arr matey! This be a rule for pirate-themed coding!`
 
     // Verify config contains the correct rule
     const config = JSON.parse(readTestFile("rules-manager.json"));
-    expect(config.rules["pirate-coding"]).toBe(
-      "./rules/pirate-coding-rule.mdc"
-    );
+    expect(config.rules["pirate-coding"]).toBe("pirate-coding-rule/rule.mdc");
 
     // Verify rule was installed properly
     expect(fileExists(path.join(".cursor", "rules", "pirate-coding.mdc"))).toBe(
@@ -81,6 +98,21 @@ alwaysApply: true
   });
 
   test("should work with the old workflow too (for backward compatibility)", async () => {
+    // First create a rules directory for local rule
+    fs.mkdirSync(path.join(testDir, "rules"), { recursive: true });
+
+    // Create a local rule file for backward compatibility test
+    fs.writeFileSync(
+      path.join(testDir, "rules", "pirate-coding-rule.mdc"),
+      `---
+description: Pirate assistant rules
+globs: 
+alwaysApply: true
+---
+# Pirate Coding Assistant Rules
+Arr matey! This be a rule for pirate-themed coding!`
+    );
+
     // Step 1: Initialize a configuration
     const initResult = await runCommand("init");
     expect(initResult.code).toBe(0);

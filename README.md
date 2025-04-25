@@ -18,8 +18,55 @@ Helps developers manage, share, and synchronize AI assistant rules across differ
 
 ## Getting Started
 
+To get automatic rule updates from NPM Packages, you can create, publish, and use dedicated npm packages to distribute AI rules across multiple projects.
+
+Considering the following npm package:
+
+```
+@myteam/ai/
+├── package.json
+└── rules/
+    ├── typescript.mdc
+    ├── react.mdc
+    └── general.mdc
+```
+
+1. **Point to the path within the npm package**
+
+In your project's `rules-manager.json`, reference the package and the specific rule:
+
+```json
+{
+  "ides": ["cursor"],
+  "rules": {
+    "typescript": "@myteam/ai/rules/typescript.mdc",
+    "react": "@myteam/ai/rules/react.mdc",
+    "general": "@myteam/ai/rules/general.mdc"
+  }
+}
+```
+
+2. **Add a postinstall script** to your package.json:
+
+```json
+{
+  "scripts": {
+    "postinstall": "npx rules-manager install"
+  }
+}
+```
+
+Now the rules will be linked automatically when you run `npm install`.
+
+### Demo
+
+You can also install the rule directly with a single command, I created a demo package to show how it works:
+
 ```bash
-# Install a rule directly with a single command
+# Install a package containing a rule
+npm install --save-dev pirate-coding-rule
+
+# Install the rule via the rules-manager CLI
 npx rules-manager install pirate-coding pirate-coding-rule/rule.mdc
 ```
 
@@ -34,16 +81,6 @@ After installation, open Cursor and ask for coding help. Your AI assistant will 
 ## Security Note
 
 To prevent [prompt-injection](https://en.wikipedia.org/wiki/Prompt_injection) risks, use only packages from trusted sources.
-
-## Installation & Usage
-
-```bash
-# Use directly with npx
-npx rules-manager <command>
-
-# Install locally in a project
-npm install --save-dev rules-manager
-```
 
 ## Configuration
 
@@ -89,52 +126,6 @@ Rules stored locally in your project or filesystem. Any path containing slashes 
 ## Supported IDEs
 
 - **Cursor**: Rules are installed as individual `.mdc` files in the Cursor rules directory
-
-## Recipes
-
-### Automatic Rule Updates from NPM Packages
-
-You can create, publish, and use dedicated npm packages to distribute AI rules across multiple projects.
-
-Considering the following npm package:
-
-```
-@myteam/rules-manager/
-├── package.json
-└── rules/
-    ├── typescript.mdc
-    ├── react.mdc
-    └── general.mdc
-```
-
-1. **Point to the path within the npm package**
-
-In your project's `rules-manager.json`, reference the package and the specific rule:
-
-```json
-{
-  "ides": ["cursor"],
-  "rules": {
-    "typescript": "@myteam/rules-manager/rules/typescript.mdc",
-    "react": "@myteam/rules-manager/rules/react.mdc"
-  }
-}
-```
-
-When specifying a rule from an npm package:
-
-- Include the package name (`@myteam/rules-manager`)
-- Add the path to the specific rule file inside the package (`/rules/typescript.mdc`)
-
-2. **Add a postinstall script** to your package.json:
-
-   ```json
-   {
-     "scripts": {
-       "postinstall": "rules-manager install"
-     }
-   }
-   ```
 
 ## Commands
 

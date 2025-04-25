@@ -195,6 +195,8 @@ describe("rules-manager install command", () => {
 
     // We expect the error message to be present in stderr
     expect(stderr).toContain("Error during rule installation");
-    expect(stderr).toContain("URL-based rules are no longer supported");
+    expect(stderr).toContain(
+      "URL-based rules are not supported due to security concerns"
+    );
   });
 });

@@ -1,4 +1,5 @@
 import path from "node:path";
+import fs from "fs-extra";
 
 /**
  * Detects the rule type from the source string
@@ -10,14 +11,34 @@ export function detectRuleType(source: string): "npm" | "local" {
     );
   }
 
-  // Check if it's an npm package (starts with @ or doesn't contain path separators)
+  // Check if it's a local file path
   if (
-    source.startsWith("@") ||
-    (!source.includes("/") && !source.includes("\\"))
+    source.startsWith("/") ||
+    source.startsWith("./") ||
+    source.startsWith("../") ||
+    source.startsWith("\\") ||
+    source.startsWith(".\\") ||
+    source.includes(":\\") || // Windows absolute path
+    source.includes(":") // Path with protocol
+  ) {
+    return "local";
+  }
+
+  // Check if it's an npm package with a direct node_modules reference
+  if (
+    fs.existsSync(
+      path.resolve(process.cwd(), "node_modules", source.split("/")[0])
+    )
   ) {
     return "npm";
   }
 
-  // Otherwise assume it's a local path
-  return "local";
+  // Try to interpret as npm package
+  try {
+    require.resolve(source.split("/")[0], { paths: [process.cwd()] });
+    return "npm";
+  } catch (e) {
+    // If we couldn't resolve it as an npm package, assume it's a local path
+    return "local";
+  }
 }
