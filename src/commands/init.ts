@@ -48,7 +48,7 @@ export function initCommand(): void {
       `  1. Edit ${chalk.blue("rules-manager.json")} to configure your rules`
     );
     console.log(
-      `  2. Run ${chalk.blue("rules-manager install")} to install rules`
+      `  2. Run ${chalk.blue("npx rules-manager install")} to install rules`
     );
   } catch (error) {
     console.error(chalk.red("Error creating configuration file:"), error);

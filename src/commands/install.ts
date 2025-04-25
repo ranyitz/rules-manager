@@ -8,7 +8,7 @@ import { installNpmRule } from "../resolvers/npm-resolver";
 import { installLocalRule } from "../resolvers/local-resolver";
 import { detectRuleType } from "../utils/rule-detector";
 
-export function installCommand(): void {
+export async function installCommand(): Promise<void> {
   // Parse command-specific arguments
   const args = arg(
     {
@@ -44,7 +44,7 @@ export function installCommand(): void {
 
     if (!config) {
       console.log(chalk.red("Configuration file not found!"));
-      console.log(`Run ${chalk.blue("rules-manager init")} to create one.`);
+      console.log(`Run ${chalk.blue("npx rules-manager init")} to create one.`);
       return;
     }
 
@@ -73,13 +73,13 @@ export function installCommand(): void {
 
       switch (ruleType) {
         case "url":
-          installUrlRule(ruleName, source, config.ides);
+          await installUrlRule(ruleName, source, config.ides);
           break;
         case "npm":
-          installNpmRule(ruleName, source, config.ides);
+          await installNpmRule(ruleName, source, config.ides);
           break;
         case "local":
-          installLocalRule(ruleName, source, config.ides);
+          await installLocalRule(ruleName, source, config.ides);
           break;
         default:
           console.log(chalk.yellow(`Unknown rule type: ${ruleType}`));
@@ -96,6 +96,12 @@ export function installCommand(): void {
 
     console.log(chalk.green("\nRules installation complete!"));
   } catch (error) {
-    console.error(chalk.red("Error during rule installation:"), error);
+    console.error(
+      chalk.red(
+        `Error during rule installation: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      )
+    );
   }
 }

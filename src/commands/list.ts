@@ -25,7 +25,7 @@ export function listCommand(): void {
 
     if (!config) {
       console.log(chalk.red("Configuration file not found!"));
-      console.log(`Run ${chalk.blue("rules-manager init")} to create one.`);
+      console.log(`Run ${chalk.blue("npx rules-manager init")} to create one.`);
       return;
     }
 
