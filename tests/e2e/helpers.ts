@@ -30,18 +30,9 @@ export const fixturesDir = path.join(projectRoot, "tests/fixtures");
  * Sanitize a filename to be safe for directories
  */
 function sanitizeFilename(name: string): string {
-  // Special case for test names that include the command name
-  name = name
-    .replace(/rules-manager[- ]?/gi, "") // Remove "rules-manager" prefix
-    .replace(/init[- ]?command[- ]?/gi, "") // Remove "init command" part
-    .replace(/install[- ]?command[- ]?/gi, "") // Remove "install command" part
-    .replace(/list[- ]?command[- ]?/gi, "") // Remove "list command" part
-    .replace(/should[- ]?/gi, "") // Remove any 'should' part
-    .replace(/^(a|the)[- ]?/gi, "") // Remove leading "a" or "the"
-    .replace(/\.test\.ts$/, ""); // Remove .test.ts extension
-
   // General sanitization
   return name
+    .replace(/\.test\.ts$/, "") // Remove .test.ts extension
     .replace(/[^a-z0-9-]/gi, "-") // Replace non-alphanumeric chars with dashes
     .replace(/-+/g, "-") // Replace multiple dashes with a single dash
     .replace(/^-|-$/g, "") // Remove leading/trailing dashes
@@ -53,12 +44,9 @@ function sanitizeFilename(name: string): string {
  * @param testFilename The name of the test file
  * @param testName The name of the individual test
  */
-export async function setupTestDir(
-  testFilename?: string,
-  testName?: string
-): Promise<string> {
+export async function setupTestDir(testName?: string): Promise<string> {
   // If no test identifiers provided, use the root tmp-test directory
-  if (!testFilename && !testName) {
+  if (!testName) {
     // Create the root test directory if it doesn't exist
     fs.mkdirSync(testRootDir, { recursive: true });
 
@@ -66,18 +54,13 @@ export async function setupTestDir(
     return testDir;
   }
 
-  // Get the command name from the test filename (e.g., "init" from "init.test.ts")
-  const commandName = testFilename
-    ? testFilename.replace(/\.test\.ts$/, "")
-    : "unknown";
-
   // Sanitize test name
   const sanitizedTestName = testName
     ? sanitizeFilename(testName)
     : "unknown-test";
 
   // Create a directory path with just the command name and sanitized test name
-  const newTestDir = path.join(testRootDir, commandName, sanitizedTestName);
+  const newTestDir = path.join(testRootDir, sanitizedTestName);
 
   // Remove any existing test directory
   await rimraf(newTestDir);

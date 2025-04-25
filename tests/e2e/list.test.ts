@@ -5,7 +5,7 @@ import { setupTestDir, runCommand, testDir, readTestFile } from "./helpers";
 describe("rules-manager list command", () => {
   beforeEach(async () => {
     // Setup a clean test directory for each test with proper scoping
-    await setupTestDir("list.test.ts", expect.getState().currentTestName);
+    await setupTestDir(expect.getState().currentTestName);
   });
 
   // Get the current filename for our directory structure

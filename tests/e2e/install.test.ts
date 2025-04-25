@@ -17,7 +17,7 @@ describe("rules-manager install command", () => {
 
   beforeEach(async () => {
     // Setup a clean test directory for each test
-    await setupTestDir("install.test.ts", "install-command-test");
+    await setupTestDir(expect.getState().currentTestName);
 
     // Create mock Cursor directories for installation
     fs.mkdirSync(path.join(testDir, ".cursor/rules"), { recursive: true });

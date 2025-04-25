@@ -12,7 +12,7 @@ import {
 describe("README example workflow", () => {
   beforeEach(async () => {
     // Setup a clean test directory for each test
-    await setupTestDir("readme-example.test.ts", "complete-flow");
+    await setupTestDir(expect.getState().currentTestName);
 
     // Create mock project-specific directories for IDEs
     fs.mkdirSync(path.join(testDir, ".cursor/rules"), { recursive: true });

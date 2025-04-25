@@ -11,7 +11,7 @@ import {
 describe("rules-manager init command", () => {
   beforeEach(async () => {
     // Setup a clean test directory for each test with proper scoping
-    await setupTestDir("init.test.ts", expect.getState().currentTestName);
+    await setupTestDir(expect.getState().currentTestName);
   });
 
   test("should create default config file", async () => {
