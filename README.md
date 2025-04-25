@@ -1,10 +1,10 @@
-# 📜 ai-rules
+# 📜 rules-manager
 
 A CLI tool for managing AI IDE rules across different projects and teams.
 
 ## Overview
 
-ai-rules helps developers manage, share, and synchronize AI assistant rules across different projects and IDEs.
+rules-manager helps developers manage, share, and synchronize AI assistant rules across different projects and IDEs.
 
 ## Features
 
@@ -17,41 +17,41 @@ ai-rules helps developers manage, share, and synchronize AI assistant rules acro
 
 ```bash
 # Use directly with npx
-npx ai-rules <command>
+npx rules-manager <command>
 
 # Or install locally in a project
-npm install --save-dev ai-rules
+npm install --save-dev rules-manager
 ```
 
 ## Getting Started
 
 ```bash
 # 1. Initialize a configuration
-npx ai-rules init
+npx rules-manager init
 
-# 2. Quick setup - run this in your terminal, or copy and paste it into your ai-rules.json file
+# 2. Quick setup - run this in your terminal, or copy and paste it into your rules-manager.json file
 echo '{
   "ides": ["cursor"],
   "rules": {
     "pirate-coding": "https://gist.githubusercontent.com/ranyitz/043183278d5ec0cbc65ebf24a9ee57bd/raw/pirate-coding-rule.mdc"
   }
-}' > ai-rules.json
+}' > rules-manager.json
 
 # 3. Install the rule
-npx ai-rules install
+npx rules-manager install
 ```
 
 After installation, open Cursor and ask for coding help. Your AI assistant will respond with pirate-themed coding advice.
 
-> **Note**: This workflow is fully tested and verified to work with the current version of ai-rules.
+> **Note**: This workflow is fully tested and verified to work with the current version of rules-manager.
 
 ## Configuration
 
-ai-rules uses a JSON configuration file (`ai-rules.json`) in your project directory.
+rules-manager uses a JSON configuration file (`rules-manager.json`) in your project directory.
 
 ### Configuration File Location
 
-By default, ai-rules looks for the `ai-rules.json` file in the current working directory. This allows you to have different configurations for different projects.
+By default, rules-manager looks for the `rules-manager.json` file in the current working directory. This allows you to have different configurations for different projects.
 
 ### Configuration Structure
 
@@ -94,7 +94,7 @@ URLs must be direct links to the rule file content. For GitHub repositories, use
 Rules provided by NPM packages. The package must be installed either globally or in your project's `node_modules`. Sources that start with `@` or don't contain path separators are detected as NPM packages.
 
 ```json
-"react-best-practices": "@company/ai-rules-react"
+"react-best-practices": "@company/rules-manager-react"
 ```
 
 #### Local Source
@@ -168,7 +168,7 @@ Note that the URL doesn't include a specific commit hash. This means it will alw
    ```json
    {
      "scripts": {
-       "postinstall": "ai-rules install"
+       "postinstall": "rules-manager install"
      }
    }
    ```
@@ -184,7 +184,7 @@ You can create, publish, and use dedicated npm packages to distribute AI rules a
 Considering the following npm package:
 
 ```
-ai-rules-myteam/
+rules-manager-myteam/
 ├── package.json
 └── rules/
     ├── typescript.mdc
@@ -194,21 +194,21 @@ ai-rules-myteam/
 
 1. **Use Rules from an NPM Package**
 
-In your project's `ai-rules.json`, reference the package and the specific rule:
+In your project's `rules-manager.json`, reference the package and the specific rule:
 
 ```json
 {
   "ides": ["cursor"],
   "rules": {
-    "typescript": "@myteam/ai-rules/rules/typescript.mdc",
-    "react": "@myteam/ai-rules/rules/react.mdc"
+    "typescript": "@myteam/rules-manager/rules/typescript.mdc",
+    "react": "@myteam/rules-manager/rules/react.mdc"
   }
 }
 ```
 
 When specifying a rule from an npm package:
 
-- Include the package name (`@myteam/ai-rules`)
+- Include the package name (`@myteam/rules-manager`)
 - Add the path to the specific rule file inside the package (`/rules/typescript.mdc`)
 
 2. **Add a postinstall script** to your package.json:
@@ -216,7 +216,7 @@ When specifying a rule from an npm package:
    ```json
    {
      "scripts": {
-       "postinstall": "ai-rules install"
+       "postinstall": "rules-manager install"
      }
    }
    ```
@@ -235,7 +235,7 @@ These options are available for all commands:
 Initializes a new configuration file in your current directory.
 
 ```bash
-npx ai-rules init [options]
+npx rules-manager init [options]
 ```
 
 **Options:**
@@ -246,15 +246,15 @@ npx ai-rules init [options]
 
 ```bash
 # Create a new configuration file
-npx ai-rules init
+npx rules-manager init
 
 # Force create a new configuration file, overwriting any existing one
-npx ai-rules init --force
+npx rules-manager init --force
 ```
 
 **Behavior:**
 
-1. Checks if `ai-rules.json` exists in the current directory
+1. Checks if `rules-manager.json` exists in the current directory
 2. If it exists and `--force` is not provided, shows a message and exits
 3. If it doesn't exist or `--force` is provided, creates a new configuration file with default settings
 4. Shows a success message with the location of the new configuration file
@@ -264,7 +264,7 @@ npx ai-rules init --force
 Installs rules from your configuration to the appropriate IDE locations.
 
 ```bash
-npx ai-rules install [rule-name] [options]
+npx rules-manager install [rule-name] [options]
 ```
 
 **Options:**
@@ -275,15 +275,15 @@ npx ai-rules install [rule-name] [options]
 
 ```bash
 # Install all configured rules
-npx ai-rules install
+npx rules-manager install
 
 # Install a specific rule
-npx ai-rules install eslint-standard
+npx rules-manager install eslint-standard
 ```
 
 **Behavior:**
 
-1. Loads the configuration file (`ai-rules.json`) from the current directory
+1. Loads the configuration file (`rules-manager.json`) from the current directory
 2. For each rule (or the specified rule), determines the source type (URL, NPM, local)
 3. Retrieves the rule content based on the source type
 4. For each configured IDE:
@@ -296,7 +296,7 @@ npx ai-rules install eslint-standard
 Lists all configured rules and their installation status.
 
 ```bash
-npx ai-rules list [options]
+npx rules-manager list [options]
 ```
 
 **Options:**
@@ -307,10 +307,10 @@ npx ai-rules list [options]
 
 ```bash
 # List all rules
-npx ai-rules list
+npx rules-manager list
 
 # List rules with detailed information
-npx ai-rules list --verbose
+npx rules-manager list --verbose
 ```
 
 **Behavior:**

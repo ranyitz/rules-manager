@@ -2,10 +2,10 @@ import fs from "fs-extra";
 import path from "node:path";
 import { Config } from "../types";
 
-const CONFIG_FILE = "ai-rules.json";
+const CONFIG_FILE = "rules-manager.json";
 
 /**
- * Get the configuration from the ai-rules.json file
+ * Get the configuration from the rules-manager.json file
  */
 export function getConfig(): Config | null {
   const configPath = path.join(process.cwd(), CONFIG_FILE);
@@ -24,7 +24,7 @@ export function getConfig(): Config | null {
 }
 
 /**
- * Save the configuration to the ai-rules.json file
+ * Save the configuration to the rules-manager.json file
  */
 export function saveConfig(config: Config): boolean {
   const configPath = path.join(process.cwd(), CONFIG_FILE);

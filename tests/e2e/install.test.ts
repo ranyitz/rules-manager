@@ -17,7 +17,7 @@ import {
 const originalHomedir = os.homedir;
 const mockHomeDir = path.join(testDir, "mock-home");
 
-describe("ai-rules install command", () => {
+describe("rules-manager install command", () => {
   beforeEach(async () => {
     // Setup a clean test directory for each test with proper scoping
     await setupTestDir("install.test.ts", expect.getState().currentTestName);
@@ -102,7 +102,7 @@ describe("ai-rules install command", () => {
         "local-rule": "./rules/local-rule.mdc",
       },
     };
-    fs.writeJsonSync(path.join(testDir, "ai-rules.json"), installConfig);
+    fs.writeJsonSync(path.join(testDir, "rules-manager.json"), installConfig);
 
     // Run the install command
     const { stdout, stderr, code } = await runCommand("install");
@@ -141,7 +141,7 @@ describe("ai-rules install command", () => {
         "missing-rule": "./rules/does-not-exist.mdc",
       },
     };
-    fs.writeJsonSync(path.join(testDir, "ai-rules.json"), badConfig);
+    fs.writeJsonSync(path.join(testDir, "rules-manager.json"), badConfig);
 
     // Run the install command
     const { stdout, stderr, code } = await runCommand("install");

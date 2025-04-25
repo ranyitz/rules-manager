@@ -44,7 +44,7 @@ export function installCommand(): void {
 
     if (!config) {
       console.log(chalk.red("Configuration file not found!"));
-      console.log(`Run ${chalk.blue("ai-rules init")} to create one.`);
+      console.log(`Run ${chalk.blue("rules-manager init")} to create one.`);
       return;
     }
 
@@ -52,7 +52,7 @@ export function installCommand(): void {
     if (!config.rules || Object.keys(config.rules).length === 0) {
       console.log(chalk.yellow("No rules defined in configuration."));
       console.log(
-        `Edit your ${chalk.blue("ai-rules.json")} file to add rules.`
+        `Edit your ${chalk.blue("rules-manager.json")} file to add rules.`
       );
       return;
     }

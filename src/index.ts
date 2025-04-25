@@ -52,13 +52,13 @@ switch (command) {
 
 function showHelp() {
   console.log(`
-${chalk.bold("ai-rules")} - A CLI tool for managing AI IDE rules
+${chalk.bold("rules-manager")} - A CLI tool for managing AI IDE rules
 
 ${chalk.bold("USAGE")}
-  $ ai-rules [command] [options]
+  $ rules-manager [command] [options]
 
 ${chalk.bold("COMMANDS")}
-  init                Initialize a new ai-rules configuration file
+  init                Initialize a new rules-manager configuration file
   install             Install rules from configured sources
   list                List all configured rules and their status
 
@@ -67,8 +67,8 @@ ${chalk.bold("OPTIONS")}
   -v, --version       Show version number
 
 ${chalk.bold("EXAMPLES")}
-  $ ai-rules init
-  $ ai-rules install
-  $ ai-rules list
+  $ rules-manager init
+  $ rules-manager install
+  $ rules-manager list
 `);
 }

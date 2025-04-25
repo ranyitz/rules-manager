@@ -24,7 +24,7 @@ describe("README example workflow", () => {
     expect(initResult.stdout).toContain(
       "Configuration file created successfully"
     );
-    expect(fileExists("ai-rules.json")).toBe(true);
+    expect(fileExists("rules-manager.json")).toBe(true);
 
     // Step 2: Create the config file directly (simulating the echo command in README)
     const config = {
@@ -34,7 +34,7 @@ describe("README example workflow", () => {
           "https://gist.githubusercontent.com/ranyitz/043183278d5ec0cbc65ebf24a9ee57bd/raw/pirate-coding-rule.mdc",
       },
     };
-    fs.writeJsonSync(path.join(testDir, "ai-rules.json"), config);
+    fs.writeJsonSync(path.join(testDir, "rules-manager.json"), config);
 
     // Step 3: Install the rule
     const installResult = await runCommand("install");

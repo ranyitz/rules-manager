@@ -32,7 +32,7 @@ export const fixturesDir = path.join(projectRoot, "tests/fixtures");
 function sanitizeFilename(name: string): string {
   // Special case for test names that include the command name
   name = name
-    .replace(/ai-rules[- ]?/gi, "") // Remove "ai-rules" prefix
+    .replace(/rules-manager[- ]?/gi, "") // Remove "rules-manager" prefix
     .replace(/init[- ]?command[- ]?/gi, "") // Remove "init command" part
     .replace(/install[- ]?command[- ]?/gi, "") // Remove "install command" part
     .replace(/list[- ]?command[- ]?/gi, "") // Remove "list command" part
@@ -92,7 +92,7 @@ export async function setupTestDir(
 }
 
 /**
- * Run the ai-rules CLI command with given arguments
+ * Run the rules-manager CLI command with given arguments
  */
 export async function runCommand(
   args: string = ""
@@ -150,7 +150,7 @@ export function readTestFile(filePath: string): string {
     return fs.readFileSync(fullPath, "utf8");
   } catch (error) {
     // Handle case where the file doesn't exist yet
-    if (filePath === "ai-rules.json") {
+    if (filePath === "rules-manager.json") {
       // Return a basic default config that matches what would be created by init
       return JSON.stringify(
         {

@@ -2,7 +2,7 @@ import path from "path";
 import fs from "fs-extra";
 import { setupTestDir, runCommand, testDir, readTestFile } from "./helpers";
 
-describe("ai-rules list command", () => {
+describe("rules-manager list command", () => {
   beforeEach(async () => {
     // Setup a clean test directory for each test with proper scoping
     await setupTestDir("list.test.ts", expect.getState().currentTestName);
@@ -16,14 +16,14 @@ describe("ai-rules list command", () => {
     await runCommand("init");
 
     // Create a config file with multiple rules manually
-    const config = JSON.parse(readTestFile("ai-rules.json"));
+    const config = JSON.parse(readTestFile("rules-manager.json"));
     config.rules = {
       rule1: "https://example.com/rule1.mdc",
       rule2: "https://example.com/rule2.mdc",
       rule3: "https://example.com/rule3.mdc",
     };
     fs.writeFileSync(
-      path.join(testDir, "ai-rules.json"),
+      path.join(testDir, "rules-manager.json"),
       JSON.stringify(config, null, 2)
     );
 
@@ -44,10 +44,10 @@ describe("ai-rules list command", () => {
     await runCommand("init");
 
     // Create a config file with no rules
-    const config = JSON.parse(readTestFile("ai-rules.json"));
+    const config = JSON.parse(readTestFile("rules-manager.json"));
     config.rules = {};
     fs.writeFileSync(
-      path.join(testDir, "ai-rules.json"),
+      path.join(testDir, "rules-manager.json"),
       JSON.stringify(config, null, 2)
     );
 
@@ -66,12 +66,12 @@ describe("ai-rules list command", () => {
     await runCommand("init");
 
     // Create a config file with a single rule
-    const config = JSON.parse(readTestFile("ai-rules.json"));
+    const config = JSON.parse(readTestFile("rules-manager.json"));
     config.rules = {
       "test-rule": "https://example.com/test-rule.mdc",
     };
     fs.writeFileSync(
-      path.join(testDir, "ai-rules.json"),
+      path.join(testDir, "rules-manager.json"),
       JSON.stringify(config, null, 2)
     );
 
@@ -96,12 +96,12 @@ describe("ai-rules list command", () => {
     await runCommand("init");
 
     // Create a config file with a single rule
-    const config = JSON.parse(readTestFile("ai-rules.json"));
+    const config = JSON.parse(readTestFile("rules-manager.json"));
     config.rules = {
       "test-rule-extra": "https://example.com/test-rule-extra.mdc",
     };
     fs.writeFileSync(
-      path.join(testDir, "ai-rules.json"),
+      path.join(testDir, "rules-manager.json"),
       JSON.stringify(config, null, 2)
     );
 

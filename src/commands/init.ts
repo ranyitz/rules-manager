@@ -24,7 +24,7 @@ export function initCommand(): void {
     }
   );
 
-  const configPath = path.join(process.cwd(), "ai-rules.json");
+  const configPath = path.join(process.cwd(), "rules-manager.json");
   const forceOverwrite = args["--force"] || false;
 
   // Check if config file already exists
@@ -32,7 +32,7 @@ export function initCommand(): void {
     console.log(chalk.yellow("Configuration file already exists!"));
     console.log(
       chalk.yellow(
-        "Use --force flag to overwrite the existing ai-rules.json file."
+        "Use --force flag to overwrite the existing rules-manager.json file."
       )
     );
     return;
@@ -45,9 +45,11 @@ export function initCommand(): void {
     console.log(`Configuration file location: ${chalk.blue(configPath)}`);
     console.log(`\nNext steps:`);
     console.log(
-      `  1. Edit ${chalk.blue("ai-rules.json")} to configure your rules`
+      `  1. Edit ${chalk.blue("rules-manager.json")} to configure your rules`
     );
-    console.log(`  2. Run ${chalk.blue("ai-rules install")} to install rules`);
+    console.log(
+      `  2. Run ${chalk.blue("rules-manager install")} to install rules`
+    );
   } catch (error) {
     console.error(chalk.red("Error creating configuration file:"), error);
   }
