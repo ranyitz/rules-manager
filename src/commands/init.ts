@@ -13,8 +13,7 @@ export function initCommand(): void {
   // Parse command-specific arguments
   const args = arg(
     {
-      "--force": Boolean,
-      "-f": "--force",
+      // Removed the --force flag
     },
     {
       permissive: true,
@@ -23,16 +22,10 @@ export function initCommand(): void {
   );
 
   const configPath = path.join(process.cwd(), "rules-manager.json");
-  const forceOverwrite = args["--force"] || false;
 
   // Check if config file already exists
-  if (fs.existsSync(configPath) && !forceOverwrite) {
+  if (fs.existsSync(configPath)) {
     console.log(chalk.yellow("Configuration file already exists!"));
-    console.log(
-      chalk.yellow(
-        "Use --force flag to overwrite the existing rules-manager.json file."
-      )
-    );
     return;
   }
 

@@ -12,8 +12,6 @@ export async function installCommand(): Promise<void> {
   // Parse command-specific arguments
   const args = arg(
     {
-      "--force": Boolean,
-      "-f": "--force",
       "--local": String,
       "-l": "--local",
     },
@@ -25,7 +23,6 @@ export async function installCommand(): Promise<void> {
 
   // Get specific rule if provided
   const specificRule = args._.length > 0 ? args._[0] : null;
-  const forceInstall = args["--force"] || false;
   const localPath = args["--local"];
 
   try {

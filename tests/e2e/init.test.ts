@@ -27,7 +27,7 @@ describe("rules-manager init command", () => {
     expect(config.rules).toBeDefined();
   });
 
-  test("should not overwrite existing config by default", async () => {
+  test("should not overwrite existing config", async () => {
     // Create a custom config file
     const customConfig = { ides: ["custom"], rules: {} };
     fs.writeJsonSync(path.join(testDir, "rules-manager.json"), customConfig);
@@ -41,22 +41,6 @@ describe("rules-manager init command", () => {
     // Verify the content was not overwritten
     const config = JSON.parse(readTestFile("rules-manager.json"));
     expect(config.ides).toEqual(["custom"]);
-  });
-
-  test("should overwrite existing config with --force flag", async () => {
-    // Create a custom config file
-    const customConfig = { ides: ["custom"], rules: {} };
-    fs.writeJsonSync(path.join(testDir, "rules-manager.json"), customConfig);
-
-    // Run the init command with force flag
-    const { stdout, stderr } = await runCommand("init --force");
-
-    // Check if the config was overwritten
-    expect(fileExists("rules-manager.json")).toBe(true);
-
-    // Verify the content was overwritten
-    const config = JSON.parse(readTestFile("rules-manager.json"));
-    expect(config.ides).not.toEqual(["custom"]);
   });
 
   test("should show help when run without arguments", async () => {
