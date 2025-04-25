@@ -125,7 +125,7 @@ Rules stored locally in your project or filesystem. Any path containing slashes 
 
 ## Supported IDEs
 
-- **Cursor**: Rules are installed as individual `.mdc` files in the Cursor rules directory
+- **Cursor**: Rules are installed as individual `.mdc` files in the Cursor rules directory (`.cursor/rules/`)
 
 ## Commands
 
@@ -141,13 +141,6 @@ These options are available for all commands:
 Initializes a new configuration file in your current directory.
 
 ```bash
-npx rules-manager init [options]
-```
-
-**Example:**
-
-```bash
-# Create a new configuration file
 npx rules-manager init
 ```
 
