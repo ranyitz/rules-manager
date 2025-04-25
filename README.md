@@ -10,7 +10,7 @@ Helps developers manage, share, and synchronize AI assistant rules across differ
 
 - Share rules between team repositories to maintain consistent AI assistant behavior
 - Install rules from multiple sources (URLs, npm packages, local files)
-- Keep rules up to date with a remote source or package
+- Keep rules up to date with an npm package
 
 ## Future Plans
 
@@ -19,19 +19,19 @@ Helps developers manage, share, and synchronize AI assistant rules across differ
 ## Getting Started
 
 ```bash
-# 1. Run this in your terminal to create a rule-manage.json file
-echo '{
-  "ides": ["cursor"],
-  "rules": {
-    "pirate-coding": "https://gist.githubusercontent.com/ranyitz/043183278d5ec0cbc65ebf24a9ee57bd/raw/pirate-coding-rule.mdc"
-  }
-}' > rules-manager.json
-
-# 2. Install the rule
-npx rules-manager install
+# Install a rule directly with a single command
+npx rules-manager install pirate-coding https://gist.githubusercontent.com/ranyitz/043183278d5ec0cbc65ebf24a9ee57bd/raw/97b71829d84cd06b176655d804fbbd93a9247fc1/pirate-coding-rule.mdc
 ```
 
+This command will:
+
+1. Create a `rules-manager.json` file if it doesn't exist
+2. Add the rule to the configuration
+3. Install the rule to your Cursor IDE
+
 After installation, open Cursor and ask for coding help. Your AI assistant will respond with pirate-themed coding advice.
+
+> Warning: always inspect the rule contents before using it to avoid risks of [prompt-injection](https://en.wikipedia.org/wiki/Prompt_injection)
 
 ## Installation & Usage
 
@@ -102,45 +102,14 @@ Rules stored locally in your project or filesystem. Any path containing slashes 
 
 ## Recipes
 
-### Automatic Rule Updates from GitHub Gist
-
-You can set up your project for automatic rule updates by leveraging GitHub Gists and npm scripts:
-
-```json
-{
-  "ides": ["cursor"],
-  "rules": {
-    "team-standards": "https://gist.githubusercontent.com/username/gistid/raw/team-standards.mdc"
-  }
-}
-```
-
-Note that the URL doesn't include a specific commit hash. This means it will always fetch the latest version of the rule.
-
-1. **Point to the raw Gist URL without a commit hash**:
-   ```
-   https://gist.githubusercontent.com/username/gistid/raw/filename.mdc
-   ```
-2. **Add a postinstall script** to your package.json:
-
-   ```json
-   {
-     "scripts": {
-       "postinstall": "rules-manager install"
-     }
-   }
-   ```
-
-With this setup, every time someone runs `npm install` in your project, they'll automatically get the latest version of your rules.
-
-### NPM Package Rules
+### Automatic Rule Updates from NPM Packages
 
 You can create, publish, and use dedicated npm packages to distribute AI rules across multiple projects.
 
 Considering the following npm package:
 
 ```
-rules-manager-myteam/
+@myteam/rules-manager/
 ├── package.json
 └── rules/
     ├── typescript.mdc
@@ -177,6 +146,8 @@ When specifying a rule from an npm package:
    }
    ```
 
+> Warning: use packages from trusted sources to avoid risks of [prompt-injection](https://en.wikipedia.org/wiki/Prompt_injection)
+
 ## Commands
 
 ### Global Options
@@ -206,12 +177,13 @@ npx rules-manager init
 Installs rules from your configuration to the appropriate IDE locations.
 
 ```bash
-npx rules-manager install [rule-name] [options]
+npx rules-manager install [rule-name] [rule-source]
 ```
 
 **Options:**
 
-- `[rule-name]`: Optional - installs a specific rule instead of all rules
+- `[rule-name]`: Optional - Name of a specific rule to install instead of all rules
+- `[rule-source]`: Optional - Source of the rule (URL, npm package, or local path)
 
 **Examples:**
 
@@ -219,8 +191,17 @@ npx rules-manager install [rule-name] [options]
 # Install all configured rules
 npx rules-manager install
 
-# Install a specific rule
+# Install a specific rule from configuration
 npx rules-manager install eslint-standard
+
+# Install a rule directly from a URL and update configuration
+npx rules-manager install eslint-standard https://example.com/rules/eslint.mdc
+
+# Install a rule directly from a local file and update configuration
+npx rules-manager install project-rules ./rules/custom.mdc
+
+# Install a rule from an npm package and update configuration
+npx rules-manager install react-best-practices @company/rules-manager-react
 ```
 
 ## Contributing

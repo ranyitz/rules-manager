@@ -84,13 +84,13 @@ describe("rules-manager install command", () => {
     // Create a rule to reference
     copyFixture("example-rule.mdc", "rules/test-rule.mdc");
 
-    // Install a rule (use local rule instead of URL to avoid HTTP issues)
+    // Install a rule using new simplified syntax (no --local flag)
     const { stdout, stderr } = await runCommand(
-      "install test-rule --local ./rules/test-rule.mdc"
+      "install test-rule ./rules/test-rule.mdc"
     );
 
     // Check if the rule file was created
-    expect(stdout).toContain("Rule installed successfully");
+    expect(stdout).toContain("Rule installation complete");
   });
 
   test("should install rules from config", async () => {
@@ -139,5 +139,87 @@ describe("rules-manager install command", () => {
     expect(code).toBe(0);
     expect(stdout).toContain("Error: Source file");
     expect(stdout).toContain("does-not-exist.mdc not found");
+  });
+
+  test("should install a rule with a local path using simplified syntax", async () => {
+    // Create a rule to reference
+    copyFixture("example-rule.mdc", "rules/test-rule.mdc");
+
+    // Install a rule with simplified syntax (no --local flag)
+    const { stdout, stderr, code } = await runCommand(
+      "install local-rule ./rules/test-rule.mdc"
+    );
+
+    // Command should run successfully
+    expect(code).toBe(0);
+    expect(stdout).toContain(
+      "Installing rule local-rule from ./rules/test-rule.mdc"
+    );
+    expect(stdout).toContain("Configuration updated successfully");
+
+    // Check the rule was installed
+    expect(fileExists(path.join(".cursor", "rules", "local-rule.mdc"))).toBe(
+      true
+    );
+
+    // Verify the config file was updated
+    const config = JSON.parse(readTestFile("rules-manager.json"));
+    expect(config.rules["local-rule"]).toBe("./rules/test-rule.mdc");
+  });
+
+  test("should install a rule from URL using simplified syntax", async () => {
+    // Install a rule with simplified syntax (no --url flag)
+    const { stdout, stderr, code } = await runCommand(
+      "install url-rule https://example.com/rule.mdc"
+    );
+
+    // Command should run successfully
+    expect(code).toBe(0);
+    expect(stdout).toContain(
+      "Installing rule url-rule from https://example.com/rule.mdc"
+    );
+    expect(stdout).toContain("Configuration updated successfully");
+
+    // Check the rule was installed
+    expect(fileExists(path.join(".cursor", "rules", "url-rule.mdc"))).toBe(
+      true
+    );
+
+    // Verify the config file was updated
+    const config = JSON.parse(readTestFile("rules-manager.json"));
+    expect(config.rules["url-rule"]).toBe("https://example.com/rule.mdc");
+  });
+
+  test("should create config if it doesn't exist when installing with simplified syntax", async () => {
+    // Remove any config file if it exists
+    if (fileExists("rules-manager.json")) {
+      fs.removeSync(path.join(testDir, "rules-manager.json"));
+    }
+
+    // Install a rule with simplified syntax
+    const { stdout, stderr, code } = await runCommand(
+      "install new-rule https://example.com/rules/formatting.mdc"
+    );
+
+    // Command should run successfully
+    expect(code).toBe(0);
+    expect(stdout).toContain(
+      "Configuration file not found. Creating a new one"
+    );
+    expect(stdout).toContain("Configuration updated successfully");
+
+    // Verify the config file was created
+    expect(fileExists("rules-manager.json")).toBe(true);
+
+    // Verify the config file contains the correct rule
+    const config = JSON.parse(readTestFile("rules-manager.json"));
+    expect(config.rules["new-rule"]).toBe(
+      "https://example.com/rules/formatting.mdc"
+    );
+
+    // Check the rule was installed
+    expect(fileExists(path.join(".cursor", "rules", "new-rule.mdc"))).toBe(
+      true
+    );
   });
 });
