@@ -105,8 +105,8 @@ describe("rules-manager list command", () => {
       JSON.stringify(config, null, 2)
     );
 
-    // List the rules with an extra flag (which might be ignored)
-    const { stdout, stderr, code } = await runCommand("list --verbose");
+    // List the rules with an unrecognized flag (should be ignored)
+    const { stdout, stderr, code } = await runCommand("list --unknown-flag");
 
     // Command should still run successfully
     expect(code).toBe(0);

@@ -7,17 +7,12 @@ import { detectRuleType } from "../utils/rule-detector";
 export function listCommand(): void {
   // Parse command-specific arguments
   const args = arg(
-    {
-      "--verbose": Boolean,
-      "-v": "--verbose",
-    },
+    {},
     {
       permissive: true,
       argv: process.argv.slice(3), // Skip the first two args and the command name
     }
   );
-
-  const verbose = args["--verbose"] || false;
 
   try {
     // Load configuration
@@ -53,20 +48,6 @@ export function listCommand(): void {
       console.log(`  Source: ${source}`);
       console.log(`  Type: ${ruleType} (auto-detected)`);
       console.log(`  Status: ${statusColor}`);
-
-      // Show additional details if verbose mode is enabled
-      if (verbose) {
-        console.log(`  IDEs: ${config.ides.join(", ")}`);
-        if (status) {
-          console.log(
-            `  Installation Path: ${getInstallPath(
-              ruleName,
-              ruleType,
-              config.ides[0]
-            )}`
-          );
-        }
-      }
 
       console.log(chalk.dim("─".repeat(50)));
     }
