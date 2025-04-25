@@ -35,7 +35,7 @@ npx ai-rules init
 echo '{
   "ides": ["cursor"],
   "rules": {
-    "pirate-coding": "https://gist.githubusercontent.com/ranyitz/043183278d5ec0cbc65ebf24a9ee57bd/raw/97b71829d84cd06b176655d804fbbd93a9247fc1/pirate-coding-rule.mdc"
+    "pirate-coding": "https://gist.githubusercontent.com/ranyitz/043183278d5ec0cbc65ebf24a9ee57bd/raw/pirate-coding-rule.mdc"
   }
 }' > ai-rules.json
 
