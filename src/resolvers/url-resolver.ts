@@ -44,22 +44,6 @@ export async function installUrlRule(
       const ruleFile = path.join(ruleDir, `${ruleName}.mdc`);
       fs.writeFileSync(ruleFile, ruleContent);
       console.log(`Installed to Cursor: ${ruleFile}`);
-    } else if (ide === "windsurf") {
-      // For Windsurf, append to the rules file in project directory
-      const rulesDir = idePaths[ide];
-      fs.ensureDirSync(rulesDir);
-
-      const rulesFile = path.join(rulesDir, ".windsurfrules");
-
-      // Create file with header if it doesn't exist
-      if (!fs.existsSync(rulesFile)) {
-        fs.writeFileSync(rulesFile, "# Windsurf Rules\n\n");
-      }
-
-      // Add rule with a separator
-      const ruleSection = `\n\n--- ${ruleName} ---\n${ruleContent}\n--- End ${ruleName} ---\n`;
-      fs.appendFileSync(rulesFile, ruleSection);
-      console.log(`Added to Windsurf rules: ${rulesFile}`);
     }
   }
 

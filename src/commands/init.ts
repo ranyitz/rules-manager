@@ -3,12 +3,10 @@ import path from "path";
 import chalk from "chalk";
 import arg from "arg";
 
-// Default configuration template
+// Default configuration
 const defaultConfig = {
-  ides: ["cursor", "windsurf"],
-  rules: {
-    "example-rule": "https://example.com/rule.mdc",
-  },
+  ides: ["cursor"],
+  rules: {},
 };
 
 export function initCommand(): void {

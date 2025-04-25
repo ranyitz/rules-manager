@@ -33,8 +33,8 @@ export async function installCommand(): Promise<void> {
     if (specificRule && localPath) {
       console.log(`Installing rule ${specificRule} from ${localPath}...`);
 
-      // Install for Cursor and Windsurf
-      installLocalRule(specificRule, localPath, ["cursor", "windsurf"]);
+      // Install for Cursor only
+      installLocalRule(specificRule, localPath, ["cursor"]);
 
       return;
     }

@@ -1,43 +1,13 @@
 import fs from "fs-extra";
 import path from "node:path";
-import { execSync } from "node:child_process";
 import { getIdePaths } from "../utils/rule-status";
 
 /**
- * Find the location of an npm package in node_modules
- */
-function findNpmPackage(packageName: string): string | null {
-  try {
-    // Try to get package location
-    const modulePath = path.join(process.cwd(), "node_modules", packageName);
-
-    if (fs.existsSync(modulePath)) {
-      return modulePath;
-    }
-
-    // If not found directly, try npm ls command to find it
-    const npmOutput = execSync(`npm ls ${packageName} --json`, {
-      encoding: "utf-8",
-    });
-    const packageInfo = JSON.parse(npmOutput);
-
-    if (
-      packageInfo &&
-      packageInfo.dependencies &&
-      packageInfo.dependencies[packageName]
-    ) {
-      return path.join(process.cwd(), "node_modules", packageName);
-    }
-
-    return null;
-  } catch (error) {
-    console.log("Error finding npm package:", error);
-    return null;
-  }
-}
-
-/**
  * Install a rule from an npm package
+ *
+ * This function handles:
+ * 1. Direct package names: "@company/rules"
+ * 2. Package with path: "@company/rules/path/to/rule.mdc"
  */
 export function installNpmRule(
   ruleName: string,
@@ -47,27 +17,58 @@ export function installNpmRule(
   console.log(`Installing rule from npm package ${source}...`);
 
   try {
-    // Find the package
-    const packagePath = findNpmPackage(source);
+    // Parse source into package and file path
+    let packageName: string;
+    let packagePath: string;
 
-    if (!packagePath) {
-      console.log(`Error: Package ${source} not found in node_modules.`);
-      console.log("Make sure the package is installed as a dependency.");
-      return false;
+    if (source.includes("/") && !source.startsWith("@")) {
+      // Format: "package-name/path/to/file.mdc"
+      const firstSlash = source.indexOf("/");
+      packageName = source.substring(0, firstSlash);
+      packagePath = source.substring(firstSlash + 1);
+    } else if (source.startsWith("@")) {
+      // Format: "@scope/package/path/to/file.mdc"
+      const parts = source.split("/");
+      // @scope/package
+      packageName = `${parts[0]}/${parts[1]}`;
+      // Remaining path, if any
+      packagePath = parts.slice(2).join("/");
+    } else {
+      // Format: "package-name" (whole package)
+      packageName = source;
+      packagePath = "";
     }
 
-    // Look for rule files in the package
-    const ruleFile = path.join(packagePath, `${ruleName}.mdc`);
+    // Try to resolve the package
+    let ruleFile: string;
+    let ruleContent: string;
 
-    if (!fs.existsSync(ruleFile)) {
-      console.log(`Error: Rule file ${ruleName}.mdc not found in package.`);
-      return false;
+    try {
+      // First try from local node_modules
+      const packageRoot = path.resolve(
+        process.cwd(),
+        "node_modules",
+        packageName
+      );
+      ruleFile = packagePath
+        ? path.join(packageRoot, packagePath)
+        : packageRoot;
+
+      if (!fs.existsSync(ruleFile)) {
+        throw new Error(
+          `Package not found in local node_modules: ${packageName}`
+        );
+      }
+
+      ruleContent = fs.readFileSync(ruleFile, "utf8");
+    } catch (error) {
+      console.log(
+        `Warning: Could not resolve package from local node_modules: ${error}`
+      );
+      throw error;
     }
 
-    // Get rule content
-    const ruleContent = fs.readFileSync(ruleFile, "utf8");
-
-    // Install for each configured IDE
+    // Install for configured IDE
     const idePaths = getIdePaths();
 
     for (const ide of ides) {
@@ -91,22 +92,6 @@ export function installNpmRule(
         // Create symbolic link
         fs.symlinkSync(ruleFile, targetFile);
         console.log(`Linked to Cursor: ${targetFile} -> ${ruleFile}`);
-      } else if (ide === "windsurf") {
-        // For Windsurf, append to the rules file in project directory
-        const rulesDir = idePaths[ide];
-        fs.ensureDirSync(rulesDir);
-
-        const rulesFile = path.join(rulesDir, ".windsurfrules");
-
-        // Create file with header if it doesn't exist
-        if (!fs.existsSync(rulesFile)) {
-          fs.writeFileSync(rulesFile, "# Windsurf Rules\n\n");
-        }
-
-        // Add rule with a separator
-        const ruleSection = `\n\n--- ${ruleName} ---\n${ruleContent}\n--- End ${ruleName} ---\n`;
-        fs.appendFileSync(rulesFile, ruleSection);
-        console.log(`Added to Windsurf rules: ${rulesFile}`);
       }
     }
 

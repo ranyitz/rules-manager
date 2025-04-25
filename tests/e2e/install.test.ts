@@ -24,7 +24,6 @@ describe("rules-manager install command", () => {
 
     // Create mock project-specific directories for IDEs
     fs.mkdirSync(path.join(testDir, ".cursor/rules"), { recursive: true });
-    fs.mkdirSync(path.join(testDir, ".windsurf"), { recursive: true });
 
     // Mock os.homedir to return our test home directory
     Object.defineProperty(os, "homedir", {
@@ -66,8 +65,8 @@ describe("rules-manager install command", () => {
     // Run the install command without arguments
     const { stdout, stderr } = await runCommand("install");
 
-    // Should show installation started
-    expect(stdout).toContain("Installing rules");
+    // Should show message about no rules defined
+    expect(stdout).toContain("No rules defined in configuration");
   });
 
   test("should show error when config doesn't exist", async () => {
@@ -97,7 +96,7 @@ describe("rules-manager install command", () => {
   test("should install rules from config", async () => {
     // Create a custom config with a local rule
     const installConfig = {
-      ides: ["cursor", "windsurf"],
+      ides: ["cursor"],
       rules: {
         "local-rule": "./rules/local-rule.mdc",
       },
@@ -121,16 +120,6 @@ describe("rules-manager install command", () => {
       path.join(".cursor", "rules", "local-rule.mdc")
     );
     expect(localRuleContent).toContain("alwaysApply: false");
-
-    // Check that the Windsurf rules file was created in the project directory
-    expect(fileExists(path.join(".windsurf", ".windsurfrules"))).toBe(true);
-
-    const windsurfContent = readTestFile(
-      path.join(".windsurf", ".windsurfrules")
-    );
-    expect(windsurfContent).toContain("# Windsurf Rules");
-    expect(windsurfContent).toContain("--- local-rule ---");
-    expect(windsurfContent).toContain("alwaysApply: false");
   });
 
   test("should handle errors with missing rule files", async () => {

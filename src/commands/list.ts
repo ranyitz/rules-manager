@@ -83,8 +83,6 @@ function getInstallPath(
 ): string {
   if (ide === "cursor") {
     return `.cursor/rules/${ruleName}.mdc`;
-  } else if (ide === "windsurf") {
-    return `.windsurf/.windsurfrules`;
   }
   return "Unknown location";
 }

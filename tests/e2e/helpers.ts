@@ -154,7 +154,7 @@ export function readTestFile(filePath: string): string {
       // Return a basic default config that matches what would be created by init
       return JSON.stringify(
         {
-          ides: ["cursor", "windsurf"],
+          ides: ["cursor"],
           rules: {},
         },
         null,

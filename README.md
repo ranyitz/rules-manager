@@ -57,7 +57,7 @@ By default, rules-manager looks for the `rules-manager.json` file in the current
 
 ```json
 {
-  "ides": ["cursor", "windsurf"],
+  "ides": ["cursor"],
   "rules": {
     "rule-name": "source-location"
   }
@@ -69,7 +69,6 @@ By default, rules-manager looks for the `rules-manager.json` file in the current
 - **ides**: Array of IDE names where rules should be installed. Currently supported values:
 
   - `"cursor"`: For the Cursor IDE
-  - `"windsurf"`: For the Windsurf IDE
 
 - **rules**: Object containing rule configurations
   - **rule-name**: A unique identifier for the rule
@@ -128,7 +127,7 @@ Local paths can be:
 
 ```json
 {
-  "ides": ["cursor", "windsurf"],
+  "ides": ["cursor"],
   "rules": {
     "typescript-best-practices": "https://github.com/user/typescript-rules/raw/main/typescript.mdc",
     "project-specific": "./rules/project-rules.mdc",
@@ -140,7 +139,12 @@ Local paths can be:
 ## Supported IDEs
 
 - **Cursor**: Rules are installed as individual `.mdc` files in the Cursor rules directory
-- **Windsurf**: Rules are concatenated into a single `.windsurfrules` file in the Windsurf configuration directory
+
+## Future Plans
+
+We're planning to expand support to additional IDEs in future releases:
+
+- **Windsurf**: Support for the Windsurf IDE is planned for an upcoming release, which will concatenate rules into a single `.windsurfrules` file.
 
 ## Recipes
 
@@ -288,7 +292,6 @@ npx rules-manager install eslint-standard
 3. Retrieves the rule content based on the source type
 4. For each configured IDE:
    - Cursor: Copies the rule file to `.cursor/rules/` with the rule name as the filename
-   - Windsurf: Appends or updates the rule content in `.windsurf/.windsurfrules`
 5. Shows installation progress and results for each rule
 
 ### `list`
@@ -335,7 +338,7 @@ eslint-standard
   Source: https://gist.github.com/user/abc123def456
   Type: url
   Status: Installed
-  IDE: cursor, windsurf  (only shown in verbose mode)
+  IDE: cursor  (only shown in verbose mode)
   Installation Path: .cursor/rules/eslint-standard.mdc  (only shown in verbose mode)
 ──────────────────────────────────────────────────
 ```

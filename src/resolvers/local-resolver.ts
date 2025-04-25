@@ -3,7 +3,7 @@ import path from "node:path";
 import { getIdePaths } from "../utils/rule-status";
 
 /**
- * Install a rule from a local file
+ * Install a rule from a local file source
  */
 export function installLocalRule(
   ruleName: string,
@@ -13,21 +13,22 @@ export function installLocalRule(
   console.log(`Installing rule from local file ${source}...`);
 
   try {
-    // Resolve source path (could be relative or absolute)
-    const sourcePath = path.isAbsolute(source)
-      ? source
-      : path.resolve(process.cwd(), source);
+    // Resolve path relative to current directory
+    let sourcePath = source;
+    if (!path.isAbsolute(source)) {
+      sourcePath = path.resolve(process.cwd(), source);
+    }
 
-    // Check if source file exists
+    // Check if file exists
     if (!fs.existsSync(sourcePath)) {
       console.log(`Error: Source file ${sourcePath} not found.`);
       return false;
     }
 
-    // Read rule content
+    // Read the file
     const ruleContent = fs.readFileSync(sourcePath, "utf8");
 
-    // Install for each configured IDE
+    // Install to each configured IDE
     const idePaths = getIdePaths();
 
     for (const ide of ides) {
@@ -44,22 +45,6 @@ export function installLocalRule(
         const ruleFile = path.join(ruleDir, `${ruleName}.mdc`);
         fs.copyFileSync(sourcePath, ruleFile);
         console.log(`Copied to Cursor: ${ruleFile}`);
-      } else if (ide === "windsurf") {
-        // For Windsurf, append to the rules file in project directory
-        const rulesDir = idePaths[ide];
-        fs.ensureDirSync(rulesDir);
-
-        const rulesFile = path.join(rulesDir, ".windsurfrules");
-
-        // Create file with header if it doesn't exist
-        if (!fs.existsSync(rulesFile)) {
-          fs.writeFileSync(rulesFile, "# Windsurf Rules\n\n");
-        }
-
-        // Add rule with a separator
-        const ruleSection = `\n\n--- ${ruleName} ---\n${ruleContent}\n--- End ${ruleName} ---\n`;
-        fs.appendFileSync(rulesFile, ruleSection);
-        console.log(`Added to Windsurf rules: ${rulesFile}`);
       }
     }
 

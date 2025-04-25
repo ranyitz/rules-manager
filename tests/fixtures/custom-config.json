@@ -1,5 +1,5 @@
 {
-  "ides": ["cursor", "windsurf"],
+  "ides": ["cursor"],
   "rules": {
     "code-formatting": "https://example.com/rules/formatting.mdc",
     "typescript-best-practices": "@company/rules-ts-best-practices",

@@ -10,7 +10,6 @@ export function getIdePaths(): Record<string, string> {
 
   return {
     cursor: path.join(projectDir, ".cursor", "rules"),
-    windsurf: path.join(projectDir, ".windsurf"),
   };
 }
 
@@ -32,16 +31,6 @@ export function checkRuleStatus(
 
     if (ide === "cursor") {
       return fs.existsSync(path.join(idePaths[ide], `${ruleName}.mdc`));
-    } else if (ide === "windsurf") {
-      const rulesFile = path.join(idePaths[ide], ".windsurfrules");
-
-      if (!fs.existsSync(rulesFile)) {
-        return false;
-      }
-
-      // Check if rule is mentioned in the file
-      const content = fs.readFileSync(rulesFile, "utf8");
-      return content.includes(`--- ${ruleName} ---`);
     }
 
     return false;
