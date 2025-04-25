@@ -3,7 +3,6 @@ import path from "path";
 import chalk from "chalk";
 import arg from "arg";
 import { getConfig, saveConfig } from "../utils/config";
-import { installUrlRule } from "../resolvers/url-resolver";
 import { installNpmRule } from "../resolvers/npm-resolver";
 import { installLocalRule } from "../resolvers/local-resolver";
 import { detectRuleType } from "../utils/rule-detector";
@@ -57,9 +56,6 @@ export async function installCommand(): Promise<void> {
 
       // Install the rule based on its type
       switch (ruleType) {
-        case "url":
-          await installUrlRule(ruleName, ruleSource, config.ides);
-          break;
         case "npm":
           await installNpmRule(ruleName, ruleSource, config.ides);
           break;
@@ -122,9 +118,6 @@ export async function installCommand(): Promise<void> {
       const ruleType = detectRuleType(source);
 
       switch (ruleType) {
-        case "url":
-          await installUrlRule(name, source, config.ides);
-          break;
         case "npm":
           await installNpmRule(name, source, config.ides);
           break;

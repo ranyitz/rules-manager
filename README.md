@@ -9,7 +9,7 @@ Helps developers manage, share, and synchronize AI assistant rules across differ
 ## Features
 
 - Share rules between team repositories to maintain consistent AI assistant behavior
-- Install rules from multiple sources (URLs, npm packages, local files)
+- Install rules from npm packages and local files
 - Keep rules up to date with an npm package
 
 ## Future Plans
@@ -20,7 +20,7 @@ Helps developers manage, share, and synchronize AI assistant rules across differ
 
 ```bash
 # Install a rule directly with a single command
-npx rules-manager install pirate-coding https://gist.githubusercontent.com/ranyitz/043183278d5ec0cbc65ebf24a9ee57bd/raw/97b71829d84cd06b176655d804fbbd93a9247fc1/pirate-coding-rule.mdc
+npx rules-manager install pirate-coding pirate-coding-rule/rule.mdc
 ```
 
 This command will:
@@ -31,7 +31,9 @@ This command will:
 
 After installation, open Cursor and ask for coding help. Your AI assistant will respond with pirate-themed coding advice.
 
-> Warning: always inspect the rule contents before using it to avoid risks of [prompt-injection](https://en.wikipedia.org/wiki/Prompt_injection)
+## Security Note
+
+To prevent [prompt-injection](https://en.wikipedia.org/wiki/Prompt_injection) risks, use only packages from trusted sources.
 
 ## Installation & Usage
 
@@ -51,8 +53,6 @@ rules-manager uses a JSON configuration file (`rules-manager.json`) in your proj
 {
   "ides": ["cursor"],
   "rules": {
-    "typescript-best-practices": "https://github.com/user/typescript-rules/raw/main/typescript.mdc",
-    "project-specific": "./rules/project-rules.mdc",
     "team-standards": "@company/coding-standards"
   }
 }
@@ -64,21 +64,11 @@ rules-manager uses a JSON configuration file (`rules-manager.json`) in your proj
 
 - **rules**: Object containing rule configurations
   - **rule-name**: A unique identifier for the rule
-  - **source-location**: Location of the rule file (URL, path within an npm package, or local path)
+  - **source-location**: Location of the rule file (path within an npm package or local path)
 
 ### Rule Source Types
 
 The type of rule is automatically detected based on the source format:
-
-#### URL Source
-
-Rules hosted on public URLs (GitHub, Gists, etc.). Any source starting with `http://` or `https://` is detected as a URL.
-
-```json
-"eslint-standard": "https://gist.github.com/user/abc123def456"
-```
-
-URLs must be direct links to the rule file content. For GitHub repositories, use the "raw" URL format.
 
 #### NPM Source
 
@@ -146,8 +136,6 @@ When specifying a rule from an npm package:
    }
    ```
 
-> Warning: use packages from trusted sources to avoid risks of [prompt-injection](https://en.wikipedia.org/wiki/Prompt_injection)
-
 ## Commands
 
 ### Global Options
@@ -183,22 +171,13 @@ npx rules-manager install [rule-name] [rule-source]
 **Options:**
 
 - `[rule-name]`: Optional - Name of a specific rule to install instead of all rules
-- `[rule-source]`: Optional - Source of the rule (URL, npm package, or local path)
+- `[rule-source]`: Optional - Source of the rule (npm package or local path)
 
 **Examples:**
 
 ```bash
 # Install all configured rules
 npx rules-manager install
-
-# Install a specific rule from configuration
-npx rules-manager install eslint-standard
-
-# Install a rule directly from a URL and update configuration
-npx rules-manager install eslint-standard https://example.com/rules/eslint.mdc
-
-# Install a rule directly from a local file and update configuration
-npx rules-manager install project-rules ./rules/custom.mdc
 
 # Install a rule from an npm package and update configuration
 npx rules-manager install react-best-practices @company/rules-manager-react

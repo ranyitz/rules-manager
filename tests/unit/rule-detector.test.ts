@@ -2,10 +2,14 @@ import { detectRuleType } from "../../src/utils/rule-detector";
 
 describe("rule-detector", () => {
   describe("detectRuleType", () => {
-    test("should detect URL rules", () => {
-      expect(detectRuleType("https://example.com/rule.mdc")).toBe("url");
-      expect(detectRuleType("http://example.com/rules/test.mdc")).toBe("url");
-      expect(detectRuleType("https://gist.github.com/user/123abc")).toBe("url");
+    test("should throw error for URL rules", () => {
+      expect(() => detectRuleType("https://example.com/rule.mdc")).toThrow();
+      expect(() =>
+        detectRuleType("http://example.com/rules/test.mdc")
+      ).toThrow();
+      expect(() =>
+        detectRuleType("https://gist.github.com/user/123abc")
+      ).toThrow();
     });
 
     test("should detect NPM package rules", () => {

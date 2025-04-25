@@ -3,10 +3,11 @@ import path from "node:path";
 /**
  * Detects the rule type from the source string
  */
-export function detectRuleType(source: string): "url" | "npm" | "local" {
-  // Check if it's a URL
+export function detectRuleType(source: string): "npm" | "local" {
   if (source.startsWith("http://") || source.startsWith("https://")) {
-    return "url";
+    throw new Error(
+      "URL-based rules are not supported due to security concerns. Please use npm packages or local files instead."
+    );
   }
 
   // Check if it's an npm package (starts with @ or doesn't contain path separators)

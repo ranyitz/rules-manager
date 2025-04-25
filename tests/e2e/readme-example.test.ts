@@ -1,12 +1,12 @@
 import fs from "fs-extra";
 import path from "path";
-import nock from "nock";
 import {
   setupTestDir,
   runCommand,
   fileExists,
   readTestFile,
   testDir,
+  copyFixture,
 } from "./helpers";
 
 describe("README example workflow", () => {
@@ -17,40 +17,32 @@ describe("README example workflow", () => {
     // Create mock project-specific directories for IDEs
     fs.mkdirSync(path.join(testDir, ".cursor/rules"), { recursive: true });
 
-    // Setup HTTP mock for URL sources
-    nock.disableNetConnect();
-    nock("https://gist.githubusercontent.com")
-      .get(
-        "/ranyitz/043183278d5ec0cbc65ebf24a9ee57bd/raw/pirate-coding-rule.mdc"
-      )
-      .reply(
-        200,
-        `---
+    // Create rules directory
+    fs.mkdirSync(path.join(testDir, "rules"), { recursive: true });
+
+    // Create a pirate rule file
+    fs.writeFileSync(
+      path.join(testDir, "rules", "pirate-coding-rule.mdc"),
+      `---
 description: Pirate assistant rules
 globs: 
 alwaysApply: true
 ---
 # Pirate Coding Assistant Rules
 Arr matey! This be a rule for pirate-themed coding!`
-      );
-  });
-
-  afterEach(() => {
-    // Clean up nock
-    nock.cleanAll();
-    nock.enableNetConnect();
+    );
   });
 
   test("should follow complete README example flow with simplified command", async () => {
     // Install the rule directly using the simplified command from README
     const installResult = await runCommand(
-      "install pirate-coding https://gist.githubusercontent.com/ranyitz/043183278d5ec0cbc65ebf24a9ee57bd/raw/pirate-coding-rule.mdc"
+      "install pirate-coding ./rules/pirate-coding-rule.mdc"
     );
 
     // Command should run successfully
     expect(installResult.code).toBe(0);
     expect(installResult.stdout).toContain(
-      "Installing rule pirate-coding from https://gist.githubusercontent.com"
+      "Installing rule pirate-coding from ./rules/pirate-coding-rule.mdc"
     );
     expect(installResult.stdout).toContain(
       "Configuration file not found. Creating a new one"
@@ -66,7 +58,7 @@ Arr matey! This be a rule for pirate-themed coding!`
     // Verify config contains the correct rule
     const config = JSON.parse(readTestFile("rules-manager.json"));
     expect(config.rules["pirate-coding"]).toBe(
-      "https://gist.githubusercontent.com/ranyitz/043183278d5ec0cbc65ebf24a9ee57bd/raw/pirate-coding-rule.mdc"
+      "./rules/pirate-coding-rule.mdc"
     );
 
     // Verify rule was installed properly
@@ -101,8 +93,7 @@ alwaysApply: true
     const config = {
       ides: ["cursor"],
       rules: {
-        "pirate-coding":
-          "https://gist.githubusercontent.com/ranyitz/043183278d5ec0cbc65ebf24a9ee57bd/raw/pirate-coding-rule.mdc",
+        "pirate-coding": "./rules/pirate-coding-rule.mdc",
       },
     };
     fs.writeJsonSync(path.join(testDir, "rules-manager.json"), config);

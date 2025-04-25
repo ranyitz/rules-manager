@@ -1,29 +1,27 @@
 import fs from "fs-extra";
 import path from "path";
-import nock from "nock";
 import os from "os";
 import {
   setupTestDir,
   runCommand,
-  copyFixture,
   fileExists,
   readTestFile,
-  projectRoot,
   testDir,
-  getDirectoryStructure,
+  copyFixture,
 } from "./helpers";
 
-// Mock home directory for tests
-const originalHomedir = os.homedir;
-const mockHomeDir = path.join(testDir, "mock-home");
-
 describe("rules-manager install command", () => {
-  beforeEach(async () => {
-    // Setup a clean test directory for each test with proper scoping
-    await setupTestDir("install.test.ts", expect.getState().currentTestName);
+  // Store original homedir to restore later
+  const originalHomedir = os.homedir;
+  const mockHomeDir = path.join(testDir, "mock-home");
 
-    // Create mock project-specific directories for IDEs
+  beforeEach(async () => {
+    // Setup a clean test directory for each test
+    await setupTestDir("install.test.ts", "install-command-test");
+
+    // Create mock Cursor directories for installation
     fs.mkdirSync(path.join(testDir, ".cursor/rules"), { recursive: true });
+    fs.mkdirSync(mockHomeDir, { recursive: true });
 
     // Mock os.homedir to return our test home directory
     Object.defineProperty(os, "homedir", {
@@ -36,14 +34,6 @@ describe("rules-manager install command", () => {
 
     // Copy example rule to rules directory
     copyFixture("example-rule.mdc", "rules/local-rule.mdc");
-
-    // Setup HTTP mock for URL sources
-    nock.disableNetConnect();
-    nock("https://example.com")
-      .get("/rule.mdc")
-      .reply(200, "# Example Rule\nThis is a test rule from URL.")
-      .get("/rules/formatting.mdc")
-      .reply(200, "# Formatting Rule\nThis is a test rule for formatting.");
   });
 
   afterEach(() => {
@@ -52,10 +42,6 @@ describe("rules-manager install command", () => {
       value: originalHomedir,
       configurable: true,
     });
-
-    // Clean up nock
-    nock.cleanAll();
-    nock.enableNetConnect();
   });
 
   test("should show error when no rule is specified", async () => {
@@ -167,38 +153,18 @@ describe("rules-manager install command", () => {
     expect(config.rules["local-rule"]).toBe("./rules/test-rule.mdc");
   });
 
-  test("should install a rule from URL using simplified syntax", async () => {
-    // Install a rule with simplified syntax (no --url flag)
-    const { stdout, stderr, code } = await runCommand(
-      "install url-rule https://example.com/rule.mdc"
-    );
-
-    // Command should run successfully
-    expect(code).toBe(0);
-    expect(stdout).toContain(
-      "Installing rule url-rule from https://example.com/rule.mdc"
-    );
-    expect(stdout).toContain("Configuration updated successfully");
-
-    // Check the rule was installed
-    expect(fileExists(path.join(".cursor", "rules", "url-rule.mdc"))).toBe(
-      true
-    );
-
-    // Verify the config file was updated
-    const config = JSON.parse(readTestFile("rules-manager.json"));
-    expect(config.rules["url-rule"]).toBe("https://example.com/rule.mdc");
-  });
-
   test("should create config if it doesn't exist when installing with simplified syntax", async () => {
     // Remove any config file if it exists
     if (fileExists("rules-manager.json")) {
       fs.removeSync(path.join(testDir, "rules-manager.json"));
     }
 
+    // Create a rule to reference
+    copyFixture("example-rule.mdc", "rules/npm-rule.mdc");
+
     // Install a rule with simplified syntax
     const { stdout, stderr, code } = await runCommand(
-      "install new-rule https://example.com/rules/formatting.mdc"
+      "install new-rule ./rules/npm-rule.mdc"
     );
 
     // Command should run successfully
@@ -213,13 +179,22 @@ describe("rules-manager install command", () => {
 
     // Verify the config file contains the correct rule
     const config = JSON.parse(readTestFile("rules-manager.json"));
-    expect(config.rules["new-rule"]).toBe(
-      "https://example.com/rules/formatting.mdc"
-    );
+    expect(config.rules["new-rule"]).toBe("./rules/npm-rule.mdc");
 
     // Check the rule was installed
     expect(fileExists(path.join(".cursor", "rules", "new-rule.mdc"))).toBe(
       true
     );
+  });
+
+  test("should throw error when trying to install from URL", async () => {
+    // Attempt to install a rule from URL
+    const { stdout, stderr, code } = await runCommand(
+      "install url-rule https://example.com/rule.mdc"
+    );
+
+    // We expect the error message to be present in stderr
+    expect(stderr).toContain("Error during rule installation");
+    expect(stderr).toContain("URL-based rules are no longer supported");
   });
 });

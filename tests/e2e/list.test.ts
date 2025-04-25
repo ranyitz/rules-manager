@@ -18,9 +18,9 @@ describe("rules-manager list command", () => {
     // Create a config file with multiple rules manually
     const config = JSON.parse(readTestFile("rules-manager.json"));
     config.rules = {
-      rule1: "https://example.com/rule1.mdc",
-      rule2: "https://example.com/rule2.mdc",
-      rule3: "https://example.com/rule3.mdc",
+      rule1: "./rules/rule1.mdc",
+      rule2: "@company/rules/rule2.mdc",
+      rule3: "./rules/rule3.mdc",
     };
     fs.writeFileSync(
       path.join(testDir, "rules-manager.json"),
@@ -68,7 +68,7 @@ describe("rules-manager list command", () => {
     // Create a config file with a single rule
     const config = JSON.parse(readTestFile("rules-manager.json"));
     config.rules = {
-      "test-rule": "https://example.com/test-rule.mdc",
+      "test-rule": "./rules/test-rule.mdc",
     };
     fs.writeFileSync(
       path.join(testDir, "rules-manager.json"),
@@ -98,7 +98,7 @@ describe("rules-manager list command", () => {
     // Create a config file with a single rule
     const config = JSON.parse(readTestFile("rules-manager.json"));
     config.rules = {
-      "test-rule-extra": "https://example.com/test-rule-extra.mdc",
+      "test-rule-extra": "@company/rules/test-rule-extra.mdc",
     };
     fs.writeFileSync(
       path.join(testDir, "rules-manager.json"),
