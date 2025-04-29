@@ -12,7 +12,7 @@ import { getIdePaths } from "../utils/rule-status";
 export function installNpmRule(
   ruleName: string,
   source: string,
-  ides: string[]
+  ides: string[],
 ): boolean {
   try {
     // Parse source into package and file path
@@ -137,7 +137,7 @@ function findPackageRoot(packageName: string): string {
     const nodeModulesPath = path.resolve(
       process.cwd(),
       "node_modules",
-      packageName
+      packageName,
     );
 
     if (!fs.existsSync(nodeModulesPath)) {

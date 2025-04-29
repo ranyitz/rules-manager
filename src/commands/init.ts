@@ -18,7 +18,7 @@ export function initCommand(): void {
     {
       permissive: true,
       argv: process.argv.slice(3), // Skip the first two args and the command name
-    }
+    },
   );
 
   const configPath = path.join(process.cwd(), "rules-manager.json");
@@ -36,10 +36,10 @@ export function initCommand(): void {
     console.log(`Configuration file location: ${chalk.blue(configPath)}`);
     console.log(`\nNext steps:`);
     console.log(
-      `  1. Edit ${chalk.blue("rules-manager.json")} to configure your rules`
+      `  1. Edit ${chalk.blue("rules-manager.json")} to configure your rules`,
     );
     console.log(
-      `  2. Run ${chalk.blue("npx rules-manager install")} to install rules`
+      `  2. Run ${chalk.blue("npx rules-manager install")} to install rules`,
     );
   } catch (error) {
     console.error(chalk.red("Error creating configuration file:"), error);

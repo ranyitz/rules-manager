@@ -46,10 +46,10 @@ describe("rule-detector", () => {
     test("should throw error for URL rules", () => {
       expect(() => detectRuleType("https://example.com/rule.mdc")).toThrow();
       expect(() =>
-        detectRuleType("http://example.com/rules/test.mdc")
+        detectRuleType("http://example.com/rules/test.mdc"),
       ).toThrow();
       expect(() =>
-        detectRuleType("https://gist.github.com/user/123abc")
+        detectRuleType("https://gist.github.com/user/123abc"),
       ).toThrow();
     });
 

@@ -19,7 +19,7 @@ export function getIdePaths(): Record<string, string> {
 export function checkRuleStatus(
   ruleName: string,
   ruleType: string,
-  ides: string[]
+  ides: string[],
 ): boolean {
   const idePaths = getIdePaths();
 

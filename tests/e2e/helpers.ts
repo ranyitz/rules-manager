@@ -78,7 +78,7 @@ export async function setupTestDir(testName?: string): Promise<string> {
  * Run the rules-manager CLI command with given arguments
  */
 export async function runCommand(
-  args: string = ""
+  args: string = "",
 ): Promise<{ stdout: string; stderr: string; code: number }> {
   try {
     // Make sure we've built the project
@@ -108,7 +108,7 @@ export async function runCommand(
  */
 export function copyFixture(
   fixtureName: string,
-  targetPath: string = ""
+  targetPath: string = "",
 ): void {
   const sourcePath = path.join(fixturesDir, fixtureName);
   const destPath = path.join(testDir, targetPath || fixtureName);
@@ -141,7 +141,7 @@ export function readTestFile(filePath: string): string {
           rules: {},
         },
         null,
-        2
+        2,
       );
     }
 

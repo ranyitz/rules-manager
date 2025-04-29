@@ -9,7 +9,7 @@ export function installLocalRule(
   ruleName: string,
   source: string,
   ides: string[],
-  ruleBasePath?: string
+  ruleBasePath?: string,
 ): boolean {
   try {
     // Resolve path relative to base path or current directory

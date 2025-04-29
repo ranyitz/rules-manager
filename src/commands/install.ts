@@ -29,7 +29,7 @@ export async function installCommand(): Promise<void> {
     {
       permissive: true,
       argv: process.argv.slice(3), // Skip the first two args and the command name
-    }
+    },
   );
 
   // Get rule name and source if provided
@@ -47,7 +47,7 @@ export async function installCommand(): Promise<void> {
       if (!config) {
         config = { ...defaultConfig };
         console.log(
-          chalk.blue("Configuration file not found. Creating a new one...")
+          chalk.blue("Configuration file not found. Creating a new one..."),
         );
       }
 
@@ -81,17 +81,17 @@ export async function installCommand(): Promise<void> {
     if (!config) {
       config = { ...defaultConfig };
       console.log(
-        chalk.blue("Configuration file not found. Creating a new one...")
+        chalk.blue("Configuration file not found. Creating a new one..."),
       );
       saveConfig(config);
       console.log(
-        chalk.green("Empty configuration file created successfully!")
+        chalk.green("Empty configuration file created successfully!"),
       );
       console.log(chalk.yellow("No rules defined in configuration."));
       console.log(
         `Edit your ${chalk.blue(
-          "rules-manager.json"
-        )} file to add rules or use the direct install command: npx rules-manager install <rule-name> <rule-source>`
+          "rules-manager.json",
+        )} file to add rules or use the direct install command: npx rules-manager install <rule-name> <rule-source>`,
       );
       return;
     }
@@ -103,8 +103,8 @@ export async function installCommand(): Promise<void> {
         console.log(chalk.yellow("No rules defined in configuration."));
         console.log(
           `Edit your ${chalk.blue(
-            "rules-manager.json"
-          )} file to add rules or use the direct install command: npx rules-manager install <rule-name> <rule-source>`
+            "rules-manager.json",
+          )} file to add rules or use the direct install command: npx rules-manager install <rule-name> <rule-source>`,
         );
         return;
       }
@@ -127,7 +127,7 @@ export async function installCommand(): Promise<void> {
         (!config.rules || Object.keys(config.rules).length === 0)
       ) {
         console.log(
-          chalk.yellow("\nNo valid rules found in configuration or presets.")
+          chalk.yellow("\nNo valid rules found in configuration or presets."),
         );
         return;
       }
@@ -160,7 +160,7 @@ export async function installCommand(): Promise<void> {
     // If a specific rule was requested but not found
     if (ruleName && !Object.keys(config.rules).includes(ruleName)) {
       console.log(
-        chalk.yellow(`Rule "${ruleName}" not found in configuration.`)
+        chalk.yellow(`Rule "${ruleName}" not found in configuration.`),
       );
       return;
     }
@@ -171,8 +171,8 @@ export async function installCommand(): Promise<void> {
       chalk.red(
         `Error during rule installation: ${
           error instanceof Error ? error.message : String(error)
-        }`
-      )
+        }`,
+      ),
     );
   }
 }

@@ -7,7 +7,7 @@ import fs from "fs-extra";
 export function detectRuleType(source: string): "npm" | "local" {
   if (source.startsWith("http://") || source.startsWith("https://")) {
     throw new Error(
-      "URL-based rules are not supported due to security concerns. Please use npm packages or local files instead."
+      "URL-based rules are not supported due to security concerns. Please use npm packages or local files instead.",
     );
   }
 
@@ -27,7 +27,7 @@ export function detectRuleType(source: string): "npm" | "local" {
   // Check if it's an npm package with a direct node_modules reference
   if (
     fs.existsSync(
-      path.resolve(process.cwd(), "node_modules", source.split("/")[0])
+      path.resolve(process.cwd(), "node_modules", source.split("/")[0]),
     )
   ) {
     return "npm";
