@@ -205,7 +205,7 @@ alwaysApply: false
 
     // Write the preset file to the npm package directory
     fs.writeFileSync(
-      path.join(npmPresetDir, "rules.json"), 
+      path.join(npmPresetDir, "rules.json"),
       JSON.stringify(presetContent, null, 2)
     );
 
@@ -223,9 +223,6 @@ alwaysApply: false
     // Command should run successfully
     expect(code).toBe(0);
     expect(stdout).toContain("Installing rules");
-    
-    // Print the stdout for debugging
-    console.log(stdout);
 
     // Check that rules from the npm preset were installed
     expect(fileExists(path.join(".cursor", "rules", "npm-rule.mdc"))).toBe(
