@@ -61,9 +61,6 @@ Arr matey! This be a rule for pirate-themed coding!`
     expect(installResult.code).toBe(0);
 
     expect(installResult.stdout).toContain(
-      "Installing rule pirate-coding from pirate-coding-rule/rule.mdc"
-    );
-    expect(installResult.stdout).toContain(
       "Configuration file not found. Creating a new one"
     );
     expect(installResult.stdout).toContain(
@@ -133,7 +130,6 @@ Arr matey! This be a rule for pirate-themed coding!`
     // Step 3: Install the rule
     const installResult = await runCommand("install");
     expect(installResult.code).toBe(0);
-    expect(installResult.stdout).toContain("Installing rules");
 
     // Verify rule was installed properly
     expect(fileExists(path.join(".cursor", "rules", "pirate-coding.mdc"))).toBe(

@@ -11,37 +11,18 @@ import {
 } from "./helpers";
 
 describe("rules-manager install command", () => {
-  // Store original homedir to restore later
-  const originalHomedir = os.homedir;
-  const mockHomeDir = path.join(testDir, "mock-home");
-
   beforeEach(async () => {
     // Setup a clean test directory for each test
     await setupTestDir(expect.getState().currentTestName);
 
     // Create mock Cursor directories for installation
     fs.mkdirSync(path.join(testDir, ".cursor/rules"), { recursive: true });
-    fs.mkdirSync(mockHomeDir, { recursive: true });
-
-    // Mock os.homedir to return our test home directory
-    Object.defineProperty(os, "homedir", {
-      value: jest.fn(() => mockHomeDir),
-      configurable: true,
-    });
 
     // Create a rules directory for local sources
     fs.mkdirSync(path.join(testDir, "rules"), { recursive: true });
 
     // Copy example rule to rules directory
     copyFixture("example-rule.mdc", "rules/local-rule.mdc");
-  });
-
-  afterEach(() => {
-    // Restore os.homedir
-    Object.defineProperty(os, "homedir", {
-      value: originalHomedir,
-      configurable: true,
-    });
   });
 
   test("should show error when no rule is specified", async () => {
@@ -94,7 +75,6 @@ describe("rules-manager install command", () => {
 
     // Command should run successfully
     expect(code).toBe(0);
-    expect(stdout).toContain("Installing rules");
 
     // Check that rules were installed for Cursor in the project directory
     expect(fileExists(path.join(".cursor", "rules", "local-rule.mdc"))).toBe(
@@ -138,9 +118,6 @@ describe("rules-manager install command", () => {
 
     // Command should run successfully
     expect(code).toBe(0);
-    expect(stdout).toContain(
-      "Installing rule local-rule from ./rules/test-rule.mdc"
-    );
     expect(stdout).toContain("Configuration updated successfully");
 
     // Check the rule was installed
