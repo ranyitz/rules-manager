@@ -11,37 +11,18 @@ import {
 } from "./helpers";
 
 describe("rules-manager install command", () => {
-  // Store original homedir to restore later
-  const originalHomedir = os.homedir;
-  const mockHomeDir = path.join(testDir, "mock-home");
-
   beforeEach(async () => {
     // Setup a clean test directory for each test
     await setupTestDir(expect.getState().currentTestName);
 
     // Create mock Cursor directories for installation
     fs.mkdirSync(path.join(testDir, ".cursor/rules"), { recursive: true });
-    fs.mkdirSync(mockHomeDir, { recursive: true });
-
-    // Mock os.homedir to return our test home directory
-    Object.defineProperty(os, "homedir", {
-      value: jest.fn(() => mockHomeDir),
-      configurable: true,
-    });
 
     // Create a rules directory for local sources
     fs.mkdirSync(path.join(testDir, "rules"), { recursive: true });
 
     // Copy example rule to rules directory
     copyFixture("example-rule.mdc", "rules/local-rule.mdc");
-  });
-
-  afterEach(() => {
-    // Restore os.homedir
-    Object.defineProperty(os, "homedir", {
-      value: originalHomedir,
-      configurable: true,
-    });
   });
 
   test("should show error when no rule is specified", async () => {

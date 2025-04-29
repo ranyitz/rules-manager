@@ -2,7 +2,7 @@ import fs from "fs-extra";
 import path from "path";
 import chalk from "chalk";
 import arg from "arg";
-import { getConfig, saveConfig } from "../utils/config";
+import { getConfig, saveConfig, loadPreset, getRuleSource } from "../utils/config";
 import { installNpmRule } from "../resolvers/npm-resolver";
 import { installLocalRule } from "../resolvers/local-resolver";
 import { detectRuleType } from "../utils/rule-detector";
@@ -12,6 +12,7 @@ import { Config } from "../types";
 const defaultConfig: Config = {
   ides: ["cursor"],
   rules: {},
+  presets: [],
 };
 
 export async function installCommand(): Promise<void> {
@@ -92,18 +93,61 @@ export async function installCommand(): Promise<void> {
       return;
     }
 
-    // Check if rules are defined
+    // Check if rules are defined (either directly or through presets)
     if (!config.rules || Object.keys(config.rules).length === 0) {
-      console.log(chalk.yellow("No rules defined in configuration."));
-      console.log(
-        `Edit your ${chalk.blue(
-          "rules-manager.json"
-        )} file to add rules or use the direct install command: npx rules-manager install <rule-name> <rule-source>`
-      );
-      return;
+      // If there are no presets defined either, show a message
+      if (!config.presets || config.presets.length === 0) {
+        console.log(chalk.yellow("No rules defined in configuration."));
+        console.log(
+          `Edit your ${chalk.blue(
+            "rules-manager.json"
+          )} file to add rules or use the direct install command: npx rules-manager install <rule-name> <rule-source>`
+        );
+        return;
+      }
+
+      // If we have presets but no rules, we should still continue as the presets might have rules
+      console.log(chalk.blue("No direct rules defined, but presets found."));
     }
 
-    console.log(chalk.blue("Installing rules..."));
+    // Display information about presets if they exist
+    if (config.presets && config.presets.length > 0) {
+      console.log(chalk.blue(`\nFound ${config.presets.length} preset(s):`));
+
+      // Try to load each preset and show status
+      let hasValidPresets = false;
+      for (const preset of config.presets) {
+        console.log(`  - ${preset}`);
+
+        // Attempt to load the preset
+        const presetRules = loadPreset(preset);
+        if (!presetRules) {
+          console.log(chalk.yellow(`    Error loading preset: ${preset}`));
+        } else {
+          console.log(
+            chalk.green(
+              `    Successfully loaded with ${
+                Object.keys(presetRules).length
+              } rules`
+            )
+          );
+          hasValidPresets = true;
+        }
+      }
+
+      // If no valid presets and no direct rules, exit
+      if (
+        !hasValidPresets &&
+        (!config.rules || Object.keys(config.rules).length === 0)
+      ) {
+        console.log(
+          chalk.yellow("\nNo valid rules found in configuration or presets.")
+        );
+        return;
+      }
+    }
+
+    console.log(chalk.blue("\nInstalling rules..."));
 
     // Process each rule (or just the specific one if provided)
     for (const [name, source] of Object.entries(config.rules)) {
@@ -122,7 +166,9 @@ export async function installCommand(): Promise<void> {
           await installNpmRule(name, source, config.ides);
           break;
         case "local":
-          await installLocalRule(name, source, config.ides);
+          // Get the source preset path if this rule came from a preset
+          const ruleSource = getRuleSource(config, name);
+          await installLocalRule(name, source, config.ides, ruleSource);
           break;
         default:
           console.log(chalk.yellow(`Unknown rule type: ${ruleType}`));

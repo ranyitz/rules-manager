@@ -8,15 +8,22 @@ import { getIdePaths } from "../utils/rule-status";
 export function installLocalRule(
   ruleName: string,
   source: string,
-  ides: string[]
+  ides: string[],
+  basePath?: string
 ): boolean {
   console.log(`Installing rule from local file ${source}...`);
 
   try {
-    // Resolve path relative to current directory
+    // Resolve path relative to base path or current directory
     let sourcePath = source;
     if (!path.isAbsolute(source)) {
-      sourcePath = path.resolve(process.cwd(), source);
+      if (basePath) {
+        // If a base path is provided (e.g., for presets), resolve relative to that
+        sourcePath = path.resolve(path.dirname(basePath), source);
+      } else {
+        // Otherwise resolve relative to current directory
+        sourcePath = path.resolve(process.cwd(), source);
+      }
     }
 
     // Check if file exists

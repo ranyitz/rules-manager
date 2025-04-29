@@ -8,4 +8,5 @@ export interface Rules {
 export interface Config {
   ides: string[];
   rules: Rules;
+  presets?: string[];
 }

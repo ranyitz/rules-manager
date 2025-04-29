@@ -15,8 +15,11 @@ Helps developers manage, share, and synchronize AI assistant rules across differ
 ## Future Plans
 
 - Support additional IDEs, allowing a single rule to be used in multiple IDEs
+- Support nested presets for more complex rule organization
 
 ## Getting Started
+
+### Using Rules from NPM Packages
 
 To get automatic rule updates from NPM Packages, you can create, publish, and use dedicated npm packages to distribute AI rules across multiple projects.
 
@@ -58,6 +61,37 @@ In your project's `rules-manager.json`, reference the package and the specific r
 
 Now the rules will be linked automatically when you run `npm install`.
 
+### Using Presets
+
+Presets allow you to bundle multiple rules into a single configuration that can be shared across projects.
+
+1. **Create a preset file**
+
+Create a JSON file with your rule definitions:
+
+```json
+// rules.json
+{
+  "rules": {
+    "typescript": "./rules/typescript.mdc",
+    "react": "./rules/react.mdc"
+  }
+}
+```
+
+2. **Reference the preset in your project**
+
+In your project's `rules-manager.json`, reference the preset:
+
+```json
+{
+  "ides": ["cursor"],
+  "presets": ["@company/rules.json"]
+}
+```
+
+When you run `npx rules-manager install`, all rules from the preset will be installed.
+
 ### Demo
 
 You can also install the rule directly with a single command, I created a demo package to show how it works:
@@ -91,7 +125,10 @@ rules-manager uses a JSON configuration file (`rules-manager.json`) in your proj
   "ides": ["cursor"],
   "rules": {
     "team-standards": "@company/coding-standards"
-  }
+  },
+  "presets": [
+    "@company/rules.json"
+  ]
 }
 ```
 
@@ -102,6 +139,10 @@ rules-manager uses a JSON configuration file (`rules-manager.json`) in your proj
 - **rules**: Object containing rule configurations
   - **rule-name**: A unique identifier for the rule
   - **source-location**: Location of the rule file (path within an npm package or local path)
+
+- **presets**: Array of preset configurations to include. Each preset is a path to a JSON file (npm package or local path) that contains additional rules.
+  - Presets allow organizations to bundle a set of rules that can be easily shared across projects
+  - Preset files should contain a `rules` object with the same structure as the main configuration
 
 ### Rule Source Types
 
