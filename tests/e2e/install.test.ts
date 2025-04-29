@@ -53,7 +53,7 @@ describe("rules-manager install command", () => {
 
     // Install a rule using new simplified syntax (no --local flag)
     const { stdout, stderr } = await runCommand(
-      "install test-rule ./rules/test-rule.mdc"
+      "install test-rule ./rules/test-rule.mdc",
     );
 
     // Check if the rule file was created
@@ -78,12 +78,12 @@ describe("rules-manager install command", () => {
 
     // Check that rules were installed for Cursor in the project directory
     expect(fileExists(path.join(".cursor", "rules", "local-rule.mdc"))).toBe(
-      true
+      true,
     );
 
     // Check rule content for Cursor
     const localRuleContent = readTestFile(
-      path.join(".cursor", "rules", "local-rule.mdc")
+      path.join(".cursor", "rules", "local-rule.mdc"),
     );
     expect(localRuleContent).toContain("alwaysApply: false");
   });
@@ -113,7 +113,7 @@ describe("rules-manager install command", () => {
 
     // Install a rule with simplified syntax (no --local flag)
     const { stdout, stderr, code } = await runCommand(
-      "install local-rule ./rules/test-rule.mdc"
+      "install local-rule ./rules/test-rule.mdc",
     );
 
     // Command should run successfully
@@ -122,7 +122,7 @@ describe("rules-manager install command", () => {
 
     // Check the rule was installed
     expect(fileExists(path.join(".cursor", "rules", "local-rule.mdc"))).toBe(
-      true
+      true,
     );
 
     // Verify the config file was updated
@@ -141,13 +141,13 @@ describe("rules-manager install command", () => {
 
     // Install a rule with simplified syntax
     const { stdout, stderr, code } = await runCommand(
-      "install new-rule ./rules/npm-rule.mdc"
+      "install new-rule ./rules/npm-rule.mdc",
     );
 
     // Command should run successfully
     expect(code).toBe(0);
     expect(stdout).toContain(
-      "Configuration file not found. Creating a new one"
+      "Configuration file not found. Creating a new one",
     );
     expect(stdout).toContain("Configuration updated successfully");
 
@@ -160,20 +160,20 @@ describe("rules-manager install command", () => {
 
     // Check the rule was installed
     expect(fileExists(path.join(".cursor", "rules", "new-rule.mdc"))).toBe(
-      true
+      true,
     );
   });
 
   test("should throw error when trying to install from URL", async () => {
     // Attempt to install a rule from URL
     const { stdout, stderr, code } = await runCommand(
-      "install url-rule https://example.com/rule.mdc"
+      "install url-rule https://example.com/rule.mdc",
     );
 
     // We expect the error message to be present in stderr
     expect(stderr).toContain("Error during rule installation");
     expect(stderr).toContain(
-      "URL-based rules are not supported due to security concerns"
+      "URL-based rules are not supported due to security concerns",
     );
   });
 });

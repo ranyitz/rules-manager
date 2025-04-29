@@ -24,7 +24,7 @@ describe("rules-manager list command", () => {
     };
     fs.writeFileSync(
       path.join(testDir, "rules-manager.json"),
-      JSON.stringify(config, null, 2)
+      JSON.stringify(config, null, 2),
     );
 
     // List the rules
@@ -48,7 +48,7 @@ describe("rules-manager list command", () => {
     config.rules = {};
     fs.writeFileSync(
       path.join(testDir, "rules-manager.json"),
-      JSON.stringify(config, null, 2)
+      JSON.stringify(config, null, 2),
     );
 
     // List rules when none have been added
@@ -72,7 +72,7 @@ describe("rules-manager list command", () => {
     };
     fs.writeFileSync(
       path.join(testDir, "rules-manager.json"),
-      JSON.stringify(config, null, 2)
+      JSON.stringify(config, null, 2),
     );
 
     // List the rules
@@ -87,7 +87,7 @@ describe("rules-manager list command", () => {
       stdout
         .trim()
         .split(/\r?\n/)
-        .filter((line) => line.trim().length > 0).length
+        .filter((line) => line.trim().length > 0).length,
     ).toBeGreaterThanOrEqual(1);
   });
 
@@ -102,7 +102,7 @@ describe("rules-manager list command", () => {
     };
     fs.writeFileSync(
       path.join(testDir, "rules-manager.json"),
-      JSON.stringify(config, null, 2)
+      JSON.stringify(config, null, 2),
     );
 
     // List the rules with an unrecognized flag (should be ignored)

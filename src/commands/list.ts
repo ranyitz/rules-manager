@@ -11,7 +11,7 @@ export function listCommand(): void {
     {
       permissive: true,
       argv: process.argv.slice(3), // Skip the first two args and the command name
-    }
+    },
   );
 
   try {
@@ -28,7 +28,7 @@ export function listCommand(): void {
     if (!config.rules || Object.keys(config.rules).length === 0) {
       console.log(chalk.yellow("No rules defined in configuration."));
       console.log(
-        `Edit your ${chalk.blue("rules-manager.json")} file to add rules.`
+        `Edit your ${chalk.blue("rules-manager.json")} file to add rules.`,
       );
       return;
     }
@@ -60,7 +60,7 @@ export function listCommand(): void {
 function getInstallPath(
   ruleName: string,
   ruleType: string,
-  ide: string
+  ide: string,
 ): string {
   if (ide === "cursor") {
     return `.cursor/rules/${ruleName}.mdc`;

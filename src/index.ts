@@ -20,7 +20,7 @@ const args = arg(
   {
     permissive: true,
     argv: process.argv.slice(2),
-  }
+  },
 );
 
 // Show version

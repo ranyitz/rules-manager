@@ -46,7 +46,7 @@ describe("Presets", () => {
 name: TypeScript Best Practices
 description: Rules for TypeScript development
 alwaysApply: false
-`
+`,
     );
 
     // Create the react rule file
@@ -56,13 +56,13 @@ alwaysApply: false
 name: React Best Practices
 description: Rules for React development
 alwaysApply: false
-`
+`,
     );
 
     // Create the preset file
     writeTestFile(
       "company-preset.json",
-      JSON.stringify(presetContent, null, 2)
+      JSON.stringify(presetContent, null, 2),
     );
 
     // Create the main configuration file with a preset reference
@@ -81,20 +81,20 @@ alwaysApply: false
 
     // Check that rules from the preset were installed
     expect(
-      fileExists(path.join(".cursor", "rules", "typescript-rule.mdc"))
+      fileExists(path.join(".cursor", "rules", "typescript-rule.mdc")),
     ).toBe(true);
     expect(fileExists(path.join(".cursor", "rules", "react-rule.mdc"))).toBe(
-      true
+      true,
     );
 
     // Check rule content
     const typescriptRuleContent = readTestFile(
-      path.join(".cursor", "rules", "typescript-rule.mdc")
+      path.join(".cursor", "rules", "typescript-rule.mdc"),
     );
     expect(typescriptRuleContent).toContain("TypeScript Best Practices");
 
     const reactRuleContent = readTestFile(
-      path.join(".cursor", "rules", "react-rule.mdc")
+      path.join(".cursor", "rules", "react-rule.mdc"),
     );
     expect(reactRuleContent).toContain("React Best Practices");
   });
@@ -117,7 +117,7 @@ alwaysApply: false
 name: Preset Rule
 description: Rule from a preset
 alwaysApply: false
-`
+`,
     );
 
     // Create a local rule file
@@ -127,13 +127,13 @@ alwaysApply: false
 name: Local Rule
 description: Rule from local configuration
 alwaysApply: false
-`
+`,
     );
 
     // Create the preset file
     writeTestFile(
       "company-preset.json",
-      JSON.stringify(presetContent, null, 2)
+      JSON.stringify(presetContent, null, 2),
     );
 
     // Create the main configuration file with both a preset reference and local rules
@@ -155,20 +155,20 @@ alwaysApply: false
 
     // Check that rules from both the preset and local config were installed
     expect(fileExists(path.join(".cursor", "rules", "preset-rule.mdc"))).toBe(
-      true
+      true,
     );
     expect(fileExists(path.join(".cursor", "rules", "local-rule.mdc"))).toBe(
-      true
+      true,
     );
 
     // Check rule content
     const presetRuleContent = readTestFile(
-      path.join(".cursor", "rules", "preset-rule.mdc")
+      path.join(".cursor", "rules", "preset-rule.mdc"),
     );
     expect(presetRuleContent).toContain("Preset Rule");
 
     const localRuleContent = readTestFile(
-      path.join(".cursor", "rules", "local-rule.mdc")
+      path.join(".cursor", "rules", "local-rule.mdc"),
     );
     expect(localRuleContent).toContain("Local Rule");
   });
@@ -204,7 +204,7 @@ alwaysApply: false
     // Write the preset file to the npm package directory
     fs.writeFileSync(
       path.join(npmPresetDir, "rules.json"),
-      JSON.stringify(presetContent, null, 2)
+      JSON.stringify(presetContent, null, 2),
     );
 
     // Create the main configuration file with an npm preset reference
@@ -223,12 +223,12 @@ alwaysApply: false
 
     // Check that rules from the npm preset were installed
     expect(fileExists(path.join(".cursor", "rules", "npm-rule.mdc"))).toBe(
-      true
+      true,
     );
 
     // Check rule content
     const npmRuleContent = readTestFile(
-      path.join(".cursor", "rules", "npm-rule.mdc")
+      path.join(".cursor", "rules", "npm-rule.mdc"),
     );
     expect(npmRuleContent).toContain("NPM Package Rule");
   });
