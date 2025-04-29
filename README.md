@@ -10,16 +10,14 @@ Helps developers manage, share, and synchronize AI assistant rules across differ
 
 - Share rules between team repositories to maintain consistent AI assistant behavior
 - Install rules from npm packages and local files
-- Keep rules up to date with an npm package
+- Keep rules up to date via an npm package
+- Support nested presets for more complex rule organization
 
 ## Future Plans
 
 - Support additional IDEs, allowing a single rule to be used in multiple IDEs
-- Support nested presets for more complex rule organization
 
 ## Getting Started
-
-### Using Rules from NPM Packages
 
 To get automatic rule updates from NPM Packages, you can create, publish, and use dedicated npm packages to distribute AI rules across multiple projects.
 
@@ -123,12 +121,10 @@ rules-manager uses a JSON configuration file (`rules-manager.json`) in your proj
 ```json
 {
   "ides": ["cursor"],
+  "presets": ["@company/rules.json"],
   "rules": {
-    "team-standards": "@company/coding-standards"
-  },
-  "presets": [
-    "@company/rules.json"
-  ]
+    "team-standards": "@company/coding-standards.mdc"
+  }
 }
 ```
 
@@ -137,6 +133,7 @@ rules-manager uses a JSON configuration file (`rules-manager.json`) in your proj
   - `"cursor"`: For the Cursor IDE
 
 - **rules**: Object containing rule configurations
+
   - **rule-name**: A unique identifier for the rule
   - **source-location**: Location of the rule file (path within an npm package or local path)
 
