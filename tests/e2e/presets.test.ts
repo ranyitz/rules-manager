@@ -78,7 +78,6 @@ alwaysApply: false
 
     // Command should run successfully
     expect(code).toBe(0);
-    expect(stdout).toContain("Installing rules");
 
     // Check that rules from the preset were installed
     expect(
@@ -153,7 +152,6 @@ alwaysApply: false
 
     // Command should run successfully
     expect(code).toBe(0);
-    expect(stdout).toContain("Installing rules");
 
     // Check that rules from both the preset and local config were installed
     expect(fileExists(path.join(".cursor", "rules", "preset-rule.mdc"))).toBe(
@@ -222,7 +220,6 @@ alwaysApply: false
 
     // Command should run successfully
     expect(code).toBe(0);
-    expect(stdout).toContain("Installing rules");
 
     // Check that rules from the npm preset were installed
     expect(fileExists(path.join(".cursor", "rules", "npm-rule.mdc"))).toBe(

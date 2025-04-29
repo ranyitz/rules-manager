@@ -39,8 +39,6 @@ export async function installCommand(): Promise<void> {
   try {
     // If a rule name and source are provided, install directly
     if (ruleName && ruleSource) {
-      console.log(`Installing rule ${ruleName} from ${ruleSource}...`);
-
       // Detect rule type from the source string
       const ruleType = detectRuleType(ruleSource);
 
@@ -150,9 +148,9 @@ export async function installCommand(): Promise<void> {
           installNpmRule(name, source, config.ides);
           break;
         case "local":
-          // Get the source preset path if this rule came from a preset
-          const ruleSource = getRuleSource(config, name);
-          installLocalRule(name, source, config.ides, ruleSource);
+          // Get the base path of the preset file if this rule came from a preset
+          const ruleBasePath = getRuleSource(config, name);
+          installLocalRule(name, source, config.ides, ruleBasePath);
           break;
         default:
           console.log(chalk.yellow(`Unknown rule type: ${ruleType}`));

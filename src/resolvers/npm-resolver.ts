@@ -14,8 +14,6 @@ export function installNpmRule(
   source: string,
   ides: string[]
 ): boolean {
-  console.log(`Installing rule from npm package ${source}...`);
-
   try {
     // Parse source into package and file path
     let packageName: string;

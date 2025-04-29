@@ -9,17 +9,15 @@ export function installLocalRule(
   ruleName: string,
   source: string,
   ides: string[],
-  basePath?: string
+  ruleBasePath?: string
 ): boolean {
-  console.log(`Installing rule from local file ${source}...`);
-
   try {
     // Resolve path relative to base path or current directory
     let sourcePath = source;
     if (!path.isAbsolute(source)) {
-      if (basePath) {
+      if (ruleBasePath) {
         // If a base path is provided (e.g., for presets), resolve relative to that
-        sourcePath = path.resolve(path.dirname(basePath), source);
+        sourcePath = path.resolve(path.dirname(ruleBasePath), source);
       } else {
         // Otherwise resolve relative to current directory
         sourcePath = path.resolve(process.cwd(), source);
@@ -51,11 +49,9 @@ export function installLocalRule(
 
         const ruleFile = path.join(ruleDir, `${ruleName}.mdc`);
         fs.copyFileSync(sourcePath, ruleFile);
-        console.log(`Copied to Cursor: ${ruleFile}`);
       }
     }
 
-    console.log("Rule installed successfully!");
     return true;
   } catch (error) {
     console.log("Error installing rule from local file:", error);

@@ -75,7 +75,6 @@ describe("rules-manager install command", () => {
 
     // Command should run successfully
     expect(code).toBe(0);
-    expect(stdout).toContain("Installing rules");
 
     // Check that rules were installed for Cursor in the project directory
     expect(fileExists(path.join(".cursor", "rules", "local-rule.mdc"))).toBe(
@@ -119,9 +118,6 @@ describe("rules-manager install command", () => {
 
     // Command should run successfully
     expect(code).toBe(0);
-    expect(stdout).toContain(
-      "Installing rule local-rule from ./rules/test-rule.mdc"
-    );
     expect(stdout).toContain("Configuration updated successfully");
 
     // Check the rule was installed
