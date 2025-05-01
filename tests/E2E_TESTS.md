@@ -30,7 +30,7 @@ For example, a fixture for testing the list command might contain:
 
 ```
 list-with-multiple-rules/
-├── rules-manager.json  # Config with multiple rules
+├── rules.json  # Config with multiple rules
 └── rules/
     ├── rule1.mdc
     └── rule3.mdc

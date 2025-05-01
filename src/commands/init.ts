@@ -21,7 +21,7 @@ export function initCommand(): void {
     },
   );
 
-  const configPath = path.join(process.cwd(), "rules-manager.json");
+  const configPath = path.join(process.cwd(), "rules.json");
 
   // Check if config file already exists
   if (fs.existsSync(configPath)) {
@@ -36,7 +36,7 @@ export function initCommand(): void {
     console.log(`Configuration file location: ${chalk.blue(configPath)}`);
     console.log(`\nNext steps:`);
     console.log(
-      `  1. Edit ${chalk.blue("rules-manager.json")} to configure your rules`,
+      `  1. Edit ${chalk.blue("rules.json")} to configure your rules`,
     );
     console.log(
       `  2. Run ${chalk.blue("npx rules-manager install")} to install rules`,

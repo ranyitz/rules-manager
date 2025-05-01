@@ -14,9 +14,9 @@ describe("rules-manager init command with fixtures", () => {
 
     const { stdout, stderr } = await runCommand("init");
 
-    expect(fileExists("rules-manager.json")).toBe(true);
+    expect(fileExists("rules.json")).toBe(true);
 
-    const config = JSON.parse(readTestFile("rules-manager.json"));
+    const config = JSON.parse(readTestFile("rules.json"));
     expect(config.ides).toBeDefined();
     expect(config.rules).toBeDefined();
   });
@@ -25,13 +25,13 @@ describe("rules-manager init command with fixtures", () => {
     await setupFromFixture("init-empty", expect.getState().currentTestName);
 
     const customConfig = { ides: ["custom"], rules: {} };
-    fs.writeJsonSync(path.join(testDir, "rules-manager.json"), customConfig);
+    fs.writeJsonSync(path.join(testDir, "rules.json"), customConfig);
 
     const { stdout, stderr } = await runCommand("init");
 
-    expect(fileExists("rules-manager.json")).toBe(true);
+    expect(fileExists("rules.json")).toBe(true);
 
-    const config = JSON.parse(readTestFile("rules-manager.json"));
+    const config = JSON.parse(readTestFile("rules.json"));
     expect(config.ides).toEqual(["custom"]);
   });
 });

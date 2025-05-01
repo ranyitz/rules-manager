@@ -35,7 +35,7 @@ Considering the following npm package:
 
 1. **Point to the path within the npm package**
 
-In your project's `rules-manager.json`, reference the package and the specific rule:
+In your project's `rules.json`, reference the package and the specific rule:
 
 ```json
 {
@@ -80,7 +80,7 @@ Create a JSON file with your rule definitions:
 
 2. **Reference the preset in your project**
 
-In your project's `rules-manager.json`, reference the preset:
+In your project's `rules.json`, reference the preset:
 
 ```json
 {
@@ -105,7 +105,7 @@ npx rules-manager install pirate-coding pirate-coding-rule/rule.mdc
 
 This command will:
 
-1. Create a `rules-manager.json` file if it doesn't exist
+1. Create a `rules.json` file if it doesn't exist
 2. Add the rule to the configuration
 3. Install the rule to `.cursor/rules/`
 
@@ -117,7 +117,7 @@ To prevent [prompt-injection](https://en.wikipedia.org/wiki/Prompt_injection), u
 
 ## Configuration
 
-rules-manager uses a JSON configuration file (`rules-manager.json`) in your project root directory.
+rules-manager uses a JSON configuration file (`rules.json`) in your project root directory.
 
 ```json
 {
