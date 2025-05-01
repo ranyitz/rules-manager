@@ -1,5 +1,9 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
+# Preset Rule
+name: Preset Rule
+description: Rule from a preset
+alwaysApply: false
