@@ -3,6 +3,12 @@ name: CI
 on: [push, pull_request]
 
 jobs:
+  format-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Format
+        run: yarn format:check
   test:
     strategy:
       matrix:
@@ -24,9 +30,6 @@ jobs:
 
       - name: Build
         run: yarn build
-
-      - name: Format:check
-        run: yarn format:check
 
       - name: Test
         run: yarn test
