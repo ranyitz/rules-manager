@@ -1,0 +1,4 @@
+{
+  "ides": ["cursor"],
+  "presets": ["./company-preset-full.json"]
+}

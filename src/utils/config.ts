@@ -57,9 +57,9 @@ export function loadPreset(presetPath: string): Rules | null {
     const fullPresetPath = getFullPresetPath(presetPath);
 
     if (!fullPresetPath) {
-      console.error(`Error loading preset: File not found: ${presetPath}`);
-      console.error(`Make sure the package is installed in your project.`);
-      return null;
+      throw new Error(
+        `Error loading preset: File not found: ${presetPath}. Make sure the package is installed in your project.`,
+      );
     }
 
     const presetContent = fs.readFileSync(fullPresetPath, "utf8");
@@ -68,21 +68,19 @@ export function loadPreset(presetPath: string): Rules | null {
     try {
       preset = JSON.parse(presetContent);
     } catch (error) {
-      console.error(`Error loading preset: Invalid JSON in ${presetPath}`);
-      return null;
+      throw new Error(`Error loading preset: Invalid JSON in ${presetPath}`);
     }
 
     if (!preset.rules || typeof preset.rules !== "object") {
-      console.error(
+      throw new Error(
         `Error loading preset: Invalid format in ${presetPath} - missing or invalid 'rules' object`,
       );
-      return null;
     }
 
     return preset.rules;
   } catch (error) {
-    console.error(`Error loading preset ${presetPath}:`, error);
-    return null;
+    // Re-throw the error instead of logging it
+    throw error;
   }
 }
 

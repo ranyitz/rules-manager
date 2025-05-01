@@ -27,6 +27,11 @@ export let testDir = testRootDir;
 export const fixturesDir = path.join(projectRoot, "tests/fixtures");
 
 /**
+ * E2E test fixtures directory
+ */
+export const e2eFixturesDir = path.join(projectRoot, "tests/e2e-fixtures");
+
+/**
  * Sanitize a filename to be safe for directories
  */
 function sanitizeFilename(name: string): string {
@@ -74,27 +79,19 @@ export async function setupTestDir(testName?: string): Promise<string> {
   return testDir;
 }
 
-/**
- * Run the rules-manager CLI command with given arguments
- */
 export async function runCommand(
   args: string = "",
 ): Promise<{ stdout: string; stderr: string; code: number }> {
   try {
-    // Make sure we've built the project
     await execPromise("npm run build", { cwd: projectRoot });
 
-    // Build the command using the built version
     const cliPath = path.join(projectRoot, "dist", "index.js");
     const command = `node ${cliPath} ${args}`;
 
-    // Execute in the test directory
     const { stdout, stderr } = await execPromise(command, { cwd: testDir });
 
     return { stdout, stderr, code: 0 };
   } catch (error: any) {
-    console.error("Command execution error:", error.message);
-
     return {
       stdout: error.stdout || "",
       stderr: error.stderr || "",
@@ -179,4 +176,28 @@ export function getDirectoryStructure(dir: string = ""): string[] {
   }
 
   return result.sort();
+}
+
+/**
+ * Setup a test directory using a fixture directory
+ * @param fixtureName The name of the fixture directory to use
+ * @param testName Optional test name for the directory
+ */
+export async function setupFromFixture(
+  fixtureName: string,
+  testName?: string,
+): Promise<string> {
+  // First setup a clean test directory
+  await setupTestDir(testName);
+
+  // Copy the entire fixture directory to the test directory
+  const fixtureDir = path.join(e2eFixturesDir, fixtureName);
+
+  if (!fs.existsSync(fixtureDir)) {
+    throw new Error(`Fixture directory not found: ${fixtureName}`);
+  }
+
+  fs.copySync(fixtureDir, testDir);
+
+  return testDir;
 }
