@@ -69,7 +69,6 @@ Presets allow you to bundle multiple rules into a single configuration that can 
 Create a JSON file with your rule definitions:
 
 ```json
-// my-rules.json
 {
   "rules": {
     "typescript": "./rules/typescript.mdc",
