@@ -22,17 +22,19 @@ describe("rule-detector", () => {
     jest.clearAllMocks();
 
     // Setup default mock behavior
-    (fs.existsSync as jest.Mock).mockImplementation((path) => {
-      if (path.includes("node_modules/some-package")) return true;
-      if (path.includes("node_modules/rule-package")) return true;
-      if (path.includes("node_modules/@company")) return true;
+    (fs.existsSync as jest.Mock).mockImplementation((path: string) => {
+      // Normalize path for cross-platform testing
+      const normalizedPath = path.replace(/\\/g, "/");
+      if (normalizedPath.includes("node_modules/some-package")) return true;
+      if (normalizedPath.includes("node_modules/rule-package")) return true;
+      if (normalizedPath.includes("node_modules/@company")) return true;
       return false;
     });
 
     // Mock require.resolve to succeed for npm packages
     jest.spyOn(require, "resolve").mockImplementation((request, options) => {
       if (request === "some-package" || request === "@company/rule-package") {
-        return "/mocked/path/to/package";
+        return path.normalize("/mocked/path/to/package");
       }
       throw new Error("Cannot find module");
     });
@@ -58,18 +60,23 @@ describe("rule-detector", () => {
       expect(detectRuleType("@company/rule-package")).toBe("npm");
       expect(detectRuleType("some-package")).toBe("npm");
 
-      // npm packages with paths
+      // npm packages with paths - test with both forward and backslash
       expect(detectRuleType("some-package/path/to/rule.mdc")).toBe("npm");
+      expect(detectRuleType("some-package\\path\\to\\rule.mdc")).toBe("npm");
       expect(detectRuleType("@company/rule-package/file.mdc")).toBe("npm");
+      expect(detectRuleType("@company/rule-package\\file.mdc")).toBe("npm");
     });
 
     test("should detect local file rules", () => {
       // Relative paths
       expect(detectRuleType("./rules/local.mdc")).toBe("local");
+      expect(detectRuleType(".\\rules\\local.mdc")).toBe("local");
       expect(detectRuleType("../parent/rules/test.mdc")).toBe("local");
+      expect(detectRuleType("..\\parent\\rules\\test.mdc")).toBe("local");
 
       // Absolute paths
       expect(detectRuleType("/absolute/path/to/rule.mdc")).toBe("local");
+      expect(detectRuleType("C:\\absolute\\path\\to\\rule.mdc")).toBe("local");
 
       // Path that looks like npm but isn't in node_modules
       (fs.existsSync as jest.Mock).mockReturnValue(false);
@@ -77,6 +84,7 @@ describe("rule-detector", () => {
         throw new Error("Cannot find module");
       });
       expect(detectRuleType("relative/path/to/rule.mdc")).toBe("local");
+      expect(detectRuleType("relative\\path\\to\\rule.mdc")).toBe("local");
     });
   });
 });

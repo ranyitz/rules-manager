@@ -18,24 +18,22 @@ export function detectRuleType(source: string): "npm" | "local" {
     source.startsWith("../") ||
     source.startsWith("\\") ||
     source.startsWith(".\\") ||
-    source.includes(":\\") || // Windows absolute path
-    source.includes(":") // Path with protocol
+    (source.includes(":\\") && source.includes("\\")) || // Windows absolute path with backslash
+    (source.includes(":") &&
+      (source.startsWith("file:") || source.includes(":\\"))) // Path with protocol or Windows drive letter
   ) {
     return "local";
   }
 
   // Check if it's an npm package with a direct node_modules reference
-  if (
-    fs.existsSync(
-      path.resolve(process.cwd(), "node_modules", source.split("/")[0]),
-    )
-  ) {
+  const packageName = source.split(/[\/\\]/)[0]; // Support both slash types
+  if (fs.existsSync(path.resolve(process.cwd(), "node_modules", packageName))) {
     return "npm";
   }
 
   // Try to interpret as npm package
   try {
-    require.resolve(source.split("/")[0], { paths: [process.cwd()] });
+    require.resolve(packageName, { paths: [process.cwd()] });
     return "npm";
   } catch (e) {
     // If we couldn't resolve it as an npm package, assume it's a local path
