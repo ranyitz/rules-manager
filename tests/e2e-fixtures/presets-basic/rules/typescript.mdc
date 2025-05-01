@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# TypeScript Rule
+name: TypeScript Best Practices
+description: Rules for TypeScript development
+alwaysApply: false

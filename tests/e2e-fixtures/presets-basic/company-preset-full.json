@@ -1,0 +1,6 @@
+{
+  "rules": {
+    "typescript-rule": "./rules/typescript.mdc",
+    "react-rule": "./rules/react.mdc"
+  }
+}

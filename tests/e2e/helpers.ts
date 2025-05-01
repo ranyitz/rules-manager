@@ -27,6 +27,11 @@ export let testDir = testRootDir;
 export const fixturesDir = path.join(projectRoot, "tests/fixtures");
 
 /**
+ * E2E test fixtures directory
+ */
+export const e2eFixturesDir = path.join(projectRoot, "tests/e2e-fixtures");
+
+/**
  * Sanitize a filename to be safe for directories
  */
 function sanitizeFilename(name: string): string {
@@ -179,4 +184,28 @@ export function getDirectoryStructure(dir: string = ""): string[] {
   }
 
   return result.sort();
+}
+
+/**
+ * Setup a test directory using a fixture directory
+ * @param fixtureName The name of the fixture directory to use
+ * @param testName Optional test name for the directory
+ */
+export async function setupFromFixture(
+  fixtureName: string,
+  testName?: string,
+): Promise<string> {
+  // First setup a clean test directory
+  await setupTestDir(testName);
+
+  // Copy the entire fixture directory to the test directory
+  const fixtureDir = path.join(e2eFixturesDir, fixtureName);
+
+  if (!fs.existsSync(fixtureDir)) {
+    throw new Error(`Fixture directory not found: ${fixtureName}`);
+  }
+
+  fs.copySync(fixtureDir, testDir);
+
+  return testDir;
 }

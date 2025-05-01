@@ -1,20 +1,18 @@
-import fs from "fs-extra";
-import path from "path";
 import {
-  setupTestDir,
+  setupFromFixture,
   runCommand,
   fileExists,
   readTestFile,
-  testDir,
 } from "./helpers";
+import fs from "fs-extra";
+import path from "path";
+import { testDir } from "./helpers";
 
-describe("rules-manager init command", () => {
-  beforeEach(async () => {
-    // Setup a clean test directory for each test with proper scoping
-    await setupTestDir(expect.getState().currentTestName);
-  });
-
+describe("rules-manager init command with fixtures", () => {
   test("should create default config file", async () => {
+    // Setup the test directory using an empty fixture
+    await setupFromFixture("init-empty", expect.getState().currentTestName);
+
     // Run the init command
     const { stdout, stderr } = await runCommand("init");
 
@@ -28,6 +26,9 @@ describe("rules-manager init command", () => {
   });
 
   test("should not overwrite existing config", async () => {
+    // Setup the test directory using an empty fixture
+    await setupFromFixture("init-empty", expect.getState().currentTestName);
+
     // Create a custom config file
     const customConfig = { ides: ["custom"], rules: {} };
     fs.writeJsonSync(path.join(testDir, "rules-manager.json"), customConfig);
@@ -41,13 +42,5 @@ describe("rules-manager init command", () => {
     // Verify the content was not overwritten
     const config = JSON.parse(readTestFile("rules-manager.json"));
     expect(config.ides).toEqual(["custom"]);
-  });
-
-  test("should show help when run without arguments", async () => {
-    // Run the init command without arguments (which should still work)
-    const { stdout, stderr } = await runCommand("init");
-
-    // Check for success message
-    expect(stdout.toLowerCase()).toContain("configuration file");
   });
 });

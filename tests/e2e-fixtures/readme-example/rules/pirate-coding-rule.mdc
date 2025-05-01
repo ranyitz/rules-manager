@@ -1,0 +1,13 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Pirate Coding Assistant Rules
+Arr matey! This be a rule for pirate-themed coding!
+description: Pirate assistant rules
+globs: 
+alwaysApply: true
+---
+# Pirate Coding Assistant Rules
+Arr matey! This be a rule for pirate-themed coding!
