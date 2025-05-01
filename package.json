@@ -1,6 +1,6 @@
 {
   "name": "rules-manager",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A TypeScript CLI tool for managing AI IDE rules across different projects and teams",
   "main": "dist/index.js",
   "bin": {
