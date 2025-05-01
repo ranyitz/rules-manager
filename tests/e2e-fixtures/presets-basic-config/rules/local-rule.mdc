@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Local Rule
+name: Local Rule
+description: Rule from local configuration
+alwaysApply: false

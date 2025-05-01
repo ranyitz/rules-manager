@@ -26,8 +26,7 @@ export function installLocalRule(
 
     // Check if file exists
     if (!fs.existsSync(sourcePath)) {
-      console.log(`Error: Source file ${sourcePath} not found.`);
-      return false;
+      throw new Error(`Source file ${sourcePath} not found.`);
     }
 
     // Read the file
@@ -38,8 +37,7 @@ export function installLocalRule(
 
     for (const ide of ides) {
       if (!idePaths[ide]) {
-        console.log(`Warning: Unknown IDE '${ide}'. Skipping.`);
-        continue;
+        throw new Error(`Unknown IDE '${ide}'.`);
       }
 
       if (ide === "cursor") {
@@ -54,7 +52,7 @@ export function installLocalRule(
 
     return true;
   } catch (error) {
-    console.log("Error installing rule from local file:", error);
-    return false;
+    // Re-throw the error instead of logging it
+    throw error;
   }
 }

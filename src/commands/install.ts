@@ -113,11 +113,12 @@ export async function installCommand(): Promise<void> {
     if (config.presets && config.presets.length > 0) {
       let hasValidPresets = false;
       for (const preset of config.presets) {
-        const presetRules = loadPreset(preset);
-        if (!presetRules) {
-          console.log(chalk.yellow(`    Error loading preset: ${preset}`));
-        } else {
+        try {
+          const presetRules = loadPreset(preset);
           hasValidPresets = true;
+        } catch (error: any) {
+          console.error(chalk.red(`Error: ${error.message}`));
+          throw error; // Re-throw to stop execution
         }
       }
 
@@ -166,7 +167,7 @@ export async function installCommand(): Promise<void> {
     }
 
     console.log(chalk.green("\nRules installation completed!"));
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       chalk.red(
         `Error during rule installation: ${
@@ -174,5 +175,6 @@ export async function installCommand(): Promise<void> {
         }`,
       ),
     );
+    process.exit(1);
   }
 }

@@ -79,27 +79,19 @@ export async function setupTestDir(testName?: string): Promise<string> {
   return testDir;
 }
 
-/**
- * Run the rules-manager CLI command with given arguments
- */
 export async function runCommand(
   args: string = "",
 ): Promise<{ stdout: string; stderr: string; code: number }> {
   try {
-    // Make sure we've built the project
     await execPromise("npm run build", { cwd: projectRoot });
 
-    // Build the command using the built version
     const cliPath = path.join(projectRoot, "dist", "index.js");
     const command = `node ${cliPath} ${args}`;
 
-    // Execute in the test directory
     const { stdout, stderr } = await execPromise(command, { cwd: testDir });
 
     return { stdout, stderr, code: 0 };
   } catch (error: any) {
-    console.error("Command execution error:", error.message);
-
     return {
       stdout: error.stdout || "",
       stderr: error.stderr || "",
