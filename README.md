@@ -1,21 +1,22 @@
 # 📜 rules-manager
 
-A CLI tool for managing AI IDE rules across different projects
+A CLI tool for syncing AI IDE rules across projects
 
-## Overview
+## Why
 
-Helps developers manage, share, and synchronize AI assistant rules across different projects and IDEs
+Development teams struggle with:
 
-## Features
+- **Inconsistent Practices**: Developers apply varying standards across projects
+- **Knowledge Silos**: Best practices remain trapped in individual projects
+- **Change Management**: No efficient way to update and distribute new standards
 
-- Share rules between team repositories to maintain consistent AI assistant behavior
-- Install rules from npm packages and local files
-- Keep rules up to date via an npm package
-- Support nested presets for more complex rule organization
+As our developers increasingly adopt AI-powered IDEs like Cursor and Windsurf, we have an opportunity to enforce best practices through "rules." However, these rules are typically isolated within individual developers or projects.
 
-## Future Plans
+**rules-manager** is a CLI tool that helps streamline rule management:
 
-- Support additional IDEs, allowing a single rule to be used in multiple IDEs
+- 🏛️ **Single Source of Truth**: Define, maintain and version-control all AI IDE rules in one central repository
+- 📦 **Seamless Distribution**: Automatically synchronize the latest rules to developers' local projects using npm packages
+- 🌐 **Cross-IDE Support**: Supports multiple AI-powered IDEs (Cursor, Windsurf, etc.)
 
 ## Getting Started
 
@@ -24,7 +25,7 @@ To get automatic rule updates from NPM Packages, you can create, publish, and us
 Considering the following npm package:
 
 ```
-@myteam/ai/
+@myteam/ai-tools
 ├── package.json
 └── rules/
     ├── typescript.mdc
@@ -40,14 +41,14 @@ In your project's `rules-manager.json`, reference the package and the specific r
 {
   "ides": ["cursor"],
   "rules": {
-    "typescript": "@myteam/ai/rules/typescript.mdc",
-    "react": "@myteam/ai/rules/react.mdc",
-    "general": "@myteam/ai/rules/general.mdc"
+    "typescript": "@myteam/ai-tools/rules/typescript.mdc",
+    "react": "@myteam/ai-tools/rules/react.mdc",
+    "general": "@myteam/ai-tools/rules/general.mdc"
   }
 }
 ```
 
-2. **Add a postinstall script** to your package.json:
+2. **Add a postinstall script** to your `package.json`:
 
 ```json
 {
@@ -57,7 +58,7 @@ In your project's `rules-manager.json`, reference the package and the specific r
 }
 ```
 
-Now the rules will be linked automatically when you run `npm install`.
+Now the rules will be linked to `.cursor/rules/` when you run `npm install`.
 
 ### Using Presets
 
@@ -68,7 +69,7 @@ Presets allow you to bundle multiple rules into a single configuration that can 
 Create a JSON file with your rule definitions:
 
 ```json
-// rules.json
+// my-rules.json
 {
   "rules": {
     "typescript": "./rules/typescript.mdc",
@@ -84,15 +85,15 @@ In your project's `rules-manager.json`, reference the preset:
 ```json
 {
   "ides": ["cursor"],
-  "presets": ["@company/rules.json"]
+  "presets": ["@myteam/ai-tools/my-rule.json"]
 }
 ```
 
-When you run `npx rules-manager install`, all rules from the preset will be installed.
+When you run `npx rules-manager install`, all rules from the preset will be installed to `.cursor/rules/`.
 
 ### Demo
 
-You can also install the rule directly with a single command, I created a demo package to show how it works:
+Here is a package to demonstrate how rules manager works:
 
 ```bash
 # Install a package containing a rule
@@ -106,13 +107,13 @@ This command will:
 
 1. Create a `rules-manager.json` file if it doesn't exist
 2. Add the rule to the configuration
-3. Install the rule to your Cursor IDE
+3. Install the rule to `.cursor/rules/`
 
-After installation, open Cursor and ask for coding help. Your AI assistant will respond with pirate-themed coding advice.
+After installation, open Cursor and ask it to do something. Your AI assistant will respond with pirate-themed coding advice.
 
 ## Security Note
 
-To prevent [prompt-injection](https://en.wikipedia.org/wiki/Prompt_injection) risks, use only packages from trusted sources.
+To prevent [prompt-injection](https://en.wikipedia.org/wiki/Prompt_injection), use only packages from trusted sources.
 
 ## Configuration
 
@@ -121,9 +122,9 @@ rules-manager uses a JSON configuration file (`rules-manager.json`) in your proj
 ```json
 {
   "ides": ["cursor"],
-  "presets": ["@company/rules.json"],
+  "presets": ["@my-team/ai-tools/my-rules.json"],
   "rules": {
-    "team-standards": "@company/coding-standards.mdc"
+    "team-standards": "@my-team/ai-tools/rules/team-standards.mdc"
   }
 }
 ```
@@ -150,7 +151,7 @@ The type of rule is automatically detected based on the source format:
 Rules provided by NPM packages. The package must be installed either globally or in your project's `node_modules`. Sources that start with `@` or don't contain start with path separators are detected as NPM packages.
 
 ```json
-"react-best-practices": "@company/rules-manager-react"
+"react-best-practices": "@my-team/ai-tools/rules-manager-react"
 ```
 
 #### Local Source
@@ -202,7 +203,7 @@ npx rules-manager install [rule-name] [rule-source]
 npx rules-manager install
 
 # Install a rule from an npm package and update configuration
-npx rules-manager install react-best-practices @company/rules-manager-react
+npx rules-manager install react-best-practices @my-team/ai-tools/react-best-practices.mdc
 ```
 
 ## Contributing
