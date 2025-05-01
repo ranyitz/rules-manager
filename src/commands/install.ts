@@ -90,7 +90,7 @@ export async function installCommand(): Promise<void> {
       console.log(chalk.yellow("No rules defined in configuration."));
       console.log(
         `Edit your ${chalk.blue(
-          "rules-manager.json",
+          "rules.json",
         )} file to add rules or use the direct install command: npx rules-manager install <rule-name> <rule-source>`,
       );
       return;
@@ -103,7 +103,7 @@ export async function installCommand(): Promise<void> {
         console.log(chalk.yellow("No rules defined in configuration."));
         console.log(
           `Edit your ${chalk.blue(
-            "rules-manager.json",
+            "rules.json",
           )} file to add rules or use the direct install command: npx rules-manager install <rule-name> <rule-source>`,
         );
         return;

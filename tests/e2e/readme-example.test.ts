@@ -26,9 +26,9 @@ describe("README example workflow with fixtures", () => {
     );
     expect(installResult.stdout).toContain("Rule installation complete");
 
-    expect(fileExists("rules-manager.json")).toBe(true);
+    expect(fileExists("rules.json")).toBe(true);
 
-    const config = JSON.parse(readTestFile("rules-manager.json"));
+    const config = JSON.parse(readTestFile("rules.json"));
     expect(config.rules["pirate-coding"]).toBe("pirate-coding-rule/rule.mdc");
 
     expect(fileExists(path.join(".cursor", "rules", "pirate-coding.mdc"))).toBe(

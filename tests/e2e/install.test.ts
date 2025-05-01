@@ -93,7 +93,7 @@ describe("rules-manager install command with fixtures", () => {
       true,
     );
 
-    const config = JSON.parse(readTestFile("rules-manager.json"));
+    const config = JSON.parse(readTestFile("rules.json"));
     expect(config.rules["local-rule"]).toBe("./rules/local-rule.mdc");
   });
 
@@ -113,9 +113,9 @@ describe("rules-manager install command with fixtures", () => {
     );
     expect(stdout).toContain("Configuration updated successfully");
 
-    expect(fileExists("rules-manager.json")).toBe(true);
+    expect(fileExists("rules.json")).toBe(true);
 
-    const config = JSON.parse(readTestFile("rules-manager.json"));
+    const config = JSON.parse(readTestFile("rules.json"));
     expect(config.rules["new-rule"]).toBe("./rules/local-rule.mdc");
 
     expect(fileExists(path.join(".cursor", "rules", "new-rule.mdc"))).toBe(

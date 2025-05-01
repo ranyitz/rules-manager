@@ -27,9 +27,7 @@ export function listCommand(): void {
     // Check if rules are defined
     if (!config.rules || Object.keys(config.rules).length === 0) {
       console.log(chalk.yellow("No rules defined in configuration."));
-      console.log(
-        `Edit your ${chalk.blue("rules-manager.json")} file to add rules.`,
-      );
+      console.log(`Edit your ${chalk.blue("rules.json")} file to add rules.`);
       return;
     }
 
