@@ -1,0 +1,7 @@
+---
+filePattern: "*.ts"
+---
+
+## File Pattern Rule
+
+- This rule should apply to files matching the pattern

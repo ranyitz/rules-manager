@@ -1,0 +1,7 @@
+---
+alwaysApply: false
+---
+
+## Opt-In Rule
+
+- This rule should only apply when explicitly referenced

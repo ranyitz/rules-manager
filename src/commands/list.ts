@@ -53,15 +53,3 @@ export function listCommand(): void {
     console.error(chalk.red("Error listing rules:"), error);
   }
 }
-
-// Helper function to get installation path (simplified for brevity)
-function getInstallPath(
-  ruleName: string,
-  ruleType: string,
-  ide: string,
-): string {
-  if (ide === "cursor") {
-    return `.cursor/rules/${ruleName}.mdc`;
-  }
-  return "Unknown location";
-}

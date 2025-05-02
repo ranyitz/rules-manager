@@ -16,7 +16,7 @@ As our developers increasingly adopt AI-powered IDEs like Cursor and Windsurf, w
 
 - 🏛️ **Single Source of Truth**: Define, maintain and version-control all AI IDE rules in one central repository
 - 📦 **Seamless Distribution**: Automatically synchronize the latest rules to developers' local projects using npm packages
-- 🌐 **Cross-IDE Support**: Supports multiple AI-powered IDEs (Cursor, Windsurf, etc.) - Coming Soon!
+- 🌐 **Cross-IDE Support**: Supports multiple AI-powered IDEs (Cursor, Windsurf, etc.)
 
 ## Getting Started
 

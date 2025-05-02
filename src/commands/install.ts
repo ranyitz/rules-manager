@@ -8,14 +8,19 @@ import {
   loadPreset,
   getRuleSource,
 } from "../utils/config";
-import { installNpmRule } from "../resolvers/npm-resolver";
-import { installLocalRule } from "../resolvers/local-resolver";
 import { detectRuleType } from "../utils/rule-detector";
-import { Config } from "../types";
+import { Config, RuleCollection } from "../types";
+import {
+  collectLocalRule,
+  collectNpmRule,
+  initRuleCollection,
+  addRuleToCollection,
+} from "../utils/rule-collector";
+import { writeRulesToTargets } from "../utils/rule-writer";
 
 // Default configuration
 const defaultConfig: Config = {
-  ides: ["cursor"],
+  ides: ["cursor", "windsurf"],
   rules: {},
   presets: [],
 };
@@ -37,6 +42,9 @@ export async function installCommand(): Promise<void> {
   const ruleSource = args._.length > 1 ? args._[1] : null;
 
   try {
+    // Initialize rule collection
+    const ruleCollection = initRuleCollection();
+
     // If a rule name and source are provided, install directly
     if (ruleName && ruleSource) {
       // Detect rule type from the source string
@@ -58,19 +66,27 @@ export async function installCommand(): Promise<void> {
       saveConfig(config);
       console.log(chalk.green("Configuration updated successfully!"));
 
-      // Install the rule based on its type
+      // Collect the rule based on its type
+      let ruleContent;
       switch (ruleType) {
         case "npm":
-          await installNpmRule(ruleName, ruleSource, config.ides);
+          ruleContent = collectNpmRule(ruleName, ruleSource);
           break;
         case "local":
-          await installLocalRule(ruleName, ruleSource, config.ides);
+          ruleContent = collectLocalRule(ruleName, ruleSource);
           break;
         default:
           console.log(chalk.yellow(`Unknown rule type: ${ruleType}`));
+          return;
       }
 
-      console.log(chalk.green("\nRule installation complete!"));
+      // Add rule to collection
+      addRuleToCollection(ruleCollection, ruleContent, config.ides);
+
+      // Write rules to targets
+      writeRulesToTargets(ruleCollection);
+
+      console.log(chalk.green("\nRules installation completed!"));
       return;
     }
 
@@ -135,6 +151,7 @@ export async function installCommand(): Promise<void> {
     }
 
     // Process each rule (or just the specific one if provided)
+    let hasErrors = false;
     for (const [name, source] of Object.entries(config.rules)) {
       // Skip if a specific rule was requested and this isn't it
       if (ruleName && name !== ruleName) {
@@ -144,18 +161,41 @@ export async function installCommand(): Promise<void> {
       // Detect rule type from the source string
       const ruleType = detectRuleType(source);
 
-      switch (ruleType) {
-        case "npm":
-          installNpmRule(name, source, config.ides);
-          break;
-        case "local":
-          // Get the base path of the preset file if this rule came from a preset
-          const ruleBasePath = getRuleSource(config, name);
-          installLocalRule(name, source, config.ides, ruleBasePath);
-          break;
-        default:
-          console.log(chalk.yellow(`Unknown rule type: ${ruleType}`));
+      // Get the base path of the preset file if this rule came from a preset
+      const ruleBasePath = getRuleSource(config, name);
+
+      // Collect the rule based on its type
+      try {
+        let ruleContent;
+        switch (ruleType) {
+          case "npm":
+            ruleContent = collectNpmRule(name, source);
+            break;
+          case "local":
+            ruleContent = collectLocalRule(name, source, ruleBasePath);
+            break;
+          default:
+            console.log(chalk.yellow(`Unknown rule type: ${ruleType}`));
+            continue;
+        }
+
+        // Add rule to collection
+        addRuleToCollection(ruleCollection, ruleContent, config.ides);
+      } catch (error: any) {
+        hasErrors = true;
+        console.error(
+          chalk.red(`Error processing rule ${name}: ${error.message}`),
+        );
+        // If a specific rule was requested and it failed, exit immediately
+        if (ruleName) {
+          throw error;
+        }
       }
+    }
+
+    // If there were errors and we're not processing a specific rule, exit with error
+    if (hasErrors && !ruleName) {
+      throw new Error("One or more rules failed to process");
     }
 
     // If a specific rule was requested but not found
@@ -165,6 +205,9 @@ export async function installCommand(): Promise<void> {
       );
       return;
     }
+
+    // Write all collected rules to their targets
+    writeRulesToTargets(ruleCollection);
 
     console.log(chalk.green("\nRules installation completed!"));
   } catch (error: any) {

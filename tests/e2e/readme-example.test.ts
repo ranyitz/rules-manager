@@ -24,7 +24,7 @@ describe("README example workflow with fixtures", () => {
     expect(installResult.stdout).toContain(
       "Configuration updated successfully",
     );
-    expect(installResult.stdout).toContain("Rule installation complete");
+    expect(installResult.stdout).toContain("Rules installation completed");
 
     expect(fileExists("rules.json")).toBe(true);
 
