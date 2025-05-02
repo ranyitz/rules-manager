@@ -1,7 +1,6 @@
-# Ignore node_modules everywhere
+# node_modules
 node_modules
 !tests/fixtures/*/node_modules/
-
 
 # Build output
 dist/
@@ -11,9 +10,13 @@ dist/
 .idea/
 *.iml
 
-# Ignore .cursor everywhere
+# cursor
 .cursor
 !tests/fixtures/*/.cursor/
+
+# windsurf
+.windsurfrules
+!tests/fixtures/*/.windsurfrules
 
 # Logs
 logs/
@@ -27,3 +30,6 @@ yarn-error.log*
 
 # Temporary test directory
 tmp-test/
+
+# rules-manager
+.rules

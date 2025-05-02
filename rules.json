@@ -1,7 +1,8 @@
 {
-  "ides": ["cursor"],
+  "ides": ["cursor", "windsurf"],
   "rules": {
     "general": "./rules/general.mdc",
-    "test": "./rules/test.mdc"
+    "test": "./rules/test.mdc",
+    "no-marker-rule": "./rules/no-marker-rule.mdc"
   }
 }

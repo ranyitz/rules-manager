@@ -15,7 +15,7 @@ import { Config } from "../types";
 
 // Default configuration
 const defaultConfig: Config = {
-  ides: ["cursor"],
+  ides: ["cursor", "windsurf"],
   rules: {},
   presets: [],
 };
@@ -70,7 +70,7 @@ export async function installCommand(): Promise<void> {
           console.log(chalk.yellow(`Unknown rule type: ${ruleType}`));
       }
 
-      console.log(chalk.green("\nRule installation complete!"));
+      console.log(chalk.green("\nRules installation completed!"));
       return;
     }
 

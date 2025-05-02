@@ -39,7 +39,7 @@ describe("rules-manager install command with fixtures", () => {
       "install test-rule ./rules/local-rule.mdc",
     );
 
-    expect(stdout).toContain("Rule installation complete");
+    expect(stdout).toContain("Rules installation completed");
   });
 
   test("should install rules from config", async () => {

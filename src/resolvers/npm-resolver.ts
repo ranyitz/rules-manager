@@ -87,7 +87,6 @@ export function installNpmRule(
       }
     }
 
-    console.log("Rule installed successfully!");
     return true;
   } catch (error) {
     console.log("Error installing rule from npm package:", error);

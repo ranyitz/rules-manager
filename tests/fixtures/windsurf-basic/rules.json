@@ -1,0 +1,9 @@
+{
+  "ides": ["cursor", "windsurf"],
+  "rules": {
+    "always-rule": "./rules/always-rule.mdc",
+    "opt-in-rule": "./rules/opt-in-rule.mdc",
+    "file-pattern-rule": "./rules/file-pattern-rule.mdc"
+  },
+  "presets": []
+}
