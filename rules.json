@@ -1,0 +1,7 @@
+{
+  "ides": ["cursor"],
+  "rules": {
+    "general": "./rules/general.mdc",
+    "test": "./rules/test.mdc"
+  }
+}
