@@ -1,5 +1,5 @@
 ---
-filePattern: "*.ts"
+globs: "*.ts"
 ---
 
 ## TypeScript Best Practices

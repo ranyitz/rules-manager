@@ -80,7 +80,7 @@ export function generateWindsurfRulesContent(
   ruleFiles: { name: string; path: string; metadata: Record<string, any> }[],
 ): string {
   const alwaysRules: string[] = [];
-  const autoAttachedRules: Array<{ path: string; pattern: string }> = [];
+  const autoAttachedRules: Array<{ path: string; glob: string }> = [];
   const agentRequestedRules: string[] = [];
   const manualRules: string[] = [];
 
@@ -92,20 +92,15 @@ export function generateWindsurfRulesContent(
       metadata.alwaysApply === "true"
     ) {
       alwaysRules.push(path);
-    } else if (
-      metadata.type === "auto-attached" ||
-      metadata.globs ||
-      metadata.filePattern
-    ) {
+    } else if (metadata.type === "auto-attached" || metadata.globs) {
       // Get the glob pattern from metadata
-      const pattern =
-        metadata.filePattern ||
+      const globPattern =
         (metadata.globs &&
           (Array.isArray(metadata.globs)
             ? metadata.globs.join(", ")
             : metadata.globs)) ||
         "*";
-      autoAttachedRules.push({ path, pattern });
+      autoAttachedRules.push({ path, glob: globPattern });
     } else if (metadata.type === "agent-requested" || metadata.description) {
       agentRequestedRules.push(path);
     } else {
@@ -132,7 +127,7 @@ export function generateWindsurfRulesContent(
     content +=
       "The following rules are automatically attached to matching glob patterns:\n";
     autoAttachedRules.forEach((rule) => {
-      content += `- [${rule.pattern}] ${rule.path}\n`;
+      content += `- [${rule.glob}] ${rule.path}\n`;
     });
     content += "\n";
   }
