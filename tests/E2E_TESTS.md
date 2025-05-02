@@ -1,9 +1,10 @@
-# E2E Test Fixtures
+# E2E Tests
 
-This file documents the fixtures used for E2E tests. All E2E test fixtures are now located in the `tests/fixtures/e2e` directory.
+The e2e tests basically test the CLI by running it with different configurations and asserting the output. To create the initial state of each test, we use fixtures.
 
 ## Using Fixtures in Tests
 
+All E2E test fixtures are located in the `tests/fixtures` directory.
 To use a fixture in your test, use the `setupFromFixture` function from the helpers:
 
 ```typescript
