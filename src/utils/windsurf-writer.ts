@@ -7,6 +7,18 @@ const WARNING =
   "<!-- WARNING: Everything between these markers will be overwritten during installation -->";
 
 /**
+ * Create a formatted block of content with rules markers
+ */
+function createRulesBlock(rulesContent: string): string {
+  return `${RULES_BEGIN}
+${WARNING}
+
+${rulesContent}
+
+${RULES_END}`;
+}
+
+/**
  * Write rules to the .windsurfrules file
  * This will update the content between the RULES_BEGIN and RULES_END markers
  * If the file doesn't exist, it will create it
@@ -16,31 +28,24 @@ export function writeWindsurfRules(
   rulesContent: string,
   rulesFilePath: string = path.join(process.cwd(), ".windsurfrules"),
 ): void {
-  let fileContent = "";
+  let fileContent: string;
+  const formattedRulesBlock = createRulesBlock(rulesContent);
 
   // Check if file exists
   if (fs.existsSync(rulesFilePath)) {
-    fileContent = fs.readFileSync(rulesFilePath, "utf8");
+    const existingContent = fs.readFileSync(rulesFilePath, "utf8");
 
     // Check if our markers exist
-    if (fileContent.includes(RULES_BEGIN) && fileContent.includes(RULES_END)) {
+    if (
+      existingContent.includes(RULES_BEGIN) &&
+      existingContent.includes(RULES_END)
+    ) {
       // Replace content between markers
-      const beforeMarker = fileContent.split(RULES_BEGIN)[0];
-      const afterMarker = fileContent.split(RULES_END)[1];
-      fileContent =
-        beforeMarker +
-        RULES_BEGIN +
-        "\n" +
-        WARNING +
-        "\n\n" +
-        rulesContent +
-        "\n\n" +
-        RULES_END +
-        afterMarker;
+      const beforeMarker = existingContent.split(RULES_BEGIN)[0];
+      const afterMarker = existingContent.split(RULES_END)[1];
+      fileContent = beforeMarker + formattedRulesBlock + afterMarker;
     } else {
       // Preserve the existing content and append markers
-      const existingContent = fileContent;
-
       // Ensure there's proper spacing between existing content and markers
       let separator = "";
       if (!existingContent.endsWith("\n")) {
@@ -53,21 +58,11 @@ export function writeWindsurfRules(
       }
 
       // Create the new file content with preserved original content
-      fileContent =
-        existingContent +
-        separator +
-        RULES_BEGIN +
-        "\n" +
-        WARNING +
-        "\n\n" +
-        rulesContent +
-        "\n\n" +
-        RULES_END;
+      fileContent = existingContent + separator + formattedRulesBlock;
     }
   } else {
     // Create new file with markers and content
-    fileContent =
-      RULES_BEGIN + "\n" + WARNING + "\n\n" + rulesContent + "\n\n" + RULES_END;
+    fileContent = formattedRulesBlock;
   }
 
   fs.writeFileSync(rulesFilePath, fileContent);

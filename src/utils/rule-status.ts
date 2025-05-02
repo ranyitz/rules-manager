@@ -1,6 +1,5 @@
 import fs from "fs-extra";
 import path from "node:path";
-import os from "node:os";
 
 /**
  * Get the IDE-specific rule installation paths
