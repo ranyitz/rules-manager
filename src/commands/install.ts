@@ -9,7 +9,10 @@ import {
   getRuleSource,
 } from "../utils/config";
 import { installNpmRule } from "../resolvers/npm-resolver";
-import { installLocalRule } from "../resolvers/local-resolver";
+import {
+  installLocalRule,
+  writeCollectedWindsurfRules,
+} from "../resolvers/local-resolver";
 import { detectRuleType } from "../utils/rule-detector";
 import { Config } from "../types";
 
@@ -65,6 +68,10 @@ export async function installCommand(): Promise<void> {
           break;
         case "local":
           await installLocalRule(ruleName, ruleSource, config.ides);
+          // Write all collected Windsurf rules
+          if (config.ides.includes("windsurf")) {
+            writeCollectedWindsurfRules();
+          }
           break;
         default:
           console.log(chalk.yellow(`Unknown rule type: ${ruleType}`));
@@ -164,6 +171,11 @@ export async function installCommand(): Promise<void> {
         chalk.yellow(`Rule "${ruleName}" not found in configuration.`),
       );
       return;
+    }
+
+    // Write all collected Windsurf rules at once
+    if (config.ides.includes("windsurf")) {
+      writeCollectedWindsurfRules();
     }
 
     console.log(chalk.green("\nRules installation completed!"));

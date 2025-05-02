@@ -103,7 +103,72 @@ describe("rules-manager windsurf integration", () => {
     expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");
 
+    // Verify that all rule files were created
+    expect(fileExists(path.join(".rules", "always-rule.md"))).toBe(true);
+    expect(fileExists(path.join(".rules", "opt-in-rule.md"))).toBe(true);
+    expect(fileExists(path.join(".rules", "file-pattern-rule.md"))).toBe(true);
+
+    // Read the .windsurfrules file content
     const windsurfRulesContent = readTestFile(".windsurfrules");
+
+    // Verify that all rules are included in the .windsurfrules file
+    expect(windsurfRulesContent).toContain(".rules/always-rule.md");
+    expect(windsurfRulesContent).toContain(".rules/opt-in-rule.md");
+    expect(windsurfRulesContent).toContain(".rules/file-pattern-rule.md");
+
+    // Verify that rules are categorized correctly
+    expect(windsurfRulesContent).toContain(
+      "The following rules always apply to all files in the project:",
+    );
+    expect(windsurfRulesContent).toContain(
+      "The following rules are only included when explicitly referenced:",
+    );
+
+    // Check that specific rules are in the correct categories
+    const alwaysSection = windsurfRulesContent.indexOf(
+      "The following rules always apply to all files in the project:",
+    );
+    const manualSection = windsurfRulesContent.indexOf(
+      "The following rules are only included when explicitly referenced:",
+    );
+
+    // Verify that always-rule.md is in the always section
+    const alwaysRulePos = windsurfRulesContent.indexOf(".rules/always-rule.md");
+    expect(alwaysRulePos).toBeGreaterThan(alwaysSection);
+    expect(alwaysRulePos).toBeLessThan(manualSection);
+  });
+
+  test("should install multiple rules with a single command", async () => {
+    // Setup test directory from fixture
+    await setupFromFixture(
+      "windsurf-multiple-command",
+      expect.getState().currentTestName,
+    );
+
+    // Run install command to install both rules
+    const { stdout, code } = await runCommand("install");
+
+    expect(code).toBe(0);
+    expect(stdout).toContain("Rules installation completed");
+
+    // Verify both rule files were created
+    expect(fileExists(path.join(".rules", "first-rule.md"))).toBe(true);
+    expect(fileExists(path.join(".rules", "second-rule.md"))).toBe(true);
+
+    // Read the .windsurfrules file content
+    const windsurfRulesContent = readTestFile(".windsurfrules");
+
+    // Verify that both rules are included in the .windsurfrules file
+    expect(windsurfRulesContent).toContain(".rules/first-rule.md");
+    expect(windsurfRulesContent).toContain(".rules/second-rule.md");
+
+    // Verify that rules are categorized correctly
+    expect(windsurfRulesContent).toContain(
+      "The following rules always apply to all files in the project:",
+    );
+    expect(windsurfRulesContent).toContain(
+      "The following rules are available for the AI to include when needed:",
+    );
   });
 
   test("should append markers to existing file without markers", async () => {

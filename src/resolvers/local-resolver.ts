@@ -7,6 +7,13 @@ import {
   generateWindsurfRulesContent,
 } from "../utils/windsurf-writer";
 
+// Store all windsurf rules that need to be written
+let collectedWindsurfRules: {
+  name: string;
+  path: string;
+  metadata: Record<string, any>;
+}[] = [];
+
 /**
  * Install a rule from a local file source
  */
@@ -37,12 +44,6 @@ export function installLocalRule(
 
     const idePaths = getIdePaths();
 
-    const windsurfRules: {
-      name: string;
-      path: string;
-      metadata: Record<string, any>;
-    }[] = [];
-
     for (const ide of ides) {
       if (!idePaths[ide]) {
         throw new Error(`Unknown IDE '${ide}'.`);
@@ -69,7 +70,8 @@ export function installLocalRule(
         const ruleFile = path.join(ruleDir, `${ruleName}.md`);
         fs.writeFileSync(ruleFile, content);
 
-        windsurfRules.push({
+        // Add to collected rules instead of writing immediately
+        collectedWindsurfRules.push({
           name: ruleName,
           path: `.rules/${ruleName}.md`,
           metadata,
@@ -77,17 +79,24 @@ export function installLocalRule(
       }
     }
 
-    // If Windsurf is one of the IDEs, update the .windsurfrules file
-    if (ides.includes("windsurf") && windsurfRules.length > 0) {
-      const windsurfRulesContent = generateWindsurfRulesContent(windsurfRules);
-
-      // Write to .windsurfrules
-      writeWindsurfRules(windsurfRulesContent);
-    }
-
     return true;
   } catch (error) {
     // Re-throw the error instead of logging it
     throw error;
+  }
+}
+
+/**
+ * Write all collected Windsurf rules to the .windsurfrules file
+ */
+export function writeCollectedWindsurfRules(): void {
+  if (collectedWindsurfRules.length > 0) {
+    const windsurfRulesContent = generateWindsurfRulesContent(
+      collectedWindsurfRules,
+    );
+    writeWindsurfRules(windsurfRulesContent);
+
+    // Clear the collected rules after writing
+    collectedWindsurfRules = [];
   }
 }
