@@ -1,6 +1,6 @@
 # Ignore node_modules everywhere
 node_modules
-!tests/e2e-fixtures/*/node_modules/
+!tests/fixtures/*/node_modules/
 
 
 # Build output
@@ -13,7 +13,7 @@ dist/
 
 # Ignore .cursor everywhere
 .cursor
-!tests/e2e-fixtures/*/.cursor/
+!tests/fixtures/*/.cursor/
 
 # Logs
 logs/

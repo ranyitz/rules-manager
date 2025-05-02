@@ -24,12 +24,12 @@ export let testDir = testRootDir;
 /**
  * Fixtures directory
  */
-export const fixturesDir = path.join(projectRoot, "tests/fixtures");
+export const fixturesDir = path.join(projectRoot, "tests/fixtures/unit");
 
 /**
  * E2E test fixtures directory
  */
-export const e2eFixturesDir = path.join(projectRoot, "tests/e2e-fixtures");
+export const e2eFixturesDir = path.join(projectRoot, "tests/fixtures/e2e");
 
 /**
  * Sanitize a filename to be safe for directories
