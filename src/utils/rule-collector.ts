@@ -1,8 +1,60 @@
 import fs from "fs-extra";
 import path from "node:path";
 import { parseMdcFile } from "./mdc-parser";
-import { RuleCollection, RuleContent } from "../types";
-import { findPackageRoot } from "../resolvers/npm-resolver";
+import { RuleCollection, RuleContent, RuleMetadata } from "../types";
+
+/**
+ * Find the root directory of a package by name
+ * @param packageName The name of the package
+ * @returns The absolute path to the package's root directory
+ */
+export function findPackageRoot(packageName: string): string {
+  try {
+    // Method 1: Try to use require.resolve
+    const packageEntry = require.resolve(packageName, {
+      paths: [process.cwd()],
+    });
+
+    // Navigate up until we find a package.json or reach a reasonable limit
+    let currentDir = path.dirname(packageEntry);
+    let iterations = 0;
+    const maxIterations = 3; // Prevent infinite loops
+
+    while (iterations < maxIterations) {
+      // If we found the package.json, this is likely the package root
+      if (fs.existsSync(path.join(currentDir, "package.json"))) {
+        return currentDir;
+      }
+
+      // Move up one directory
+      const parentDir = path.dirname(currentDir);
+
+      // If we've reached the root or haven't changed directory, stop
+      if (parentDir === currentDir) {
+        break;
+      }
+
+      currentDir = parentDir;
+      iterations++;
+    }
+
+    // If we couldn't find package.json, use the directory of the entry point
+    return path.dirname(packageEntry);
+  } catch (error) {
+    // Method 2: Fall back to direct node_modules resolution
+    const nodeModulesPath = path.resolve(
+      process.cwd(),
+      "node_modules",
+      packageName,
+    );
+
+    if (!fs.existsSync(nodeModulesPath)) {
+      throw new Error(`Package '${packageName}' not found in node_modules.`);
+    }
+
+    return nodeModulesPath;
+  }
+}
 
 /**
  * Initialize an empty rule collection
