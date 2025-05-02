@@ -2,8 +2,6 @@
   "ides": ["cursor", "windsurf"],
   "rules": {
     "general": "./rules/general.mdc",
-    "test": "./rules/test.mdc",
-    "pattern": "./rules/pattern.mdc",
-    "workflow": "./rules/workflow.mdc"
+    "test": "./rules/test.mdc"
   }
 }
