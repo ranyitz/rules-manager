@@ -22,14 +22,9 @@ export const testRootDir = path.join(projectRoot, "tmp-test");
 export let testDir = testRootDir;
 
 /**
- * Fixtures directory
- */
-export const fixturesDir = path.join(projectRoot, "tests/fixtures");
-
-/**
  * E2E test fixtures directory
  */
-export const e2eFixturesDir = path.join(projectRoot, "tests/e2e-fixtures");
+export const e2eFixturesDir = path.join(projectRoot, "tests/fixtures");
 
 /**
  * Sanitize a filename to be safe for directories
@@ -98,19 +93,6 @@ export async function runCommand(
       code: error.code || 1,
     };
   }
-}
-
-/**
- * Copy a fixture file to the test directory
- */
-export function copyFixture(
-  fixtureName: string,
-  targetPath: string = "",
-): void {
-  const sourcePath = path.join(fixturesDir, fixtureName);
-  const destPath = path.join(testDir, targetPath || fixtureName);
-
-  fs.copySync(sourcePath, destPath);
 }
 
 /**

@@ -1,6 +1,6 @@
 # E2E Test Fixtures
 
-This directory contains fixtures for e2e tests. Each subdirectory represents an initial state for a test.
+This file documents the fixtures used for E2E tests. All E2E test fixtures are now located in the `tests/fixtures/e2e` directory.
 
 ## Using Fixtures in Tests
 
@@ -29,7 +29,7 @@ Each fixture directory should contain the complete file structure needed for the
 For example, a fixture for testing the list command might contain:
 
 ```
-list-with-multiple-rules/
+tests/fixtures/e2e/list-with-multiple-rules/
 ├── rules.json  # Config with multiple rules
 └── rules/
     ├── rule1.mdc
