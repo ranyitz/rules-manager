@@ -12,7 +12,7 @@ describe("rules-manager init command with fixtures", () => {
   test("should create default config file", async () => {
     await setupFromFixture("init-empty", expect.getState().currentTestName);
 
-    const { stdout, stderr } = await runCommand("init");
+    await runCommand("init");
 
     expect(fileExists("rules.json")).toBe(true);
 
@@ -27,7 +27,7 @@ describe("rules-manager init command with fixtures", () => {
     const customConfig = { ides: ["custom"], rules: {} };
     fs.writeJsonSync(path.join(testDir, "rules.json"), customConfig);
 
-    const { stdout, stderr } = await runCommand("init");
+    await runCommand("init");
 
     expect(fileExists("rules.json")).toBe(true);
 

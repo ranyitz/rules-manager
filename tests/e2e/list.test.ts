@@ -7,7 +7,7 @@ describe("rules-manager list command with fixtures", () => {
       expect.getState().currentTestName,
     );
 
-    const { stdout, stderr, code } = await runCommand("list");
+    const { stdout, code } = await runCommand("list");
 
     expect(code).toBe(0);
 

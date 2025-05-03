@@ -3,10 +3,8 @@ import {
   runCommand,
   fileExists,
   readTestFile,
-  testDir,
 } from "./helpers";
 import path from "path";
-import fs from "fs-extra";
 
 describe("README example workflow with fixtures", () => {
   test("should follow complete README example flow with simplified command", async () => {
