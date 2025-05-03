@@ -8,7 +8,7 @@ module.exports = {
   verbose: true,
   clearMocks: true,
   resetMocks: false,
-  testTimeout: 30000, // Longer timeout for e2e tests
-  globalSetup: "<rootDir>/tests/e2e/global-setup.ts", // Add global setup
+  testTimeout: 30000,
+  globalSetup: "<rootDir>/tests/e2e/global-setup.ts",
   setupFilesAfterEnv: ["./tests/setup.ts"],
 };

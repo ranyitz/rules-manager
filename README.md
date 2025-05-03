@@ -164,6 +164,7 @@ Rules stored locally in your project or filesystem. Any path containing slashes 
 ## Supported IDEs
 
 - **Cursor**: Rules are installed as individual `.mdc` files in the Cursor rules directory (`.cursor/rules/`)
+- **Windsurf**: Rules are installed in the `.rules` directory which should be added to your `.gitignore` file. Our approach for Windsurf is to create links from the `.windsurfrules` file to the respective rules in the `.rules` directory.
 
 ## Commands
 
