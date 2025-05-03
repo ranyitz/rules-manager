@@ -26,7 +26,7 @@ export function detectRuleType(source: string): "npm" | "local" {
   }
 
   // Check if it's an npm package with a direct node_modules reference
-  const packageName = source.split(/[\/\\]/)[0]; // Support both slash types
+  const packageName = source.split(/[/\\]/)[0]; // Support both slash types
   if (fs.existsSync(path.resolve(process.cwd(), "node_modules", packageName))) {
     return "npm";
   }
@@ -35,7 +35,7 @@ export function detectRuleType(source: string): "npm" | "local" {
   try {
     require.resolve(packageName, { paths: [process.cwd()] });
     return "npm";
-  } catch (e) {
+  } catch {
     // If we couldn't resolve it as an npm package, assume it's a local path
     return "local";
   }

@@ -72,14 +72,18 @@ export function writeWindsurfRules(
  * Generate the Windsurf rules content based on rule files
  */
 export function generateWindsurfRulesContent(
-  ruleFiles: { name: string; path: string; metadata: Record<string, any> }[],
+  ruleFiles: {
+    name: string;
+    path: string;
+    metadata: Record<string, string | boolean | string[]>;
+  }[],
 ): string {
   const alwaysRules: string[] = [];
   const autoAttachedRules: Array<{ path: string; glob: string }> = [];
   const agentRequestedRules: string[] = [];
   const manualRules: string[] = [];
 
-  ruleFiles.forEach(({ name, path, metadata }) => {
+  ruleFiles.forEach(({ path, metadata }) => {
     // Determine rule type based on metadata
     if (
       metadata.type === "always" ||
@@ -88,14 +92,15 @@ export function generateWindsurfRulesContent(
     ) {
       alwaysRules.push(path);
     } else if (metadata.type === "auto-attached" || metadata.globs) {
-      // Get the glob pattern from metadata
-      const globPattern =
-        (metadata.globs &&
-          (Array.isArray(metadata.globs)
+      const globPattern: string | undefined =
+        typeof metadata.globs === "string" || Array.isArray(metadata.globs)
+          ? Array.isArray(metadata.globs)
             ? metadata.globs.join(", ")
-            : metadata.globs)) ||
-        "*";
-      autoAttachedRules.push({ path, glob: globPattern });
+            : metadata.globs
+          : undefined;
+      if (globPattern !== undefined) {
+        autoAttachedRules.push({ path, glob: globPattern });
+      }
     } else if (metadata.type === "agent-requested" || metadata.description) {
       agentRequestedRules.push(path);
     } else {

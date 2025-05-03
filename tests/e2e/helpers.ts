@@ -6,6 +6,12 @@ import { rimraf } from "rimraf";
 
 const execPromise = promisify(exec);
 
+interface ExecError extends Error {
+  stdout?: string;
+  stderr?: string;
+  code?: number;
+}
+
 /**
  * The root directory of the project
  */
@@ -86,11 +92,12 @@ export async function runCommand(
     const { stdout, stderr } = await execPromise(command, { cwd: testDir });
 
     return { stdout, stderr, code: 0 };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const execError = error as ExecError;
     return {
-      stdout: error.stdout || "",
-      stderr: error.stderr || "",
-      code: error.code || 1,
+      stdout: execError.stdout || "",
+      stderr: execError.stderr || "",
+      code: execError.code || 1,
     };
   }
 }

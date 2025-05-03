@@ -1,7 +1,3 @@
-// Global test setup
-import fs from "fs-extra";
-import path from "path";
-
 // Extend the Jest timeout for all tests
 jest.setTimeout(10000);
 

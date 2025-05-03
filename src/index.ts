@@ -7,6 +7,7 @@ import { installCommand } from "./commands/install";
 import { listCommand } from "./commands/list";
 
 // Define version from package.json
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const pkg = require("../package.json");
 
 // Parse arguments
@@ -31,7 +32,6 @@ if (args["--version"]) {
 
 // Get the command (first non-flag argument)
 const command = args._.length > 0 ? args._[0] : null;
-const commandArgs = args._.slice(1);
 
 // Execute the appropriate command
 switch (command) {

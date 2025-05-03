@@ -6,7 +6,7 @@ import fs from "fs-extra";
  * https://docs.cursor.com/context/rules
  */
 export function parseMdcFile(filePath: string): {
-  metadata: Record<string, any>;
+  metadata: Record<string, boolean | string | string[]>;
   content: string;
 } {
   const fileContent = fs.readFileSync(filePath, "utf8");
@@ -29,16 +29,16 @@ export function parseMdcFile(filePath: string): {
   const metadataStr = fileContent.substring(3, endOfMetadata).trim();
   const content = fileContent.substring(endOfMetadata + 3).trim();
 
-  const metadata: Record<string, any> = {};
+  const metadata: Record<string, boolean | string | string[]> = {};
 
   metadataStr.split("\n").forEach((line) => {
     const colonIndex = line.indexOf(":");
     if (colonIndex !== -1) {
       const key = line.substring(0, colonIndex).trim();
-      let valueStr = line.substring(colonIndex + 1).trim();
+      const valueStr = line.substring(colonIndex + 1).trim();
 
       // Handle different value types
-      let value: any;
+      let value: boolean | string | string[] = "";
 
       if (valueStr === "true") {
         value = true;

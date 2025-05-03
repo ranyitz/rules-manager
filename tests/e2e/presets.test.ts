@@ -1,11 +1,9 @@
-import fs from "fs-extra";
 import path from "path";
 import {
   setupFromFixture,
   runCommand,
   fileExists,
   readTestFile,
-  testDir,
 } from "./helpers";
 
 describe("Presets with fixtures", () => {

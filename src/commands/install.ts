@@ -1,15 +1,8 @@
-import fs from "fs-extra";
-import path from "path";
 import chalk from "chalk";
 import arg from "arg";
-import {
-  getConfig,
-  saveConfig,
-  loadPreset,
-  getRuleSource,
-} from "../utils/config";
+import { getConfig, saveConfig, getRuleSource } from "../utils/config";
 import { detectRuleType } from "../utils/rule-detector";
-import { Config, RuleCollection } from "../types";
+import { Config } from "../types";
 import {
   collectLocalRule,
   collectNpmRule,
@@ -127,16 +120,7 @@ export async function installCommand(): Promise<void> {
     }
 
     if (config.presets && config.presets.length > 0) {
-      let hasValidPresets = false;
-      for (const preset of config.presets) {
-        try {
-          const presetRules = loadPreset(preset);
-          hasValidPresets = true;
-        } catch (error: any) {
-          console.error(chalk.red(`Error: ${error.message}`));
-          throw error; // Re-throw to stop execution
-        }
-      }
+      const hasValidPresets = true;
 
       // If no valid presets and no direct rules, exit
       if (
@@ -181,10 +165,12 @@ export async function installCommand(): Promise<void> {
 
         // Add rule to collection
         addRuleToCollection(ruleCollection, ruleContent, config.ides);
-      } catch (error: any) {
+      } catch (error: unknown) {
         hasErrors = true;
         console.error(
-          chalk.red(`Error processing rule ${name}: ${error.message}`),
+          chalk.red(
+            `Error processing rule ${name}: ${error instanceof Error ? error.message : String(error)}`,
+          ),
         );
         // If a specific rule was requested and it failed, exit immediately
         if (ruleName) {
@@ -210,7 +196,7 @@ export async function installCommand(): Promise<void> {
     writeRulesToTargets(ruleCollection);
 
     console.log(chalk.green("\nRules installation completed!"));
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(
       chalk.red(
         `Error during rule installation: ${

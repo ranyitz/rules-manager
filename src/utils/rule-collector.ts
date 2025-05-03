@@ -1,7 +1,7 @@
 import fs from "fs-extra";
 import path from "node:path";
 import { parseMdcFile } from "./mdc-parser";
-import { RuleCollection, RuleContent, RuleMetadata } from "../types";
+import { RuleCollection, RuleContent } from "../types";
 
 /**
  * Find the root directory of a package by name
@@ -40,7 +40,7 @@ export function findPackageRoot(packageName: string): string {
 
     // If we couldn't find package.json, use the directory of the entry point
     return path.dirname(packageEntry);
-  } catch (error) {
+  } catch {
     // Method 2: Fall back to direct node_modules resolution
     const nodeModulesPath = path.resolve(
       process.cwd(),

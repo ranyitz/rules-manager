@@ -1,36 +1,21 @@
 import fs from "fs-extra";
 import path from "path";
 import chalk from "chalk";
-import arg from "arg";
 
-// Default configuration
 const defaultConfig = {
   ides: ["cursor"],
   rules: {},
 };
 
 export function initCommand(): void {
-  // Parse command-specific arguments
-  const args = arg(
-    {
-      // Removed the --force flag
-    },
-    {
-      permissive: true,
-      argv: process.argv.slice(3), // Skip the first two args and the command name
-    },
-  );
-
   const configPath = path.join(process.cwd(), "rules.json");
 
-  // Check if config file already exists
   if (fs.existsSync(configPath)) {
     console.log(chalk.yellow("Configuration file already exists!"));
     return;
   }
 
   try {
-    // Create config file
     fs.writeJsonSync(configPath, defaultConfig, { spaces: 2 });
     console.log(chalk.green("Configuration file created successfully!"));
     console.log(`Configuration file location: ${chalk.blue(configPath)}`);

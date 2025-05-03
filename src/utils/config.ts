@@ -3,12 +3,6 @@ import path from "node:path";
 import { Config, Rules } from "../types";
 import { detectRuleType } from "./rule-detector";
 
-interface RuleInfo {
-  path: string;
-  source?: string;
-}
-
-// Define a more specific type for Config with metadata
 interface ConfigWithMeta extends Config {
   __ruleSources?: Record<string, string>;
 }
@@ -25,12 +19,10 @@ export function getFullPresetPath(presetPath: string): string | null {
 
     if (ruleType === "npm") {
       try {
-        // For npm packages, resolve from node_modules
         fullPresetPath = require.resolve(presetPath, {
           paths: [process.cwd()],
         });
-      } catch (error) {
-        // Try a direct path approach for tests
+      } catch {
         const directPath = path.join(process.cwd(), "node_modules", presetPath);
         if (fs.existsSync(directPath)) {
           fullPresetPath = directPath;
@@ -44,7 +36,7 @@ export function getFullPresetPath(presetPath: string): string | null {
     }
 
     return fs.existsSync(fullPresetPath) ? fullPresetPath : null;
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -53,35 +45,33 @@ export function getFullPresetPath(presetPath: string): string | null {
  * Load a preset file and return its rules
  */
 export function loadPreset(presetPath: string): Rules | null {
-  try {
-    const fullPresetPath = getFullPresetPath(presetPath);
+  const fullPresetPath = getFullPresetPath(presetPath);
 
-    if (!fullPresetPath) {
-      throw new Error(
-        `Error loading preset: File not found: ${presetPath}. Make sure the package is installed in your project.`,
-      );
-    }
-
-    const presetContent = fs.readFileSync(fullPresetPath, "utf8");
-    let preset;
-
-    try {
-      preset = JSON.parse(presetContent);
-    } catch (error) {
-      throw new Error(`Error loading preset: Invalid JSON in ${presetPath}`);
-    }
-
-    if (!preset.rules || typeof preset.rules !== "object") {
-      throw new Error(
-        `Error loading preset: Invalid format in ${presetPath} - missing or invalid 'rules' object`,
-      );
-    }
-
-    return preset.rules;
-  } catch (error) {
-    // Re-throw the error instead of logging it
-    throw error;
+  if (!fullPresetPath) {
+    throw new Error(
+      `Error loading preset: File not found: ${presetPath}. Make sure the package is installed in your project.`,
+    );
   }
+
+  const presetContent = fs.readFileSync(fullPresetPath, "utf8");
+  let preset;
+
+  try {
+    preset = JSON.parse(presetContent);
+  } catch (error: unknown) {
+    const parseError = error as SyntaxError;
+    throw new Error(
+      `Error loading preset: Invalid JSON in ${presetPath}: ${parseError.message}`,
+    );
+  }
+
+  if (!preset.rules || typeof preset.rules !== "object") {
+    throw new Error(
+      `Error loading preset: Invalid format in ${presetPath} - missing or invalid 'rules' object`,
+    );
+  }
+
+  return preset.rules;
 }
 
 /**
