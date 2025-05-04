@@ -10,7 +10,7 @@ Development teams struggle with:
 - **Knowledge Silos**: Best practices remain trapped in individual projects
 - **Change Management**: No efficient way to update and distribute new standards
 
-As our developers increasingly adopt AI-powered IDEs like Cursor and Windsurf, we have an opportunity to enforce best practices through "rules." However, these rules are typically isolated within individual developers or projects.
+As developers increasingly adopt AI-powered IDEs like Cursor and Windsurf, we have an opportunity to enforce best practices through "rules." However, these rules are typically isolated within individual developers or projects.
 
 **rules-manager** is a CLI tool that helps streamline rule management:
 
