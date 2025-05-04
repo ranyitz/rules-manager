@@ -16,7 +16,7 @@ As developers increasingly adopt AI-powered IDEs like Cursor and Windsurf, we ha
 
 - 🏛️ **Single Source of Truth**: Define, maintain and version-control all AI IDE rules in one central repository
 - 📦 **Seamless Distribution**: Automatically synchronize the latest rules to developers' local projects using npm packages
-- 🌐 **Cross-IDE Support**: Supports multiple AI-powered IDEs (Cursor, Windsurf, etc.)
+- 🌐 **Cross-IDE Support**: Supports multiple AI-powered IDEs (Cursor, Windsurf)
 
 ## Getting Started
 
@@ -53,7 +53,7 @@ In your project's `rules.json`, reference the package and the specific rule:
 ```json
 {
   "scripts": {
-    "postinstall": "npx rules-manager install"
+    "postinstall": "npx -y rules-manager install"
   }
 }
 ```
@@ -99,7 +99,7 @@ Here is a package to demonstrate how rules manager works:
 npm install --save-dev pirate-coding-rule
 
 # Install the rule via the rules-manager CLI
-npx rules-manager install pirate-coding pirate-coding-rule/rule.mdc
+npx -y rules-manager install pirate-coding pirate-coding-rule/rule.mdc
 ```
 
 This command will:
@@ -200,10 +200,10 @@ npx rules-manager install [rule-name] [rule-source]
 
 ```bash
 # Install all configured rules
-npx rules-manager install
+npx -y rules-manager install
 
 # Install a rule from an npm package and update configuration
-npx rules-manager install react-best-practices @my-team/ai-tools/react-best-practices.mdc
+npx -y rules-manager install react-best-practices @my-team/ai-tools/react-best-practices.mdc
 ```
 
 ## Contributing
