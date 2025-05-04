@@ -24,8 +24,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint",
-    "prepare": "husky",
-    "postinstall": "npx ts-node src/index.ts install",
+    "prepare": "husky && npx ts-node src/index.ts install",
     "version": "auto-changelog -p && git add CHANGELOG.md"
   },
   "keywords": [
