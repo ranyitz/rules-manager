@@ -37,7 +37,7 @@ Consider the following npm package structure:
 
 1. **Point to the path within the npm package**
 
-In your project's `rules.json`, reference the package and the specific rule:
+In your project's `aicm.json`, reference the package and the specific rule:
 
 ```json
 {
@@ -81,12 +81,12 @@ Create a JSON file with your rule definitions:
 
 2. **Reference the preset in your project**
 
-In your project's `rules.json`, reference the preset:
+In your project's `aicm.json`, reference the preset:
 
 ```json
 {
   "ides": ["cursor"],
-  "presets": ["@myteam/ai-tools/my-rule.json"]
+  "presets": ["@myteam/ai-tools/my-aicm.json"]
 }
 ```
 
@@ -106,7 +106,7 @@ npx -y aicm install pirate-coding pirate-coding-rule/rule.mdc
 
 This command will:
 
-1. Create a `rules.json` file if it doesn't exist
+1. Create a `aicm.json` file if it doesn't exist
 2. Add the rule to the configuration
 3. Install the rule to `.cursor/rules/`
 
@@ -118,12 +118,12 @@ To prevent [prompt-injection](https://en.wikipedia.org/wiki/Prompt_injection), u
 
 ## Configuration
 
-aicm uses a JSON configuration file (`rules.json`) in your project root directory.
+aicm uses a JSON configuration file (`aicm.json`) in your project root directory.
 
 ```json
 {
   "ides": ["cursor"],
-  "presets": ["@my-team/ai-tools/my-rules.json"],
+  "presets": ["@my-team/ai-tools/my-aicm.json"],
   "rules": {
     "team-standards": "@my-team/ai-tools/rules/team-standards.mdc"
   }

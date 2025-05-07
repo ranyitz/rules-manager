@@ -31,7 +31,7 @@ For example, a fixture for testing the list command might contain:
 
 ```
 tests/fixtures/e2e/list-with-multiple-rules/
-├── rules.json  # Config with multiple rules
+├── aicm.json  # Config with multiple rules
 └── rules/
     ├── rule1.mdc
     └── rule3.mdc

@@ -8,7 +8,7 @@ const defaultConfig = {
 };
 
 export function initCommand(): void {
-  const configPath = path.join(process.cwd(), "rules.json");
+  const configPath = path.join(process.cwd(), "aicm.json");
 
   if (fs.existsSync(configPath)) {
     console.log(chalk.yellow("Configuration file already exists!"));
@@ -20,9 +20,7 @@ export function initCommand(): void {
     console.log(chalk.green("Configuration file created successfully!"));
     console.log(`Configuration file location: ${chalk.blue(configPath)}`);
     console.log(`\nNext steps:`);
-    console.log(
-      `  1. Edit ${chalk.blue("rules.json")} to configure your rules`,
-    );
+    console.log(`  1. Edit ${chalk.blue("aicm.json")} to configure your rules`);
     console.log(`  2. Run ${chalk.blue("npx aicm install")} to install rules`);
   } catch (error) {
     console.error(chalk.red("Error creating configuration file:"), error);

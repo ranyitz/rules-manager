@@ -119,7 +119,7 @@ export function readTestFile(filePath: string): string {
     return fs.readFileSync(fullPath, "utf8");
   } catch (error) {
     // Handle case where the file doesn't exist yet
-    if (filePath === "rules.json") {
+    if (filePath === "aicm.json") {
       // Return a basic default config that matches what would be created by init
       return JSON.stringify(
         {
