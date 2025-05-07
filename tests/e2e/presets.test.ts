@@ -89,6 +89,21 @@ describe("Presets with fixtures", () => {
     expect(npmRuleContent).toContain("NPM Package Rule");
   });
 
+  test("should support shorthand npm directory preset loading (loads aicm.json from directory)", async () => {
+    await setupFromFixture("presets-npm", expect.getState().currentTestName);
+
+    const { code } = await runCommand("install");
+
+    expect(code).toBe(0);
+    expect(fileExists(path.join(".cursor", "rules", "npm-rule.mdc"))).toBe(
+      true,
+    );
+    const npmRuleContent = readTestFile(
+      path.join(".cursor", "rules", "npm-rule.mdc"),
+    );
+    expect(npmRuleContent).toContain("NPM Package Rule");
+  });
+
   test("should handle errors with missing rule files", async () => {
     await setupFromFixture(
       "presets-missing-rules",
