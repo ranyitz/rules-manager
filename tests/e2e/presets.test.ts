@@ -58,6 +58,15 @@ describe("Presets with fixtures", () => {
       path.join(".cursor", "rules", "local-rule.mdc"),
     );
     expect(localRuleContent).toContain("Local Rule");
+
+    // Assert .cursor/mcp.json exists and contains the preset-mcp
+    const mcpPath = path.join(".cursor", "mcp.json");
+    expect(fileExists(mcpPath)).toBe(true);
+    const mcpConfig = JSON.parse(readTestFile(mcpPath));
+    expect(mcpConfig["preset-mcp"]).toMatchObject({
+      command: "./scripts/preset-mcp.sh",
+      env: { MCP_TOKEN: "preset" },
+    });
   });
 
   test("should handle npm package presets from @company/ai-rules", async () => {
