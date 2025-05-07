@@ -14,7 +14,7 @@ export function listCommand(): void {
 
   if (!config.rules || Object.keys(config.rules).length === 0) {
     console.log(chalk.yellow("No rules defined in configuration."));
-    console.log(`Edit your ${chalk.blue("rules.json")} file to add rules.`);
+    console.log(`Edit your ${chalk.blue("aicm.json")} file to add rules.`);
     return;
   }
 

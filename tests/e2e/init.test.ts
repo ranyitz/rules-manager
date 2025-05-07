@@ -14,9 +14,9 @@ describe("aicm init command with fixtures", () => {
 
     await runCommand("init");
 
-    expect(fileExists("rules.json")).toBe(true);
+    expect(fileExists("aicm.json")).toBe(true);
 
-    const config = JSON.parse(readTestFile("rules.json"));
+    const config = JSON.parse(readTestFile("aicm.json"));
     expect(config.ides).toBeDefined();
     expect(config.rules).toBeDefined();
   });
@@ -25,13 +25,13 @@ describe("aicm init command with fixtures", () => {
     await setupFromFixture("init-empty", expect.getState().currentTestName);
 
     const customConfig = { ides: ["custom"], rules: {} };
-    fs.writeJsonSync(path.join(testDir, "rules.json"), customConfig);
+    fs.writeJsonSync(path.join(testDir, "aicm.json"), customConfig);
 
     await runCommand("init");
 
-    expect(fileExists("rules.json")).toBe(true);
+    expect(fileExists("aicm.json")).toBe(true);
 
-    const config = JSON.parse(readTestFile("rules.json"));
+    const config = JSON.parse(readTestFile("aicm.json"));
     expect(config.ides).toEqual(["custom"]);
   });
 });

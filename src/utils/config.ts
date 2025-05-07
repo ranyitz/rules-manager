@@ -7,7 +7,7 @@ interface ConfigWithMeta extends Config {
   __ruleSources?: Record<string, string>;
 }
 
-const CONFIG_FILE = "rules.json";
+const CONFIG_FILE = "aicm.json";
 
 /**
  * Get the full path to a preset file
@@ -141,7 +141,7 @@ function mergePresetRules(
 }
 
 /**
- * Get the configuration from the rules.json file and merge with any presets
+ * Get the configuration from the aicm.json file and merge with any presets
  */
 export function getConfig(): Config | null {
   const config = readConfigFile();
@@ -165,7 +165,7 @@ export function getRuleSource(
 }
 
 /**
- * Save the configuration to the rules.json file
+ * Save the configuration to the aicm.json file
  */
 export function saveConfig(config: Config): boolean {
   const configPath = path.join(process.cwd(), CONFIG_FILE);
