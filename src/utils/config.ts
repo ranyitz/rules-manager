@@ -107,13 +107,19 @@ function mergePresetRules(
   presetRules: Rules,
   presetPath: string,
 ): void {
-  // Add preset rules, but don't override existing rules
   for (const [ruleName, rulePath] of Object.entries(presetRules)) {
-    // Only add if not already defined in config
-    if (!config.rules[ruleName]) {
+    // Cancel if set to false in config
+    if (
+      Object.prototype.hasOwnProperty.call(config.rules, ruleName) &&
+      config.rules[ruleName] === false
+    ) {
+      delete config.rules[ruleName];
+      if (config.__ruleSources) delete config.__ruleSources[ruleName];
+      continue;
+    }
+    // Only add if not already defined in config (override handled by config)
+    if (!Object.prototype.hasOwnProperty.call(config.rules, ruleName)) {
       config.rules[ruleName] = rulePath;
-
-      // Store the source preset path in metadata
       config.__ruleSources = config.__ruleSources || {};
       config.__ruleSources[ruleName] = presetPath;
     }
@@ -129,7 +135,16 @@ function mergePresetMcpServers(
 ): void {
   if (!config.mcpServers) config.mcpServers = {};
   for (const [serverName, serverConfig] of Object.entries(presetMcpServers)) {
-    if (!config.mcpServers[serverName]) {
+    // Cancel if set to false in config
+    if (
+      Object.prototype.hasOwnProperty.call(config.mcpServers, serverName) &&
+      config.mcpServers[serverName] === false
+    ) {
+      delete config.mcpServers[serverName];
+      continue;
+    }
+    // Only add if not already defined in config (override handled by config)
+    if (!Object.prototype.hasOwnProperty.call(config.mcpServers, serverName)) {
       config.mcpServers[serverName] = serverConfig;
     }
   }

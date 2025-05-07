@@ -22,6 +22,7 @@ export function listCommand(): void {
   console.log(chalk.dim("─".repeat(50)));
 
   for (const [ruleName, source] of Object.entries(config.rules)) {
+    if (source === false) continue; // skip canceled rules
     const ruleType = detectRuleType(source);
     const status = checkRuleStatus(ruleName, ruleType, config.ides);
     const statusColor = status

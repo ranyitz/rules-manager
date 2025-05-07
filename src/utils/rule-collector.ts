@@ -101,9 +101,13 @@ export function addRuleToCollection(
  */
 export function collectLocalRule(
   ruleName: string,
-  source: string,
+  source: string | false,
   ruleBasePath?: string,
 ): RuleContent {
+  if (source === false)
+    throw new Error(
+      `Rule '${ruleName}' is canceled and should not be processed.`,
+    );
   // Resolve path relative to base path or current directory
   let sourcePath = source;
   if (!path.isAbsolute(source)) {
@@ -114,6 +118,12 @@ export function collectLocalRule(
       // Otherwise resolve relative to current directory
       sourcePath = path.resolve(process.cwd(), source);
     }
+  }
+  if (ruleName === "npm-rule") {
+    fs.appendFileSync(
+      "/tmp/aicm-debug.log",
+      `DEBUG: collectLocalRule resolved sourcePath: ${sourcePath}\n`,
+    );
   }
 
   if (!fs.existsSync(sourcePath)) {
@@ -137,7 +147,14 @@ export function collectLocalRule(
  * @param source The npm package source (can include path)
  * @returns The rule content
  */
-export function collectNpmRule(ruleName: string, source: string): RuleContent {
+export function collectNpmRule(
+  ruleName: string,
+  source: string | false,
+): RuleContent {
+  if (source === false)
+    throw new Error(
+      `Rule '${ruleName}' is canceled and should not be processed.`,
+    );
   // Parse source into package and file path
   let packageName: string;
   let packagePath: string;

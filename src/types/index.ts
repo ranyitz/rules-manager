@@ -1,5 +1,5 @@
 // Configuration interfaces
-export type Rule = string;
+export type Rule = string | false;
 
 export interface Rules {
   [ruleName: string]: Rule;
@@ -17,7 +17,8 @@ export type MCPServer =
       env?: Record<string, string>;
       command?: never;
       args?: never;
-    };
+    }
+  | false;
 
 export interface MCPServers {
   [serverName: string]: MCPServer;

@@ -1,0 +1,13 @@
+{
+  "ides": ["cursor"],
+  "presets": ["@company/ai-rules/aicm.json"],
+  "rules": {
+    "npm-rule": "./rules/override-rule.mdc"
+  },
+  "mcpServers": {
+    "preset-mcp": {
+      "command": "./scripts/override-mcp.sh",
+      "env": { "MCP_TOKEN": "override" }
+    }
+  }
+}

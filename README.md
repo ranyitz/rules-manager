@@ -92,6 +92,38 @@ In your project's `aicm.json`, reference the preset:
 
 When you run `npx aicm install`, all rules from the preset will be installed to `.cursor/rules/`.
 
+### Overriding and Canceling Rules and MCP Servers from Presets
+
+When you use a preset, you can override or cancel any rule or mcpServer from the preset in your own `aicm.json` configuration:
+
+- **Override**: To override a rule or mcpServer, specify the same key in your config with a new value. The value in your config will take precedence over the preset.
+- **Cancel**: To cancel (remove) a rule or mcpServer from a preset, set its value to `false` in your config.
+
+**Example:**
+
+```json
+{
+  "ides": ["cursor"],
+  "presets": ["@company/ai-rules/aicm.json"],
+  "rules": {
+    "npm-rule": "./rules/override-rule.mdc", // override
+    "preset-rule": false // cancel
+  },
+  "mcpServers": {
+    "preset-mcp": {
+      "command": "./scripts/override-mcp.sh",
+      "env": { "MCP_TOKEN": "override" }
+    },
+    "another-mcp": false // cancel
+  }
+}
+```
+
+- In this example, `npm-rule` is overridden with a local rule, and `preset-rule` is canceled.
+- The `preset-mcp` server is overridden, and `another-mcp` is canceled.
+
+This allows you to fully customize or selectively disable rules and servers from any preset you use.
+
 ### Demo
 
 Here is a package to demonstrate how aicm works:

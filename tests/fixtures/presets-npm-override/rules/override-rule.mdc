@@ -1,0 +1,6 @@
+---
+name: Override Rule
+description: Rule from local configuration (overrides preset)
+alwaysApply: false
+---
+# Override Rule
