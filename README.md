@@ -106,15 +106,15 @@ When you use a preset, you can override or cancel any rule or mcpServer from the
   "ides": ["cursor"],
   "presets": ["@company/ai-rules/aicm.json"],
   "rules": {
-    "npm-rule": "./rules/override-rule.mdc", // override
-    "preset-rule": false // cancel
+    "rule-from-preset-a": "./rules/override-rule.mdc",
+    "rule-from-preset-b": false
   },
   "mcpServers": {
-    "preset-mcp": {
+    "mcp-from-preset-a": {
       "command": "./scripts/override-mcp.sh",
       "env": { "MCP_TOKEN": "override" }
     },
-    "another-mcp": false // cancel
+    "mcp-from-preset-b": false
   }
 }
 ```
