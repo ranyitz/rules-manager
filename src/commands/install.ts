@@ -76,9 +76,9 @@ export async function installCommand(): Promise<void> {
     // Process each rule
     let hasErrors = false;
     for (const [name, source] of Object.entries(config.rules)) {
+      if (source === false) continue; // skip canceled rules
       // Detect rule type from the source string
       const ruleType = detectRuleType(source);
-
       // Get the base path of the preset file if this rule came from a preset
       const ruleBasePath = getRuleSource(config, name);
 
@@ -118,7 +118,13 @@ export async function installCommand(): Promise<void> {
     writeRulesToTargets(ruleCollection);
 
     // Write mcpServers config to IDE targets
-    writeMcpServersToTargets(config.mcpServers, config.ides);
+    if (config.mcpServers) {
+      // Filter out canceled servers
+      const filteredMcpServers = Object.fromEntries(
+        Object.entries(config.mcpServers).filter(([, v]) => v !== false),
+      );
+      writeMcpServersToTargets(filteredMcpServers, config.ides);
+    }
 
     console.log(chalk.green("\nRules installation completed!"));
   } catch (error: unknown) {
