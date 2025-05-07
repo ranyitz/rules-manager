@@ -11,8 +11,8 @@ With the rise of agentic IDEs like cursor and windsurf, we have an opportunity t
 **aicm** is a CLI tool that helps with distribution of agentic IDE configurations, rules and mcps:
 
 - 🏛️ **Single Source of Truth**: Define, maintain and version-control all AI IDE rules in one central repository
-- 📦 **Seamless Distribution**: Automatically synchronize the latest rules to developers' local projects using npm packages
-- 🌐 **Cross-IDE Support**: Supports multiple AI-powered IDEs (Cursor, Windsurf)
+- 📦 **Distribution**: Automatically synchronize the latest rules to developers' local projects using npm packages
+- 🌐 **Cross-IDE Support**: Supports multiple AI-powered IDEs (Cursor, Windsurf) - Submit Issues / PRs to support other IDEs
 
 ## Getting Started
 
