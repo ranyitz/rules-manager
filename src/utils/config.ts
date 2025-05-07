@@ -43,9 +43,11 @@ export function getFullPresetPath(presetPath: string): string | null {
 }
 
 /**
- * Load a preset file and return its rules
+ * Load a preset file and return its rules and mcpServers
  */
-export function loadPreset(presetPath: string): Rules | null {
+export function loadPreset(
+  presetPath: string,
+): { rules: Rules; mcpServers?: import("../types").MCPServers } | null {
   const fullPresetPath = getFullPresetPath(presetPath);
 
   if (!fullPresetPath) {
@@ -72,11 +74,11 @@ export function loadPreset(presetPath: string): Rules | null {
     );
   }
 
-  return preset.rules;
+  return { rules: preset.rules, mcpServers: preset.mcpServers };
 }
 
 /**
- * Process presets and merge their rules into the config
+ * Process presets and merge their rules and mcpServers into the config
  */
 function processPresets(config: ConfigWithMeta): void {
   if (!config.presets || !Array.isArray(config.presets)) {
@@ -84,13 +86,16 @@ function processPresets(config: ConfigWithMeta): void {
   }
 
   for (const presetPath of config.presets) {
-    const presetRules = loadPreset(presetPath);
-    if (!presetRules) continue;
+    const preset = loadPreset(presetPath);
+    if (!preset) continue;
 
     const fullPresetPath = getFullPresetPath(presetPath);
     if (!fullPresetPath) continue;
 
-    mergePresetRules(config, presetRules, fullPresetPath);
+    mergePresetRules(config, preset.rules, fullPresetPath);
+    if (preset.mcpServers) {
+      mergePresetMcpServers(config, preset.mcpServers);
+    }
   }
 }
 
@@ -111,6 +116,21 @@ function mergePresetRules(
       // Store the source preset path in metadata
       config.__ruleSources = config.__ruleSources || {};
       config.__ruleSources[ruleName] = presetPath;
+    }
+  }
+}
+
+/**
+ * Merge preset mcpServers into the config
+ */
+function mergePresetMcpServers(
+  config: ConfigWithMeta,
+  presetMcpServers: import("../types").MCPServers,
+): void {
+  if (!config.mcpServers) config.mcpServers = {};
+  for (const [serverName, serverConfig] of Object.entries(presetMcpServers)) {
+    if (!config.mcpServers[serverName]) {
+      config.mcpServers[serverName] = serverConfig;
     }
   }
 }

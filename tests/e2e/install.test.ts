@@ -60,6 +60,20 @@ describe("aicm install command with fixtures", () => {
       path.join(".cursor", "rules", "local-rule.mdc"),
     );
     expect(localRuleContent).toContain("alwaysApply: false");
+
+    // Assert .cursor/mcp.json exists and contains both mcps
+    const mcpPath = path.join(".cursor", "mcp.json");
+    expect(fileExists(mcpPath)).toBe(true);
+    const mcpConfig = JSON.parse(readTestFile(mcpPath));
+    expect(mcpConfig["local-mcp"]).toMatchObject({
+      command: "./scripts/start-mcp.sh",
+      args: ["--test"],
+      env: { MCP_TOKEN: "test123" },
+    });
+    expect(mcpConfig["remote-mcp"]).toMatchObject({
+      url: "https://example.com/mcp-config.json",
+      env: { MCP_TOKEN: "test456" },
+    });
   });
 
   test("should handle errors with missing rule files", async () => {

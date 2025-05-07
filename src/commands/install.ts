@@ -10,6 +10,8 @@ import {
   addRuleToCollection,
 } from "../utils/rule-collector";
 import { writeRulesToTargets } from "../utils/rule-writer";
+import fs from "fs-extra";
+import path from "node:path";
 
 // Default configuration
 const defaultConfig: Config = {
@@ -17,6 +19,24 @@ const defaultConfig: Config = {
   rules: {},
   presets: [],
 };
+
+function writeMcpServersToTargets(
+  mcpServers: Config["mcpServers"],
+  ides: string[],
+) {
+  if (!mcpServers) return;
+  for (const ide of ides) {
+    let mcpPath: string | null = null;
+    if (ide === "cursor") {
+      mcpPath = path.join(process.cwd(), ".cursor", "mcp.json");
+      fs.ensureDirSync(path.dirname(mcpPath));
+    }
+    // Windsurf does not support project mcpServers, so skip
+    if (mcpPath) {
+      fs.writeJsonSync(mcpPath, mcpServers, { spaces: 2 });
+    }
+  }
+}
 
 export async function installCommand(): Promise<void> {
   // Parse command-specific arguments
@@ -78,6 +98,9 @@ export async function installCommand(): Promise<void> {
 
       // Write rules to targets
       writeRulesToTargets(ruleCollection);
+
+      // Write mcpServers config to IDE targets
+      writeMcpServersToTargets(config.mcpServers, config.ides);
 
       console.log(chalk.green("\nRules installation completed!"));
       return;
@@ -194,6 +217,9 @@ export async function installCommand(): Promise<void> {
 
     // Write all collected rules to their targets
     writeRulesToTargets(ruleCollection);
+
+    // Write mcpServers config to IDE targets
+    writeMcpServersToTargets(config.mcpServers, config.ides);
 
     console.log(chalk.green("\nRules installation completed!"));
   } catch (error: unknown) {

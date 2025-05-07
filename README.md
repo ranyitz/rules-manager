@@ -131,6 +131,11 @@ Example `aicm.json`:
   "presets": ["@my-team/ai-tools/my-aicm.json"],
   "rules": {
     "team-standards": "@my-team/ai-tools/rules/team-standards.mdc"
+  },
+  "mcpServers": {
+    "remote-mcp": {
+      "url": "https://example.com/mcp-config.json"
+    }
   }
 }
 ```
@@ -144,9 +149,20 @@ Example `aicm.json`:
   - **rule-name**: A unique identifier for the rule
   - **source-location**: Location of the rule file (path within an npm package or local path)
 
-- **presets**: Array of preset configurations to include. Each preset is a path to a JSON file (npm package or local path) that contains additional rules.
-  - Presets allow organizations to bundle a set of rules that can be easily shared across projects
-  - Preset files should contain a `rules` object with the same structure as the main configuration
+- **mcpServers**: Object containing MCP server configurations. Each key is a unique server name, and the value is an object with either:
+
+  - **command**: The command or script to run (with optional **args** and **env**), or
+  - **url**: The URL to fetch the MCP config from (with optional **env**)
+
+- **presets**: Array of preset configurations to include. Each preset is a path to a JSON file (npm package or local path) that contains additional rules and mcpServers.
+
+  - Preset files should contain a `rules` and `mcpServers` objects with the same structure as the main configuration.
+
+### MCP Server Installation
+
+- **Cursor**: MCP server configs are written to `.cursor/mcp.json` (see Cursor docs for latest path).
+- **Windsurf**: Windsurf does not support project mcpServers. MCP server configuration is not installed for Windsurf projects.
+- All installations are per-project.
 
 ### Rule Source Types
 
@@ -170,8 +186,8 @@ Rules stored locally in your project or filesystem. Any path containing slashes 
 
 ## Supported IDEs
 
-- **Cursor**: Rules are installed as individual `.mdc` files in the Cursor rules directory (`.cursor/rules/`)
-- **Windsurf**: Rules are installed in the `.rules` directory which should be added to your `.gitignore` file. Our approach for Windsurf is to create links from the `.windsurfrules` file to the respective rules in the `.rules` directory.
+- **Cursor**: Rules are installed as individual `.mdc` files in the Cursor rules directory (`.cursor/rules/`), mcp servers are installed to `.cursor/mcp.json`
+- **Windsurf**: Rules are installed in the `.rules` directory which should be added to your `.gitignore` file. Our approach for Windsurf is to create links from the `.windsurfrules` file to the respective rules in the `.rules` directory. There is no support for local mcp servers at the moment.
 
 ## Commands
 

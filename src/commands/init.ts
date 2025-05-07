@@ -5,6 +5,7 @@ import chalk from "chalk";
 const defaultConfig = {
   ides: ["cursor"],
   rules: {},
+  mcpServers: {},
 };
 
 export function initCommand(): void {
