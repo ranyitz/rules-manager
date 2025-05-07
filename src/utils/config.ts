@@ -2,6 +2,7 @@ import fs from "fs-extra";
 import path from "node:path";
 import { Config, Rules } from "../types";
 import { detectRuleType } from "./rule-detector";
+import { cosmiconfigSync } from "cosmiconfig";
 
 interface ConfigWithMeta extends Config {
   __ruleSources?: Record<string, string>;
@@ -75,32 +76,6 @@ export function loadPreset(presetPath: string): Rules | null {
 }
 
 /**
- * Read the raw configuration file without processing presets
- */
-function readConfigFile(): ConfigWithMeta | null {
-  const configPath = path.join(process.cwd(), CONFIG_FILE);
-
-  if (!fs.existsSync(configPath)) {
-    return null;
-  }
-
-  try {
-    const configContent = fs.readFileSync(configPath, "utf8");
-    const config = JSON.parse(configContent) as ConfigWithMeta;
-
-    // Initialize rules object if it doesn't exist
-    if (!config.rules) {
-      config.rules = {};
-    }
-
-    return config;
-  } catch (error) {
-    console.error("Error reading configuration file:", error);
-    return null;
-  }
-}
-
-/**
  * Process presets and merge their rules into the config
  */
 function processPresets(config: ConfigWithMeta): void {
@@ -141,15 +116,31 @@ function mergePresetRules(
 }
 
 /**
- * Get the configuration from the aicm.json file and merge with any presets
+ * Load the aicm config using cosmiconfigSync, supporting both aicm.json and package.json.
+ * Returns the config object or null if not found.
  */
-export function getConfig(): Config | null {
-  const config = readConfigFile();
-
-  if (!config) {
+export function loadAicmConfigCosmiconfig(): ConfigWithMeta | null {
+  const explorer = cosmiconfigSync("aicm", {
+    searchPlaces: ["package.json", "aicm.json"],
+  });
+  try {
+    const result = explorer.search();
+    if (!result || !result.config) return null;
+    const config = result.config as ConfigWithMeta;
+    if (!config.rules) config.rules = {};
+    return config;
+  } catch (error) {
+    console.error("Error loading aicm config via cosmiconfig:", error);
     return null;
   }
+}
 
+/**
+ * Get the configuration from aicm.json or package.json (using cosmiconfigSync) and merge with any presets
+ */
+export function getConfig(): Config | null {
+  const config = loadAicmConfigCosmiconfig();
+  if (!config) return null;
   processPresets(config);
   return config;
 }

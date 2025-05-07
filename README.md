@@ -118,7 +118,12 @@ To prevent [prompt-injection](https://en.wikipedia.org/wiki/Prompt_injection), u
 
 ## Configuration
 
-aicm uses a JSON configuration file (`aicm.json`) in your project root directory.
+To configure aicm, use either:
+
+- a root-level `aicm.json` file, **or**
+- an `aicm` key in your project's `package.json`.
+
+Example `aicm.json`:
 
 ```json
 {
