@@ -65,12 +65,13 @@ describe("aicm install command with fixtures", () => {
     const mcpPath = path.join(".cursor", "mcp.json");
     expect(fileExists(mcpPath)).toBe(true);
     const mcpConfig = JSON.parse(readTestFile(mcpPath));
-    expect(mcpConfig["local-mcp"]).toMatchObject({
+    expect(mcpConfig).toHaveProperty("mcpServers");
+    expect(mcpConfig.mcpServers["local-mcp"]).toMatchObject({
       command: "./scripts/start-mcp.sh",
       args: ["--test"],
       env: { MCP_TOKEN: "test123" },
     });
-    expect(mcpConfig["remote-mcp"]).toMatchObject({
+    expect(mcpConfig.mcpServers["remote-mcp"]).toMatchObject({
       url: "https://example.com/mcp-config.json",
       env: { MCP_TOKEN: "test456" },
     });

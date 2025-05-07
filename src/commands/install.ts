@@ -33,7 +33,7 @@ function writeMcpServersToTargets(
     }
     // Windsurf does not support project mcpServers, so skip
     if (mcpPath) {
-      fs.writeJsonSync(mcpPath, mcpServers, { spaces: 2 });
+      fs.writeJsonSync(mcpPath, { mcpServers }, { spaces: 2 });
     }
   }
 }

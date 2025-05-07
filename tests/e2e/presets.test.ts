@@ -63,7 +63,8 @@ describe("Presets with fixtures", () => {
     const mcpPath = path.join(".cursor", "mcp.json");
     expect(fileExists(mcpPath)).toBe(true);
     const mcpConfig = JSON.parse(readTestFile(mcpPath));
-    expect(mcpConfig["preset-mcp"]).toMatchObject({
+    expect(mcpConfig).toHaveProperty("mcpServers");
+    expect(mcpConfig.mcpServers["preset-mcp"]).toMatchObject({
       command: "./scripts/preset-mcp.sh",
       env: { MCP_TOKEN: "preset" },
     });
