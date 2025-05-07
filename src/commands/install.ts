@@ -77,22 +77,10 @@ export async function installCommand(): Promise<void> {
     let hasErrors = false;
     for (const [name, source] of Object.entries(config.rules)) {
       if (source === false) continue; // skip canceled rules
-      if (name === "npm-rule") {
-        fs.appendFileSync(
-          "/tmp/aicm-debug.log",
-          `DEBUG: config.rules['npm-rule']: ${JSON.stringify(source)}\n`,
-        );
-      }
       // Detect rule type from the source string
       const ruleType = detectRuleType(source);
       // Get the base path of the preset file if this rule came from a preset
       const ruleBasePath = getRuleSource(config, name);
-      if (name === "npm-rule") {
-        fs.appendFileSync(
-          "/tmp/aicm-debug.log",
-          `DEBUG: ruleType: ${ruleType} ruleBasePath: ${ruleBasePath}\n`,
-        );
-      }
 
       // Collect the rule based on its type
       try {

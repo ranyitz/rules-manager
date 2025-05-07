@@ -119,12 +119,6 @@ export function collectLocalRule(
       sourcePath = path.resolve(process.cwd(), source);
     }
   }
-  if (ruleName === "npm-rule") {
-    fs.appendFileSync(
-      "/tmp/aicm-debug.log",
-      `DEBUG: collectLocalRule resolved sourcePath: ${sourcePath}\n`,
-    );
-  }
 
   if (!fs.existsSync(sourcePath)) {
     throw new Error(`Source file ${sourcePath} not found.`);
