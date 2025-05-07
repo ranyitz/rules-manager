@@ -8,7 +8,7 @@ import fs from "fs-extra";
 import path from "path";
 import { testDir } from "./helpers";
 
-describe("rules-manager init command with fixtures", () => {
+describe("aicm init command with fixtures", () => {
   test("should create default config file", async () => {
     await setupFromFixture("init-empty", expect.getState().currentTestName);
 

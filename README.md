@@ -1,4 +1,4 @@
-# 📜 rules-manager
+# 📜 aicm
 
 A CLI tool for syncing AI IDE rules across projects
 
@@ -12,7 +12,7 @@ Development teams struggle with:
 
 As developers increasingly adopt AI-powered IDEs like Cursor and Windsurf, we have an opportunity to enforce best practices through "rules." However, these rules are typically isolated within individual developers or projects.
 
-**rules-manager** is a CLI tool that helps streamline rule management:
+**aicm** is a CLI tool that helps streamline AI configuration management:
 
 - 🏛️ **Single Source of Truth**: Define, maintain and version-control all AI IDE rules in one central repository
 - 📦 **Seamless Distribution**: Automatically synchronize the latest rules to developers' local projects using npm packages
@@ -53,7 +53,7 @@ In your project's `rules.json`, reference the package and the specific rule:
 ```json
 {
   "scripts": {
-    "postinstall": "npx -y rules-manager install"
+    "postinstall": "npx -y aicm install"
   }
 }
 ```
@@ -88,18 +88,18 @@ In your project's `rules.json`, reference the preset:
 }
 ```
 
-When you run `npx rules-manager install`, all rules from the preset will be installed to `.cursor/rules/`.
+When you run `npx aicm install`, all rules from the preset will be installed to `.cursor/rules/`.
 
 ### Demo
 
-Here is a package to demonstrate how rules manager works:
+Here is a package to demonstrate how aicm works:
 
 ```bash
 # Install a package containing a rule
 npm install --save-dev pirate-coding-rule
 
-# Install the rule via the rules-manager CLI
-npx -y rules-manager install pirate-coding pirate-coding-rule/rule.mdc
+# Install the rule via the aicm CLI
+npx -y aicm install pirate-coding pirate-coding-rule/rule.mdc
 ```
 
 This command will:
@@ -116,7 +116,7 @@ To prevent [prompt-injection](https://en.wikipedia.org/wiki/Prompt_injection), u
 
 ## Configuration
 
-rules-manager uses a JSON configuration file (`rules.json`) in your project root directory.
+aicm uses a JSON configuration file (`rules.json`) in your project root directory.
 
 ```json
 {
@@ -150,7 +150,7 @@ The type of rule is automatically detected based on the source format:
 Rules provided by NPM packages. The package must be installed either globally or in your project's `node_modules`. Sources that start with `@` or don't contain start with path separators are detected as NPM packages.
 
 ```json
-"react-best-practices": "@my-team/ai-tools/rules-manager-react"
+"react-best-practices": "@my-team/ai-tools/aicm-react"
 ```
 
 #### Local Source
@@ -180,7 +180,7 @@ These options are available for all commands:
 Initializes a new configuration file in your current directory.
 
 ```bash
-npx rules-manager init
+npx aicm init
 ```
 
 ### `install`
@@ -188,7 +188,7 @@ npx rules-manager init
 Installs rules from your configuration to the appropriate IDE locations.
 
 ```bash
-npx rules-manager install [rule-name] [rule-source]
+npx aicm install [rule-name] [rule-source]
 ```
 
 **Options:**
@@ -200,10 +200,10 @@ npx rules-manager install [rule-name] [rule-source]
 
 ```bash
 # Install all configured rules
-npx -y rules-manager install
+npx -y aicm install
 
 # Install a rule from an npm package and update configuration
-npx -y rules-manager install react-best-practices @my-team/ai-tools/react-best-practices.mdc
+npx -y aicm install react-best-practices @my-team/ai-tools/react-best-practices.mdc
 ```
 
 ## Contributing
@@ -226,7 +226,3 @@ npm run test:unit
 # Run only E2E tests
 npm run test:e2e
 ```
-
-## License
-
-MIT

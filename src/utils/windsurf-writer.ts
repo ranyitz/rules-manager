@@ -1,8 +1,8 @@
 import fs from "fs-extra";
 import path from "path";
 
-const RULES_BEGIN = "<!-- RULES-MANAGER:BEGIN -->";
-const RULES_END = "<!-- RULES-MANAGER:END -->";
+const RULES_BEGIN = "<!-- AICM:BEGIN -->";
+const RULES_END = "<!-- AICM:END -->";
 const WARNING =
   "<!-- WARNING: Everything between these markers will be overwritten during installation -->";
 

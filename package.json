@@ -1,10 +1,10 @@
 {
-  "name": "rules-manager",
+  "name": "aicm",
   "version": "0.3.3",
   "description": "A TypeScript CLI tool for managing AI IDE rules across different projects and teams",
   "main": "dist/index.js",
   "bin": {
-    "rules-manager": "./dist/index.js"
+    "aicm": "./dist/index.js"
   },
   "files": [
     "dist",

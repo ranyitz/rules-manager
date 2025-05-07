@@ -31,5 +31,5 @@ yarn-error.log*
 # Temporary test directory
 tmp-test/
 
-# rules-manager
+# aicm
 .rules
