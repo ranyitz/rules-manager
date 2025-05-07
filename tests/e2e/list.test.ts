@@ -1,6 +1,6 @@
 import { setupFromFixture, runCommand } from "./helpers";
 
-describe("rules-manager list command with fixtures", () => {
+describe("aicm list command with fixtures", () => {
   test("should list all rules in the config", async () => {
     await setupFromFixture(
       "list-with-multiple-rules",

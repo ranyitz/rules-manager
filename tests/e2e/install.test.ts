@@ -6,7 +6,7 @@ import {
   readTestFile,
 } from "./helpers";
 
-describe("rules-manager install command with fixtures", () => {
+describe("aicm install command with fixtures", () => {
   test("should show error when no rule is specified", async () => {
     await setupFromFixture(
       "install-no-rules",

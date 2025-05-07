@@ -23,9 +23,7 @@ export function initCommand(): void {
     console.log(
       `  1. Edit ${chalk.blue("rules.json")} to configure your rules`,
     );
-    console.log(
-      `  2. Run ${chalk.blue("npx rules-manager install")} to install rules`,
-    );
+    console.log(`  2. Run ${chalk.blue("npx aicm install")} to install rules`);
   } catch (error) {
     console.error(chalk.red("Error creating configuration file:"), error);
   }

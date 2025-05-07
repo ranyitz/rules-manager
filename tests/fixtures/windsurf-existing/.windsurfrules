@@ -4,10 +4,10 @@ Manually written rules
 Some custom rules content here
 </rules>
 
-<!-- RULES-MANAGER:BEGIN -->
+<!-- AICM:BEGIN -->
 <!-- WARNING: Everything between these markers will be overwritten during installation -->
 
 The following rules apply to all files in the project:
 - .rules/existing-rule.md
 
-<!-- RULES-MANAGER:END -->
+<!-- AICM:END -->

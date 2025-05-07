@@ -1,6 +1,6 @@
 # Test Fixtures
 
-This directory contains all test fixtures for the rules-manager project, organized by test type.
+This directory contains all test fixtures for the aicm project, organized by test type.
 
 ## Directory Structure
 

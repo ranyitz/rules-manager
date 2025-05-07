@@ -8,7 +8,7 @@ import {
   testDir,
 } from "./helpers";
 
-describe("rules-manager windsurf integration", () => {
+describe("aicm windsurf integration", () => {
   test("should install rules to .rules directory and update .windsurfrules", async () => {
     await setupFromFixture("windsurf-basic", expect.getState().currentTestName);
 
@@ -39,8 +39,8 @@ describe("rules-manager windsurf integration", () => {
     expect(fileExists(".windsurfrules")).toBe(true);
     const windsurfRulesContent = readTestFile(".windsurfrules");
 
-    expect(windsurfRulesContent).toContain("<!-- RULES-MANAGER:BEGIN -->");
-    expect(windsurfRulesContent).toContain("<!-- RULES-MANAGER:END -->");
+    expect(windsurfRulesContent).toContain("<!-- AICM:BEGIN -->");
+    expect(windsurfRulesContent).toContain("<!-- AICM:END -->");
 
     expect(windsurfRulesContent).toContain(
       "[*.ts] .rules/file-pattern-rule.md",
@@ -64,8 +64,8 @@ describe("rules-manager windsurf integration", () => {
     expect(windsurfRulesContent).toContain("<rules>");
     expect(windsurfRulesContent).toContain("</rules>");
 
-    expect(windsurfRulesContent).toContain("<!-- RULES-MANAGER:BEGIN -->");
-    expect(windsurfRulesContent).toContain("<!-- RULES-MANAGER:END -->");
+    expect(windsurfRulesContent).toContain("<!-- AICM:BEGIN -->");
+    expect(windsurfRulesContent).toContain("<!-- AICM:END -->");
     expect(windsurfRulesContent).toContain(".rules/new-rule.md");
   });
 
@@ -87,8 +87,8 @@ describe("rules-manager windsurf integration", () => {
     expect(fileExists(".windsurfrules")).toBe(true);
     const windsurfRulesContent = readTestFile(".windsurfrules");
 
-    expect(windsurfRulesContent).toContain("<!-- RULES-MANAGER:BEGIN -->");
-    expect(windsurfRulesContent).toContain("<!-- RULES-MANAGER:END -->");
+    expect(windsurfRulesContent).toContain("<!-- AICM:BEGIN -->");
+    expect(windsurfRulesContent).toContain("<!-- AICM:END -->");
     expect(windsurfRulesContent).toContain(".rules/single-rule.md");
   });
 
@@ -212,11 +212,11 @@ This rule is used to test appending markers to an existing file without markers.
     expect(windsurfRulesContent).toContain("# Existing Windsurf Rules");
     expect(windsurfRulesContent).toContain("These are some existing rules.");
 
-    expect(windsurfRulesContent).toContain("<!-- RULES-MANAGER:BEGIN -->");
-    expect(windsurfRulesContent).toContain("<!-- RULES-MANAGER:END -->");
+    expect(windsurfRulesContent).toContain("<!-- AICM:BEGIN -->");
+    expect(windsurfRulesContent).toContain("<!-- AICM:END -->");
 
     const beginMarkerIndex = windsurfRulesContent.indexOf(
-      "<!-- RULES-MANAGER:BEGIN -->",
+      "<!-- AICM:BEGIN -->",
     );
     const existingContentIndex = windsurfRulesContent.indexOf(
       "# Existing Windsurf Rules",

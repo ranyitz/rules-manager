@@ -100,7 +100,7 @@ export async function installCommand(): Promise<void> {
       console.log(
         `Edit your ${chalk.blue(
           "rules.json",
-        )} file to add rules or use the direct install command: npx rules-manager install <rule-name> <rule-source>`,
+        )} file to add rules or use the direct install command: npx aicm install <rule-name> <rule-source>`,
       );
       return;
     }
@@ -113,7 +113,7 @@ export async function installCommand(): Promise<void> {
         console.log(
           `Edit your ${chalk.blue(
             "rules.json",
-          )} file to add rules or use the direct install command: npx rules-manager install <rule-name> <rule-source>`,
+          )} file to add rules or use the direct install command: npx aicm install <rule-name> <rule-source>`,
         );
         return;
       }
