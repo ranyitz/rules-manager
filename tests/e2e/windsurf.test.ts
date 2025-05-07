@@ -69,29 +69,6 @@ describe("aicm windsurf integration", () => {
     expect(windsurfRulesContent).toContain(".rules/new-rule.md");
   });
 
-  test("should install a single rule to windsurf", async () => {
-    await setupFromFixture(
-      "windsurf-single-rule",
-      expect.getState().currentTestName,
-    );
-
-    const { stdout, code } = await runCommand(
-      "install single-rule ./rules/local-rule.mdc",
-    );
-
-    expect(code).toBe(0);
-    expect(stdout).toContain("Rules installation completed");
-
-    expect(fileExists(path.join(".rules", "single-rule.md"))).toBe(true);
-
-    expect(fileExists(".windsurfrules")).toBe(true);
-    const windsurfRulesContent = readTestFile(".windsurfrules");
-
-    expect(windsurfRulesContent).toContain("<!-- AICM:BEGIN -->");
-    expect(windsurfRulesContent).toContain("<!-- AICM:END -->");
-    expect(windsurfRulesContent).toContain(".rules/single-rule.md");
-  });
-
   test("should handle multiple rule types correctly", async () => {
     await setupFromFixture(
       "windsurf-multiple-types",

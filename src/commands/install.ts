@@ -1,6 +1,5 @@
 import chalk from "chalk";
-import arg from "arg";
-import { getConfig, saveConfig, getRuleSource } from "../utils/config";
+import { getConfig, getRuleSource } from "../utils/config";
 import { detectRuleType } from "../utils/rule-detector";
 import { Config } from "../types";
 import {
@@ -12,13 +11,6 @@ import {
 import { writeRulesToTargets } from "../utils/rule-writer";
 import fs from "fs-extra";
 import path from "node:path";
-
-// Default configuration
-const defaultConfig: Config = {
-  ides: ["cursor", "windsurf"],
-  rules: {},
-  presets: [],
-};
 
 function writeMcpServersToTargets(
   mcpServers: Config["mcpServers"],
@@ -39,93 +31,21 @@ function writeMcpServersToTargets(
 }
 
 export async function installCommand(): Promise<void> {
-  // Parse command-specific arguments
-  const args = arg(
-    {
-      // Removed flags as we'll infer the type from the source
-    },
-    {
-      permissive: true,
-      argv: process.argv.slice(3), // Skip the first two args and the command name
-    },
-  );
-
-  // Get rule name and source if provided
-  const ruleName = args._.length > 0 ? args._[0] : null;
-  const ruleSource = args._.length > 1 ? args._[1] : null;
-
   try {
     // Initialize rule collection
     const ruleCollection = initRuleCollection();
 
-    // If a rule name and source are provided, install directly
-    if (ruleName && ruleSource) {
-      // Detect rule type from the source string
-      const ruleType = detectRuleType(ruleSource);
-
-      // Create config file if it doesn't exist
-      let config = getConfig();
-      if (!config) {
-        config = { ...defaultConfig };
-        console.log(
-          chalk.blue("Configuration file not found. Creating a new one..."),
-        );
-      }
-
-      // Add the rule to the config
-      config.rules[ruleName] = ruleSource;
-
-      // Save the updated config
-      saveConfig(config);
-      console.log(chalk.green("Configuration updated successfully!"));
-
-      // Collect the rule based on its type
-      let ruleContent;
-      switch (ruleType) {
-        case "npm":
-          ruleContent = collectNpmRule(ruleName, ruleSource);
-          break;
-        case "local":
-          ruleContent = collectLocalRule(ruleName, ruleSource);
-          break;
-        default:
-          console.log(chalk.yellow(`Unknown rule type: ${ruleType}`));
-          return;
-      }
-
-      // Add rule to collection
-      addRuleToCollection(ruleCollection, ruleContent, config.ides);
-
-      // Write rules to targets
-      writeRulesToTargets(ruleCollection);
-
-      // Write mcpServers config to IDE targets
-      writeMcpServersToTargets(config.mcpServers, config.ides);
-
-      console.log(chalk.green("\nRules installation completed!"));
-      return;
-    }
-
     // Load configuration
-    let config = getConfig();
+    const config = getConfig();
 
-    // If config doesn't exist, create a new one
+    // If config doesn't exist, print error and exit
     if (!config) {
-      config = { ...defaultConfig };
-      console.log(
-        chalk.blue("Configuration file not found. Creating a new one..."),
+      console.error(
+        chalk.red(
+          "Configuration file not found! Please run 'npx aicm init' to create one.",
+        ),
       );
-      saveConfig(config);
-      console.log(
-        chalk.green("Empty configuration file created successfully!"),
-      );
-      console.log(chalk.yellow("No rules defined in configuration."));
-      console.log(
-        `Edit your ${chalk.blue(
-          "aicm.json",
-        )} file to add rules or use the direct install command: npx aicm install <rule-name> <rule-source>`,
-      );
-      return;
+      process.exit(1);
     }
 
     // Check if rules are defined (either directly or through presets)
@@ -133,11 +53,7 @@ export async function installCommand(): Promise<void> {
       // If there are no presets defined either, show a message
       if (!config.presets || config.presets.length === 0) {
         console.log(chalk.yellow("No rules defined in configuration."));
-        console.log(
-          `Edit your ${chalk.blue(
-            "aicm.json",
-          )} file to add rules or use the direct install command: npx aicm install <rule-name> <rule-source>`,
-        );
+        console.log(`Edit your ${chalk.blue("aicm.json")} file to add rules.`);
         return;
       }
     }
@@ -157,14 +73,9 @@ export async function installCommand(): Promise<void> {
       }
     }
 
-    // Process each rule (or just the specific one if provided)
+    // Process each rule
     let hasErrors = false;
     for (const [name, source] of Object.entries(config.rules)) {
-      // Skip if a specific rule was requested and this isn't it
-      if (ruleName && name !== ruleName) {
-        continue;
-      }
-
       // Detect rule type from the source string
       const ruleType = detectRuleType(source);
 
@@ -195,24 +106,12 @@ export async function installCommand(): Promise<void> {
             `Error processing rule ${name}: ${error instanceof Error ? error.message : String(error)}`,
           ),
         );
-        // If a specific rule was requested and it failed, exit immediately
-        if (ruleName) {
-          throw error;
-        }
       }
     }
 
-    // If there were errors and we're not processing a specific rule, exit with error
-    if (hasErrors && !ruleName) {
+    // If there were errors, exit with error
+    if (hasErrors) {
       throw new Error("One or more rules failed to process");
-    }
-
-    // If a specific rule was requested but not found
-    if (ruleName && !Object.keys(config.rules).includes(ruleName)) {
-      console.log(
-        chalk.yellow(`Rule "${ruleName}" not found in configuration.`),
-      );
-      return;
     }
 
     // Write all collected rules to their targets

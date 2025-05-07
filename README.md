@@ -96,19 +96,36 @@ When you run `npx aicm install`, all rules from the preset will be installed to 
 
 Here is a package to demonstrate how aicm works:
 
-```bash
-# Install a package containing a rule
-npm install --save-dev pirate-coding-rule
+1. Install a package containing a rule
 
-# Install the rule via the aicm CLI
-npx -y aicm install pirate-coding pirate-coding-rule/rule.mdc
+```bash
+npm install --save-dev pirate-coding-rule
 ```
 
-This command will:
+2. Initialize aicm config
 
-1. Create a `aicm.json` file if it doesn't exist
-2. Add the rule to the configuration
-3. Install the rule to `.cursor/rules/`
+```bash
+npx -y aicm init
+```
+
+3. Add the rule to your config file: `aicm.json`
+
+```json
+{
+  "ides": ["cursor"],
+  "rules": {
+    "pirate-coding": "pirate-coding-rule/rule.mdc"
+  }
+}
+```
+
+4. Install all rules from your configuration
+
+```bash
+npx -y aicm install
+```
+
+This command installs all configured rules and MCPs to their IDE-specific locations.
 
 After installation, open Cursor and ask it to do something. Your AI assistant will respond with pirate-themed coding advice.
 
@@ -210,22 +227,18 @@ npx aicm init
 Installs rules from your configuration to the appropriate IDE locations.
 
 ```bash
-npx aicm install [rule-name] [rule-source]
+npx aicm install
 ```
 
 **Options:**
 
-- `[rule-name]`: Optional - Name of a specific rule to install instead of all rules
-- `[rule-source]`: Optional - Source of the rule (npm package or local path)
+- No arguments are supported. All rules are installed from your configuration and any referenced presets.
 
 **Examples:**
 
 ```bash
 # Install all configured rules
 npx -y aicm install
-
-# Install a rule from an npm package and update configuration
-npx -y aicm install react-best-practices @my-team/ai-tools/react-best-practices.mdc
 ```
 
 ## Contributing
@@ -247,4 +260,8 @@ npm run test:unit
 
 # Run only E2E tests
 npm run test:e2e
+```
+
+```
+
 ```
