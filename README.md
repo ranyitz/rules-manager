@@ -6,13 +6,7 @@ A CLI tool for syncing and managing Agentic IDE rules across projects
 
 ## Why
 
-Development teams struggle with:
-
-- **Inconsistent Practices**: Developers apply varying standards across projects
-- **Knowledge Silos**: Best practices remain trapped in individual projects
-- **Change Management**: No efficient way to update and distribute new standards
-
-As developers increasingly adopt AI-powered IDEs like Cursor and Windsurf, we have an opportunity to enforce best practices through rules. However, these rules are typically isolated within individual developers or projects.
+With the rise of agentic IDEs like cursor and windsurf, we have an opportunity to enforce best practices through rules. However, these rules are typically isolated within individual developers or projects.
 
 **aicm** is a CLI tool that helps with distribution of agentic IDE configurations, rules and mcps:
 
@@ -31,8 +25,7 @@ Consider the following npm package structure:
 ├── package.json
 └── rules/
     ├── typescript.mdc
-    ├── react.mdc
-    └── general.mdc
+    └── react.mdc
 ```
 
 1. **Point to the path within the npm package**
@@ -44,8 +37,7 @@ In your project's `aicm.json`, reference the package and the specific rule:
   "ides": ["cursor"],
   "rules": {
     "typescript": "@myteam/ai-tools/rules/typescript.mdc",
-    "react": "@myteam/ai-tools/rules/react.mdc",
-    "general": "@myteam/ai-tools/rules/general.mdc"
+    "react": "@myteam/ai-tools/rules/react.mdc
   }
 }
 ```
@@ -64,17 +56,24 @@ Now the rules will be linked to `.cursor/rules/` when you run `npm install`.
 
 ### Using Presets
 
-Presets allow you to bundle multiple rules into a single configuration that can be shared across projects.
+Presets allow you to bundle multiple rules & mcps into a single configuration that can be shared across projects.
 
 1. **Create a preset package or directory**
 
 Create an npm package with your rule definitions in an `aicm.json` file:
+
+> `@myteam/ai-tools/aicm.json`
 
 ```json
 {
   "rules": {
     "typescript": "./rules/typescript.mdc",
     "react": "./rules/react.mdc"
+  },
+  "mcpServers": {
+    "my-mcp": {
+      "url": "https://example.com/sse"
+    }
   }
 }
 ```
@@ -90,7 +89,7 @@ In your project's `aicm.json`, reference the preset by its npm package or direct
 }
 ```
 
-When you run `npx aicm install`, all rules from the preset will be installed to `.cursor/rules/`.
+When you run `npx aicm install`, all rules from the preset will be installed to `.cursor/rules/` and all mcps from the preset will be installed to `.cursor/mcp.json`.
 
 ### Overriding and Canceling Rules and MCP Servers from Presets
 
@@ -183,7 +182,7 @@ Example `aicm.json`:
   },
   "mcpServers": {
     "remote-mcp": {
-      "url": "https://example.com/mcp-config.json"
+      "url": "https://example.com/sse"
     }
   }
 }
@@ -260,17 +259,6 @@ Installs rules from your configuration to the appropriate IDE locations.
 
 ```bash
 npx aicm install
-```
-
-**Options:**
-
-- No arguments are supported. All rules are installed from your configuration and any referenced presets.
-
-**Examples:**
-
-```bash
-# Install all configured rules
-npx -y aicm install
 ```
 
 ## Contributing
