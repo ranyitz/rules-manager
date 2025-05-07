@@ -261,7 +261,3 @@ npm run test:unit
 # Run only E2E tests
 npm run test:e2e
 ```
-
-```
-
-```
