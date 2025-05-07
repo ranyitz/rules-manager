@@ -6,38 +6,20 @@ import {
 } from "./helpers";
 import path from "path";
 
-describe("README example workflow with fixtures", () => {
-  test("should follow complete README example flow with simplified command", async () => {
-    await setupFromFixture("readme-example", expect.getState().currentTestName);
+describe("README demo example", () => {
+  test("should install all rules from config as shown in the README", async () => {
+    await setupFromFixture("readme-demo", expect.getState().currentTestName);
 
-    const installResult = await runCommand(
-      "install pirate-coding pirate-coding-rule/rule.mdc",
-    );
+    const { stdout, code } = await runCommand("install");
 
-    expect(installResult.code).toBe(0);
-
-    expect(installResult.stdout).toContain(
-      "Configuration file not found. Creating a new one",
-    );
-    expect(installResult.stdout).toContain(
-      "Configuration updated successfully",
-    );
-    expect(installResult.stdout).toContain("Rules installation completed");
-
-    expect(fileExists("aicm.json")).toBe(true);
-
-    const config = JSON.parse(readTestFile("aicm.json"));
-    expect(config.rules["pirate-coding"]).toBe("pirate-coding-rule/rule.mdc");
-
+    expect(code).toBe(0);
+    expect(stdout).toContain("Rules installation completed");
     expect(fileExists(path.join(".cursor", "rules", "pirate-coding.mdc"))).toBe(
       true,
     );
-
     const ruleContent = readTestFile(
       path.join(".cursor", "rules", "pirate-coding.mdc"),
     );
-
-    expect(ruleContent).toContain("Pirate Coding Assistant Rules");
-    expect(ruleContent).toContain("Arr matey!");
+    expect(ruleContent).toContain("pirate");
   });
 });

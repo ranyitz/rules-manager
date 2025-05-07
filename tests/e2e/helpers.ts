@@ -114,26 +114,7 @@ export function fileExists(filePath: string): boolean {
  */
 export function readTestFile(filePath: string): string {
   const fullPath = path.join(testDir, filePath);
-
-  try {
-    return fs.readFileSync(fullPath, "utf8");
-  } catch (error) {
-    // Handle case where the file doesn't exist yet
-    if (filePath === "aicm.json") {
-      // Return a basic default config that matches what would be created by init
-      return JSON.stringify(
-        {
-          ides: ["cursor"],
-          rules: {},
-        },
-        null,
-        2,
-      );
-    }
-
-    // Re-throw for other files
-    throw error;
-  }
+  return fs.readFileSync(fullPath, "utf8");
 }
 
 /**
