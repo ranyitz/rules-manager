@@ -37,7 +37,7 @@ In your project's `aicm.json`, reference the package and the specific rule:
   "ides": ["cursor"],
   "rules": {
     "typescript": "@myteam/ai-tools/rules/typescript.mdc",
-    "react": "@myteam/ai-tools/rules/react.mdc
+    "react": "@myteam/ai-tools/rules/react.mdc"
   }
 }
 ```
