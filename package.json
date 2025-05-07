@@ -1,6 +1,6 @@
 {
   "name": "aicm",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "A TypeScript CLI tool for managing AI IDE rules across different projects and teams",
   "main": "dist/index.js",
   "bin": {
