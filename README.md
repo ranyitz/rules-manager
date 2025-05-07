@@ -1,4 +1,4 @@
-# 📜 aicm
+# 🗂️ aicm
 
 > Agentic IDE Configuration Manager
 
