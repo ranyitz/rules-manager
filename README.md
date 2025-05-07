@@ -66,9 +66,9 @@ Now the rules will be linked to `.cursor/rules/` when you run `npm install`.
 
 Presets allow you to bundle multiple rules into a single configuration that can be shared across projects.
 
-1. **Create a preset file**
+1. **Create a preset package or directory**
 
-Create a JSON file with your rule definitions:
+Create an npm package with your rule definitions in an `aicm.json` file:
 
 ```json
 {
@@ -81,12 +81,12 @@ Create a JSON file with your rule definitions:
 
 2. **Reference the preset in your project**
 
-In your project's `aicm.json`, reference the preset:
+In your project's `aicm.json`, reference the preset by its npm package or directory name:
 
 ```json
 {
   "ides": ["cursor"],
-  "presets": ["@myteam/ai-tools/my-aicm.json"]
+  "presets": ["@myteam/ai-tools"]
 }
 ```
 

@@ -1,4 +1,4 @@
 {
   "ides": ["cursor"],
-  "presets": ["@company/ai-rules/aicm.json"]
+  "presets": ["@company/ai-rules"]
 }

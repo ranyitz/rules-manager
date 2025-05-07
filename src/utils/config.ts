@@ -20,13 +20,22 @@ export function getFullPresetPath(presetPath: string): string | null {
 
     if (ruleType === "npm") {
       try {
+        // Try to resolve as a file first
         fullPresetPath = require.resolve(presetPath, {
           paths: [process.cwd()],
         });
       } catch {
+        // If not a file, check if it's a directory in node_modules
         const directPath = path.join(process.cwd(), "node_modules", presetPath);
         if (fs.existsSync(directPath)) {
-          fullPresetPath = directPath;
+          // If it's a directory, look for aicm.json inside
+          const aicmJsonPath = path.join(directPath, "aicm.json");
+          if (fs.existsSync(aicmJsonPath)) {
+            fullPresetPath = aicmJsonPath;
+          } else {
+            // If aicm.json doesn't exist, treat the directory as invalid
+            return null;
+          }
         } else {
           return null;
         }
