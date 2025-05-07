@@ -5,10 +5,29 @@ export interface Rules {
   [ruleName: string]: Rule;
 }
 
+export type MCPServer =
+  | {
+      command: string;
+      args?: string[];
+      env?: Record<string, string>;
+      url?: never;
+    }
+  | {
+      url: string;
+      env?: Record<string, string>;
+      command?: never;
+      args?: never;
+    };
+
+export interface MCPServers {
+  [serverName: string]: MCPServer;
+}
+
 export interface Config {
   ides: string[];
   rules: Rules;
   presets?: string[];
+  mcpServers?: MCPServers;
 }
 
 // Rule metadata and content models

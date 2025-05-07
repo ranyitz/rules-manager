@@ -3,5 +3,11 @@
   "rules": {
     "general": "./rules/general.mdc",
     "test": "./rules/test.mdc"
+  },
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    }
   }
 }
