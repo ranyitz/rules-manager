@@ -162,7 +162,6 @@ Example `aicm.json`:
 
 - **Cursor**: MCP server configs are written to `.cursor/mcp.json` (see Cursor docs for latest path).
 - **Windsurf**: Windsurf does not support project mcpServers. MCP server configuration is not installed for Windsurf projects.
-- All installations are per-project.
 
 ### Rule Source Types
 
