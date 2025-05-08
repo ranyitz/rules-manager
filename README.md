@@ -91,12 +91,12 @@ In your project's `aicm.json`, reference the preset by its npm package or direct
 
 When you run `npx aicm install`, all rules from the preset will be installed to `.cursor/rules/` and all mcps from the preset will be installed to `.cursor/mcp.json`.
 
-### Overriding and Canceling Rules and MCP Servers from Presets
+### Overriding and Disabling Rules and MCP Servers from Presets
 
-When you use a preset, you can override or cancel any rule or mcpServer from the preset in your own `aicm.json` configuration:
+When you use a preset, you can override or disable any rule or mcpServer from the preset in your own `aicm.json` configuration:
 
 - **Override**: To override a rule or mcpServer, specify the same key in your config with a new value. The value in your config will take precedence over the preset.
-- **Cancel**: To cancel (remove) a rule or mcpServer from a preset, set its value to `false` in your config.
+- **Disable**: To disable a rule or mcpServer from a preset, set its value to `false` in your config.
 
 **Example:**
 
@@ -118,16 +118,11 @@ When you use a preset, you can override or cancel any rule or mcpServer from the
 }
 ```
 
-- In this example, `npm-rule` is overridden with a local rule, and `preset-rule` is canceled.
-- The `preset-mcp` server is overridden, and `another-mcp` is canceled.
-
-This allows you to fully customize or selectively disable rules and servers from any preset you use.
-
 ### Demo
 
-Here is a package to demonstrate how aicm works:
+We'll install an npm package containing a simple rule to demonstrate how aicm works.
 
-1. Install a package containing a rule
+1. Install an npm package containing a rule
 
 ```bash
 npm install --save-dev pirate-coding-rule
@@ -268,8 +263,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## Development
 
 ### Testing
-
-The project includes both unit tests and end-to-end (E2E) tests:
 
 ```bash
 # Run all tests
