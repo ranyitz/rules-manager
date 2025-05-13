@@ -65,10 +65,12 @@ function writeWindsurfRulesFromCollection(
     const relativeRuleDir = path.basename(ruleDir); // Gets '.rules'
     const windsurfPath =
       path.join(relativeRuleDir, ...rule.name.split("/")) + ".md";
+    // Normalize to POSIX style for cross-platform compatibility in .windsurfrules
+    const windsurfPathPosix = windsurfPath.replace(/\\/g, "/");
 
     return {
       name: rule.name,
-      path: windsurfPath,
+      path: windsurfPathPosix,
       metadata: rule.metadata,
     };
   });

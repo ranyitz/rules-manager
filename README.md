@@ -91,6 +91,7 @@ When you run `npx aicm install`, all rules from the preset will be installed to 
 
 - Generated rules are always placed in a subdirectory for deterministic cleanup and easy gitignore.
 - Users may add `.cursor/rules/aicm/` and `.aicm/` (for Windsurf) to their `.gitignore` if they do not want to track generated rules.
+- All rule paths in `.windsurfrules` use POSIX-style (forward slash `/`) separators, regardless of your operating system. This ensures cross-platform compatibility and consistent behavior in CI and across developer environments.
 
 ### Overriding and Disabling Rules and MCP Servers from Presets
 
