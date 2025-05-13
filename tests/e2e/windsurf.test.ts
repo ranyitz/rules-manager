@@ -7,6 +7,7 @@ import {
   readTestFile,
   testDir,
 } from "./helpers";
+import { parseMdcFile } from "../../src/utils/mdc-parser";
 
 describe("aicm windsurf integration", () => {
   test("should install rules to .rules directory and update .windsurfrules", async () => {
@@ -199,5 +200,32 @@ This rule is used to test appending markers to an existing file without markers.
       "# Existing Windsurf Rules",
     );
     expect(existingContentIndex).toBeLessThan(beginMarkerIndex);
+  });
+
+  test("should install rules into specified subdirectory when rule key includes a directory (windsurf)", async () => {
+    await setupFromFixture(
+      "windsurf-rule-in-subdir",
+      expect.getState().currentTestName,
+    );
+
+    const { code } = await runCommand("install");
+
+    expect(code).toBe(0);
+
+    // Check that the rule file is installed in the subdirectory
+    expect(fileExists(path.join(".rules", "dir", "general.md"))).toBe(true);
+
+    // Check that the content matches (parse the source MDC file for content only)
+    const installedContent = readTestFile(
+      path.join(".rules", "dir", "general.md"),
+    );
+    const sourceFilePath = path.join("rules", "general.mdc");
+    const { content: expectedContent } = parseMdcFile(
+      path.join(testDir, sourceFilePath),
+    );
+    expect(installedContent).toBe(expectedContent);
+
+    // Check that the directory exists
+    expect(fileExists(path.join(".rules", "dir"))).toBe(true);
   });
 });

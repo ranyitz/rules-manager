@@ -78,4 +78,30 @@ describe("aicm install command with fixtures", () => {
     expect(stderr).toContain("Source file");
     expect(stderr).toContain("does-not-exist.mdc not found");
   });
+
+  test("should install rules into specified subdirectory when rule key includes a directory", async () => {
+    await setupFromFixture(
+      "install-rule-in-subdir",
+      expect.getState().currentTestName,
+    );
+
+    const { code } = await runCommand("install");
+
+    expect(code).toBe(0);
+
+    // Check that the rule file is installed in the subdirectory
+    expect(
+      fileExists(path.join(".cursor", "rules", "dir", "general.mdc")),
+    ).toBe(true);
+
+    // Check that the content matches
+    const installedContent = readTestFile(
+      path.join(".cursor", "rules", "dir", "general.mdc"),
+    );
+    const sourceContent = readTestFile(path.join("rules", "general.mdc"));
+    expect(installedContent).toBe(sourceContent);
+
+    // Check that the directory exists
+    expect(fileExists(path.join(".cursor", "rules", "dir"))).toBe(true);
+  });
 });
