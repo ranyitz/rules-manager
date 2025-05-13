@@ -6,17 +6,13 @@ A CLI tool for syncing and managing Agentic IDE rules across projects
 
 ## Why
 
-With the rise of agentic IDEs like cursor and windsurf, we have an opportunity to enforce best practices through rules. However, these rules are typically isolated within individual developers or projects.
+With the rise of Agentic IDEs like cursor and windsurf, we have an opportunity to enforce best practices through rules. However, these rules are typically isolated within individual developers or projects.
 
-**aicm** is a CLI tool that helps with distribution of agentic IDE configurations, rules and mcps:
-
-- 🏛️ **Single Source of Truth**: Define, maintain and version-control all AI IDE rules in one central repository
-- 📦 **Distribution**: Automatically synchronize the latest rules to developers' local projects using npm packages
-- 🌐 **Cross-IDE Support**: Supports multiple AI-powered IDEs (Cursor, Windsurf) - Submit Issues / PRs to support other IDEs
+**aicm** is a CLI tool for distributing Agentic IDE configurations, rules, and MCPs across projects. It leverages package managers to copy configurations from node_modules to the correct locations in your file system.
 
 ## Getting Started
 
-To get automatic rule updates from NPM Packages, you can create, publish, and use dedicated npm packages to distribute AI rules across multiple projects.
+Since aicm is not a package manager, begin by creating an npm package that contains your rules and MCP configurations.
 
 Consider the following npm package structure:
 
