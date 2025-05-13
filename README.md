@@ -169,7 +169,7 @@ Example `aicm.json`:
   "ides": ["cursor"],
   "presets": ["@my-team/ai-tools/my-aicm.json"],
   "rules": {
-    "team-standards": "@my-team/ai-tools/rules/team-standards.mdc"
+    "team-rules/team-standards": "@my-team/ai-tools/rules/team-standards.mdc"
   },
   "mcpServers": {
     "remote-mcp": {
@@ -185,7 +185,7 @@ Example `aicm.json`:
 
 - **rules**: Object containing rule configurations
 
-  - **rule-name**: A unique identifier for the rule
+  - **rule-name**: A unique identifier for the rule. Can include a directory path to install the rule to a specific directory.
   - **source-location**: Location of the rule file (path within an npm package or local path)
 
 - **mcpServers**: Object containing MCP server configurations. Each key is a unique server name, and the value is an object with either:

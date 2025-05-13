@@ -34,7 +34,9 @@ function writeCursorRules(rules: RuleContent[], cursorRulesDir: string): void {
   fs.ensureDirSync(cursorRulesDir);
 
   for (const rule of rules) {
-    const ruleFile = path.join(cursorRulesDir, `${rule.name}.mdc`);
+    const ruleFile =
+      path.join(cursorRulesDir, ...rule.name.split("/")) + ".mdc";
+    fs.ensureDirSync(path.dirname(ruleFile));
 
     // For Cursor, we either copy the file or create a symlink to the original
     if (fs.existsSync(rule.sourcePath)) {
@@ -59,7 +61,8 @@ function writeWindsurfRulesFromCollection(rules: RuleContent[]): void {
 
   // First write individual rule files
   const ruleFiles = rules.map((rule) => {
-    const ruleFile = path.join(ruleDir, `${rule.name}.md`);
+    const ruleFile = path.join(ruleDir, ...rule.name.split("/")) + ".md";
+    fs.ensureDirSync(path.dirname(ruleFile));
     fs.writeFileSync(ruleFile, rule.content);
 
     return {

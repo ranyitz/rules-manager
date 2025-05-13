@@ -1,0 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# General Rule
+
+This rule is used to test installing into a subdirectory.
