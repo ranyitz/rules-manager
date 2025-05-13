@@ -8,6 +8,6 @@ Some custom rules content here
 <!-- WARNING: Everything between these markers will be overwritten during installation -->
 
 The following rules apply to all files in the project:
-- .rules/existing-rule.md
+- .aicm/existing-rule.md
 
 <!-- AICM:END -->

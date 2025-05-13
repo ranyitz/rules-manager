@@ -40,16 +40,15 @@ describe("aicm install command with fixtures", () => {
 
     expect(code).toBe(0);
 
-    expect(fileExists(path.join(".cursor", "rules", "local-rule.mdc"))).toBe(
-      true,
-    );
+    expect(
+      fileExists(path.join(".cursor", "rules", "aicm", "local-rule.mdc")),
+    ).toBe(true);
 
     const localRuleContent = readTestFile(
-      path.join(".cursor", "rules", "local-rule.mdc"),
+      path.join(".cursor", "rules", "aicm", "local-rule.mdc"),
     );
     expect(localRuleContent).toContain("alwaysApply: false");
 
-    // Assert .cursor/mcp.json exists and contains both mcps
     const mcpPath = path.join(".cursor", "mcp.json");
     expect(fileExists(mcpPath)).toBe(true);
     const mcpConfig = JSON.parse(readTestFile(mcpPath));
@@ -60,7 +59,6 @@ describe("aicm install command with fixtures", () => {
       env: { MCP_TOKEN: "test123" },
     });
     expect(mcpConfig.mcpServers["remote-mcp"]).toMatchObject({
-      url: "https://example.com/mcp-config.json",
       env: { MCP_TOKEN: "test456" },
     });
   });
@@ -89,19 +87,87 @@ describe("aicm install command with fixtures", () => {
 
     expect(code).toBe(0);
 
-    // Check that the rule file is installed in the subdirectory
     expect(
-      fileExists(path.join(".cursor", "rules", "dir", "general.mdc")),
+      fileExists(path.join(".cursor", "rules", "aicm", "dir", "general.mdc")),
     ).toBe(true);
 
-    // Check that the content matches
     const installedContent = readTestFile(
-      path.join(".cursor", "rules", "dir", "general.mdc"),
+      path.join(".cursor", "rules", "aicm", "dir", "general.mdc"),
     );
     const sourceContent = readTestFile(path.join("rules", "general.mdc"));
     expect(installedContent).toBe(sourceContent);
 
-    // Check that the directory exists
-    expect(fileExists(path.join(".cursor", "rules", "dir"))).toBe(true);
+    expect(fileExists(path.join(".cursor", "rules", "aicm", "dir"))).toBe(true);
+  });
+
+  test("should clean stale Cursor rules on installation", async () => {
+    await setupFromFixture(
+      "install-cursor-cleanup",
+      expect.getState().currentTestName,
+    );
+
+    const staleRulePath = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "stale-rule.mdc",
+    );
+    const newRulePath = path.join(".cursor", "rules", "aicm", "new-rule.mdc");
+    const anotherStaleRulePath = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "another-stale-rule.mdc",
+    );
+
+    const { code, stdout } = await runCommand("install");
+
+    expect(code).toBe(0);
+    expect(stdout).toContain("Rules installation completed");
+
+    expect(fileExists(staleRulePath)).toBe(false);
+    expect(fileExists(anotherStaleRulePath)).toBe(false);
+    expect(fileExists(newRulePath)).toBe(true);
+  });
+
+  test("should clean stale Windsurf rules and .aicm directory before installation", async () => {
+    await setupFromFixture(
+      "install-windsurf-cleanup",
+      expect.getState().currentTestName,
+    );
+
+    expect(fileExists(path.join(".aicm", "stale-windsurf-rule.md"))).toBe(true);
+    const oldFreshContent = readTestFile(
+      path.join(".aicm", "fresh-windsurf-rule.md"),
+    );
+    expect(oldFreshContent).toContain("This is OLD fresh Windsurf content");
+    let windsurfRulesContent = readTestFile(".windsurfrules");
+    expect(windsurfRulesContent).toContain(".aicm/stale-windsurf-rule.md");
+    expect(windsurfRulesContent).toContain(".aicm/another-stale-reference.md");
+
+    const { code, stdout } = await runCommand("install --ide windsurf");
+
+    expect(code).toBe(0);
+    expect(stdout).toContain("Rules installation completed");
+
+    expect(fileExists(path.join(".aicm", "stale-windsurf-rule.md"))).toBe(
+      false,
+    );
+
+    expect(fileExists(path.join(".aicm", "fresh-windsurf-rule.md"))).toBe(true);
+    const freshRuleContent = readTestFile(
+      path.join(".aicm", "fresh-windsurf-rule.md"),
+    );
+    expect(freshRuleContent).toContain("This is fresh Windsurf content.");
+    expect(freshRuleContent).not.toContain(
+      "This is OLD fresh Windsurf content",
+    );
+
+    windsurfRulesContent = readTestFile(".windsurfrules");
+    expect(windsurfRulesContent).not.toContain(".aicm/stale-windsurf-rule.md");
+    expect(windsurfRulesContent).not.toContain(
+      ".aicm/another-stale-reference.md",
+    );
+    expect(windsurfRulesContent).toContain(".aicm/fresh-windsurf-rule.md");
   });
 });

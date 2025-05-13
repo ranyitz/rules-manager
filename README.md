@@ -48,7 +48,7 @@ In your project's `aicm.json`, reference the package and the specific rule:
 }
 ```
 
-Now the rules will be linked to `.cursor/rules/` when you run `npm install`.
+Now the rules will be linked to `.cursor/rules/aicm/` when you run `npm install`.
 
 ### Using Presets
 
@@ -85,7 +85,12 @@ In your project's `aicm.json`, reference the preset by its npm package or direct
 }
 ```
 
-When you run `npx aicm install`, all rules from the preset will be installed to `.cursor/rules/` and all mcps from the preset will be installed to `.cursor/mcp.json`.
+When you run `npx aicm install`, all rules from the preset will be installed to `.cursor/rules/aicm/` and all mcps from the preset will be installed to `.cursor/mcp.json`.
+
+### Notes
+
+- Generated rules are always placed in a subdirectory for deterministic cleanup and easy gitignore.
+- Users may add `.cursor/rules/aicm/` and `.aicm/` (for Windsurf) to their `.gitignore` if they do not want to track generated rules.
 
 ### Overriding and Disabling Rules and MCP Servers from Presets
 
@@ -224,8 +229,8 @@ Rules stored locally in your project or filesystem. Any path containing slashes 
 
 ## Supported IDEs
 
-- **Cursor**: Rules are installed as individual `.mdc` files in the Cursor rules directory (`.cursor/rules/`), mcp servers are installed to `.cursor/mcp.json`
-- **Windsurf**: Rules are installed in the `.rules` directory which should be added to your `.gitignore` file. Our approach for Windsurf is to create links from the `.windsurfrules` file to the respective rules in the `.rules` directory. There is no support for local mcp servers at the moment.
+- **Cursor**: Rules are installed as individual `.mdc` files in the Cursor rules directory (`.cursor/rules/aicm/`), mcp servers are installed to `.cursor/mcp.json`
+- **Windsurf**: Rules are installed in the `.aicm` directory which should be added to your `.gitignore` file. Our approach for Windsurf is to create links from the `.windsurfrules` file to the respective rules in the `.aicm` directory. There is no support for local mcp servers at the moment.
 
 ## Commands
 

@@ -14,11 +14,11 @@ describe("README demo example", () => {
 
     expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");
-    expect(fileExists(path.join(".cursor", "rules", "pirate-coding.mdc"))).toBe(
-      true,
-    );
+    expect(
+      fileExists(path.join(".cursor", "rules", "aicm", "pirate-coding.mdc")),
+    ).toBe(true);
     const ruleContent = readTestFile(
-      path.join(".cursor", "rules", "pirate-coding.mdc"),
+      path.join(".cursor", "rules", "aicm", "pirate-coding.mdc"),
     );
     expect(ruleContent).toContain("pirate");
   });

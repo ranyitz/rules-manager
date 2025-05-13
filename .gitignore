@@ -18,6 +18,9 @@ dist/
 .windsurfrules
 !tests/fixtures/*/.windsurfrules
 
+# aicm
+.aicm
+!tests/fixtures/*/.aicm
 # Logs
 logs/
 *.log
@@ -30,6 +33,3 @@ yarn-error.log*
 
 # Temporary test directory
 tmp-test/
-
-# aicm
-.rules

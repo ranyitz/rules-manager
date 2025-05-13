@@ -1,0 +1,6 @@
+{
+  "ides": ["cursor"],
+  "rules": {
+    "new-rule": "./rules/new-rule.mdc"
+  }
+}
