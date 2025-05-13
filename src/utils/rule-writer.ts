@@ -34,7 +34,6 @@ function writeCursorRules(rules: RuleContent[], cursorRulesDir: string): void {
   fs.ensureDirSync(cursorRulesDir);
 
   for (const rule of rules) {
-    // Support rule keys with directories (e.g., dir/general)
     const ruleFile =
       path.join(cursorRulesDir, ...rule.name.split("/")) + ".mdc";
     fs.ensureDirSync(path.dirname(ruleFile));
