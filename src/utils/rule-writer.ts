@@ -21,7 +21,7 @@ export function writeRulesToTargets(collection: RuleCollection): void {
 
   // Write Windsurf rules
   if (collection.windsurf.length > 0) {
-    writeWindsurfRulesFromCollection(collection.windsurf);
+    writeWindsurfRulesFromCollection(collection.windsurf, idePaths.windsurf);
   }
 }
 
@@ -31,19 +31,15 @@ export function writeRulesToTargets(collection: RuleCollection): void {
  * @param cursorRulesDir The path to Cursor's rules directory
  */
 function writeCursorRules(rules: RuleContent[], cursorRulesDir: string): void {
-  fs.ensureDirSync(cursorRulesDir);
+  fs.emptyDirSync(cursorRulesDir);
 
   for (const rule of rules) {
     const ruleFile =
       path.join(cursorRulesDir, ...rule.name.split("/")) + ".mdc";
     fs.ensureDirSync(path.dirname(ruleFile));
-
-    // For Cursor, we either copy the file or create a symlink to the original
     if (fs.existsSync(rule.sourcePath)) {
-      // Copy the file (safer than symlink)
       fs.copyFileSync(rule.sourcePath, ruleFile);
     } else {
-      // If source path doesn't exist (shouldn't happen), write content directly
       const mdcContent = `---\n${JSON.stringify(rule.metadata, null, 2)}\n---\n\n${rule.content}`;
       fs.writeFileSync(ruleFile, mdcContent);
     }
@@ -54,25 +50,28 @@ function writeCursorRules(rules: RuleContent[], cursorRulesDir: string): void {
  * Write rules to Windsurf's rules directory and update .windsurfrules file
  * @param rules The rules to write
  */
-function writeWindsurfRulesFromCollection(rules: RuleContent[]): void {
-  const idePaths = getIdePaths();
-  const ruleDir = idePaths.windsurf;
-  fs.ensureDirSync(ruleDir);
+function writeWindsurfRulesFromCollection(
+  rules: RuleContent[],
+  ruleDir: string,
+): void {
+  fs.emptyDirSync(ruleDir);
 
-  // First write individual rule files
   const ruleFiles = rules.map((rule) => {
-    const ruleFile = path.join(ruleDir, ...rule.name.split("/")) + ".md";
-    fs.ensureDirSync(path.dirname(ruleFile));
-    fs.writeFileSync(ruleFile, rule.content);
+    const physicalRulePath =
+      path.join(ruleDir, ...rule.name.split("/")) + ".md";
+    fs.ensureDirSync(path.dirname(physicalRulePath));
+    fs.writeFileSync(physicalRulePath, rule.content);
+
+    const relativeRuleDir = path.basename(ruleDir); // Gets '.rules'
+    const windsurfPath =
+      path.join(relativeRuleDir, ...rule.name.split("/")) + ".md";
 
     return {
       name: rule.name,
-      path: `.rules/${rule.name}.md`,
+      path: windsurfPath,
       metadata: rule.metadata,
     };
   });
-
-  // Then generate and write the .windsurfrules file
   const windsurfRulesContent = generateWindsurfRulesContent(ruleFiles);
   writeWindsurfRules(windsurfRulesContent);
 }

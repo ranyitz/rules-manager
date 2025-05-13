@@ -20,19 +20,19 @@ describe("Presets with fixtures", () => {
     expect(code).toBe(0);
 
     expect(
-      fileExists(path.join(".cursor", "rules", "typescript-rule.mdc")),
+      fileExists(path.join(".cursor", "rules", "aicm", "typescript-rule.mdc")),
     ).toBe(true);
-    expect(fileExists(path.join(".cursor", "rules", "react-rule.mdc"))).toBe(
-      true,
-    );
+    expect(
+      fileExists(path.join(".cursor", "rules", "aicm", "react-rule.mdc")),
+    ).toBe(true);
 
     const typescriptRuleContent = readTestFile(
-      path.join(".cursor", "rules", "typescript-rule.mdc"),
+      path.join(".cursor", "rules", "aicm", "typescript-rule.mdc"),
     );
     expect(typescriptRuleContent).toContain("TypeScript Best Practices");
 
     const reactRuleContent = readTestFile(
-      path.join(".cursor", "rules", "react-rule.mdc"),
+      path.join(".cursor", "rules", "aicm", "react-rule.mdc"),
     );
     expect(reactRuleContent).toContain("React Best Practices");
   });
@@ -44,20 +44,20 @@ describe("Presets with fixtures", () => {
 
     expect(code).toBe(0);
 
-    expect(fileExists(path.join(".cursor", "rules", "preset-rule.mdc"))).toBe(
-      true,
-    );
-    expect(fileExists(path.join(".cursor", "rules", "local-rule.mdc"))).toBe(
-      true,
-    );
+    expect(
+      fileExists(path.join(".cursor", "rules", "aicm", "preset-rule.mdc")),
+    ).toBe(true);
+    expect(
+      fileExists(path.join(".cursor", "rules", "aicm", "local-rule.mdc")),
+    ).toBe(true);
 
     const presetRuleContent = readTestFile(
-      path.join(".cursor", "rules", "preset-rule.mdc"),
+      path.join(".cursor", "rules", "aicm", "preset-rule.mdc"),
     );
     expect(presetRuleContent).toContain("Preset Rule");
 
     const localRuleContent = readTestFile(
-      path.join(".cursor", "rules", "local-rule.mdc"),
+      path.join(".cursor", "rules", "aicm", "local-rule.mdc"),
     );
     expect(localRuleContent).toContain("Local Rule");
 
@@ -79,12 +79,12 @@ describe("Presets with fixtures", () => {
 
     expect(code).toBe(0);
 
-    expect(fileExists(path.join(".cursor", "rules", "npm-rule.mdc"))).toBe(
-      true,
-    );
+    expect(
+      fileExists(path.join(".cursor", "rules", "aicm", "npm-rule.mdc")),
+    ).toBe(true);
 
     const npmRuleContent = readTestFile(
-      path.join(".cursor", "rules", "npm-rule.mdc"),
+      path.join(".cursor", "rules", "aicm", "npm-rule.mdc"),
     );
     expect(npmRuleContent).toContain("NPM Package Rule");
   });
@@ -95,11 +95,11 @@ describe("Presets with fixtures", () => {
     const { code } = await runCommand("install");
 
     expect(code).toBe(0);
-    expect(fileExists(path.join(".cursor", "rules", "npm-rule.mdc"))).toBe(
-      true,
-    );
+    expect(
+      fileExists(path.join(".cursor", "rules", "aicm", "npm-rule.mdc")),
+    ).toBe(true);
     const npmRuleContent = readTestFile(
-      path.join(".cursor", "rules", "npm-rule.mdc"),
+      path.join(".cursor", "rules", "aicm", "npm-rule.mdc"),
     );
     expect(npmRuleContent).toContain("NPM Package Rule");
   });
@@ -140,11 +140,11 @@ describe("Presets with fixtures", () => {
     expect(code).toBe(0);
 
     // The overridden rule should be installed
-    expect(fileExists(path.join(".cursor", "rules", "npm-rule.mdc"))).toBe(
-      true,
-    );
+    expect(
+      fileExists(path.join(".cursor", "rules", "aicm", "npm-rule.mdc")),
+    ).toBe(true);
     const ruleContent = readTestFile(
-      path.join(".cursor", "rules", "npm-rule.mdc"),
+      path.join(".cursor", "rules", "aicm", "npm-rule.mdc"),
     );
     expect(ruleContent).toContain("Override Rule");
 
@@ -174,9 +174,9 @@ describe("Presets with fixtures", () => {
     expect(code).toBe(0);
 
     // The canceled rule should not be installed
-    expect(fileExists(path.join(".cursor", "rules", "npm-rule.mdc"))).toBe(
-      false,
-    );
+    expect(
+      fileExists(path.join(".cursor", "rules", "aicm", "npm-rule.mdc")),
+    ).toBe(false);
 
     // The canceled mcpServer should not be present in mcp.json
     const mcpPath = path.join(".cursor", "mcp.json");
