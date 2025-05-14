@@ -126,7 +126,7 @@ export async function installCommand(): Promise<void> {
       writeMcpServersToTargets(filteredMcpServers, config.ides);
     }
 
-    console.log(chalk.green("\nRules installation completed!"));
+    console.log(chalk.green("Rules installation completed!"));
   } catch (error: unknown) {
     console.error(
       chalk.red(
