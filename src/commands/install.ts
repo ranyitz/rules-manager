@@ -229,10 +229,7 @@ export async function install(
 
 export async function installCommand(): Promise<void> {
   try {
-    // Use the core function with default options - never use silent mode for CLI
-    const result = await install({
-      silent: false,
-    });
+    const result = await install({ silent: false });
 
     if (!result.success) {
       console.error(chalk.red(result.error));
