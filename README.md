@@ -249,11 +249,64 @@ npx aicm init
 
 ### `install`
 
-Installs rules from your configuration to the appropriate IDE locations.
+Installs all rules and MCPs configured in your `aicm.json`.
 
 ```bash
 npx aicm install
 ```
+
+## Node.js API
+
+In addition to the CLI, aicm can be used programmatically in Node.js applications:
+
+```javascript
+const { install, Config } = require("aicm");
+
+install().then((result) => {
+  if (result.success) {
+    console.log(`Successfully installed ${result.installedRuleCount} rules`);
+  } else {
+    console.error(`Error: ${result.error}`);
+  }
+});
+
+// Install with custom options
+const customConfig = {
+  ides: ["cursor"],
+  rules: {
+    typescript: "./rules/typescript.mdc",
+    react: "@org/rules/react.mdc",
+  },
+};
+
+install({
+  config: customConfig,
+  cwd: "/path/to/project",
+  silent: true,
+}).then((result) => {
+  // Handle result
+});
+```
+
+### API Reference
+
+#### `install(options?: InstallOptions): Promise<InstallResult>`
+
+Installs rules and MCP servers based on configuration.
+
+**Options:**
+
+- `cwd`: Base directory to use instead of `process.cwd()`
+- `config`: Custom config object to use instead of loading from file
+- `silent`: Whether to suppress console output
+
+**Returns:**
+
+A Promise that resolves to an object with:
+
+- `success`: Whether the operation was successful
+- `error`: Error message if the operation failed
+- `installedRuleCount`: Number of rules installed
 
 ## Contributing
 

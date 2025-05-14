@@ -2,7 +2,8 @@
   "name": "aicm",
   "version": "0.6.0",
   "description": "A TypeScript CLI tool for managing AI IDE rules across different projects and teams",
-  "main": "dist/index.js",
+  "main": "dist/api.js",
+  "types": "dist/api.d.ts",
   "bin": {
     "aicm": "./dist/index.js"
   },

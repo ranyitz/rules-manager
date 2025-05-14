@@ -13,9 +13,9 @@ describe("aicm install command with fixtures", () => {
       expect.getState().currentTestName,
     );
 
-    const { stdout } = await runCommand("install");
+    const { stderr } = await runCommand("install");
 
-    expect(stdout).toContain("No rules defined in configuration");
+    expect(stderr).toContain("No rules defined in configuration");
   });
 
   test("should show error when config doesn't exist", async () => {
@@ -72,7 +72,7 @@ describe("aicm install command with fixtures", () => {
     const { stderr, code } = await runCommand("install");
 
     expect(code).toBe(1);
-    expect(stderr).toContain("Error during rule installation");
+    expect(stderr).toContain("Error processing rule");
     expect(stderr).toContain("Source file");
     expect(stderr).toContain("does-not-exist.mdc not found");
   });
