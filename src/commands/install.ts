@@ -199,7 +199,7 @@ export async function install(
       writeMcpServersToTargets(filteredMcpServers, config.ides, cwd);
     }
 
-    log("Rules installation completed!");
+    log("Rules installation completed");
 
     // Restore original cwd
     if (cwd !== originalCwd) {
@@ -235,8 +235,6 @@ export async function installCommand(): Promise<void> {
       console.error(chalk.red(result.error));
       process.exit(1);
     }
-
-    console.log(chalk.green("Rules installation completed!"));
   } catch (error: unknown) {
     console.error(
       chalk.red(
