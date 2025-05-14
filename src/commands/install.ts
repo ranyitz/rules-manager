@@ -236,7 +236,7 @@ export async function installCommand(): Promise<void> {
       process.exit(1);
     }
 
-    console.log(chalk.green("\nRules installation completed!"));
+    console.log(chalk.green("Rules installation completed!"));
   } catch (error: unknown) {
     console.error(
       chalk.red(
