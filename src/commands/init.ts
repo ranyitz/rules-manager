@@ -18,11 +18,14 @@ export function initCommand(): void {
 
   try {
     fs.writeJsonSync(configPath, defaultConfig, { spaces: 2 });
-    console.log(chalk.green("Configuration file created successfully!"));
     console.log(`Configuration file location: ${chalk.blue(configPath)}`);
     console.log(`\nNext steps:`);
-    console.log(`  1. Edit ${chalk.blue("aicm.json")} to configure your rules`);
-    console.log(`  2. Run ${chalk.blue("npx aicm install")} to install rules`);
+    console.log(
+      `  1. Edit ${chalk.blue("aicm.json")} to configure your rules & presets`,
+    );
+    console.log(
+      `  2. Run ${chalk.blue("npx aicm install")} to install rules & mcps`,
+    );
   } catch (error) {
     console.error(chalk.red("Error creating configuration file:"), error);
   }
