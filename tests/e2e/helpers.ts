@@ -171,3 +171,24 @@ export async function setupFromFixture(
 
   return testDir;
 }
+
+/**
+ * Run npm install for a specific package in the test directory
+ * @param packageName The npm package to install
+ */
+export async function runNpmInstall(
+  packageName: string,
+): Promise<{ stdout: string; stderr: string; code: number }> {
+  try {
+    const command = `npm install --no-save ${packageName}`;
+    const { stdout, stderr } = await execPromise(command, { cwd: testDir });
+    return { stdout, stderr, code: 0 };
+  } catch (error: unknown) {
+    const execError = error as ExecError;
+    return {
+      stdout: execError.stdout || "",
+      stderr: execError.stderr || "",
+      code: execError.code || 1,
+    };
+  }
+}
