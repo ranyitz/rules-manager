@@ -121,12 +121,12 @@ When you use a preset, you can override or disable any rule or mcpServer from th
 
 ### Demo
 
-We'll install an npm package containing a simple rule to demonstrate how aicm works.
+We'll install [an npm package](https://github.com/ranyitz/pirate-coding) containing a simple preset to demonstrate how aicm works.
 
-1. Install an npm package containing a rule
+1. Install an npm package containing a preset
 
 ```bash
-npm install --save-dev pirate-coding-rule
+npm install --save-dev pirate-coding
 ```
 
 2. Initialize aicm config
@@ -140,13 +140,11 @@ npx -y aicm init
 ```json
 {
   "ides": ["cursor"],
-  "rules": {
-    "pirate-coding": "pirate-coding-rule/rule.mdc"
-  }
+  "presets": ["pirate-coding"]
 }
 ```
 
-4. Install all rules from your configuration
+4. Install all rules & mcps from your configuration
 
 ```bash
 npx -y aicm install
@@ -154,7 +152,7 @@ npx -y aicm install
 
 This command installs all configured rules and MCPs to their IDE-specific locations.
 
-After installation, open Cursor and ask it to do something. Your AI assistant will respond with pirate-themed coding advice.
+After installation, open Cursor and ask it to do something. Your AI assistant will respond with pirate-themed coding advice. You can also ask it about the aicm library which uses https://gitmcp.io/ to give you advise based on the latest documentation.
 
 ## Security Note
 

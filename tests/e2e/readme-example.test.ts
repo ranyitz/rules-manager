@@ -2,14 +2,16 @@ import {
   setupFromFixture,
   runCommand,
   fileExists,
-  readTestFile,
+  runNpmInstall,
 } from "./helpers";
 import path from "path";
 
 describe("README demo example", () => {
-  test("should install all rules from config as shown in the README", async () => {
+  test("should install rules from preset as shown in the README", async () => {
     await setupFromFixture("readme-demo", expect.getState().currentTestName);
 
+    const npmResult = await runNpmInstall("pirate-coding");
+    expect(npmResult.code).toBe(0);
     const { stdout, code } = await runCommand("install");
 
     expect(code).toBe(0);
@@ -17,9 +19,6 @@ describe("README demo example", () => {
     expect(
       fileExists(path.join(".cursor", "rules", "aicm", "pirate-coding.mdc")),
     ).toBe(true);
-    const ruleContent = readTestFile(
-      path.join(".cursor", "rules", "aicm", "pirate-coding.mdc"),
-    );
-    expect(ruleContent).toContain("pirate");
+    expect(fileExists(path.join(".cursor", "mcp.json"))).toBe(true);
   });
 });
