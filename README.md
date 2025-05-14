@@ -129,22 +129,16 @@ We'll install [an npm package](https://github.com/ranyitz/pirate-coding) contain
 npm install --save-dev pirate-coding
 ```
 
-2. Initialize aicm config
+2. Create an `aicm.json` file in your project
 
 ```bash
-npx -y aicm init
-```
-
-3. Add the rule to your config file: `aicm.json`
-
-```json
-{
+echo '{
   "ides": ["cursor"],
   "presets": ["pirate-coding"]
-}
+}' > aicm.json
 ```
 
-4. Install all rules & mcps from your configuration
+3. Install all rules & mcps from your configuration
 
 ```bash
 npx -y aicm install
