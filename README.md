@@ -30,7 +30,6 @@ In your project's `aicm.json`, reference the package and the specific rule:
 
 ```json
 {
-  "ides": ["cursor"],
   "rules": {
     "typescript": "@myteam/ai-tools/rules/typescript.mdc",
     "react": "@myteam/ai-tools/rules/react.mdc"
@@ -80,7 +79,6 @@ In your project's `aicm.json`, reference the preset by its npm package or direct
 
 ```json
 {
-  "ides": ["cursor"],
   "presets": ["@myteam/ai-tools"]
 }
 ```
@@ -133,7 +131,6 @@ npm install --save-dev pirate-coding
 
 ```bash
 echo '{
-  "ides": ["cursor"],
   "presets": ["pirate-coding"]
 }' > aicm.json
 ```
@@ -179,6 +176,9 @@ Example `aicm.json`:
 - **ides**: Array of IDE names where rules should be installed. Currently supported values:
 
   - `"cursor"`: For the Cursor IDE
+  - `"windsurf"`: For the Windsurf IDE
+
+  > **Note:** The 'ides' field is default to `["cursor"]` if not specified.
 
 - **rules**: Object containing rule configurations
 
