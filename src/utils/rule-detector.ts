@@ -24,7 +24,7 @@ export function detectRuleType(source: string): "npm" | "local" {
 
   try {
     const packageName = source.split(/[/\\]/)[0];
-    require.resolve(packageName, { paths: [process.cwd()] });
+    require.resolve(packageName, { paths: [__dirname, process.cwd()] });
     return "npm";
   } catch {
     return "local";

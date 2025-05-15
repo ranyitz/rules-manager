@@ -18,12 +18,12 @@ export function getFullPresetPath(presetPath: string): string | null {
     let absolutePresetPath;
     if (presetPath.endsWith(".json")) {
       absolutePresetPath = require.resolve(presetPath, {
-        paths: [process.cwd()],
+        paths: [__dirname, process.cwd()],
       });
     } else {
       const presetPathWithConfig = path.join(presetPath, "aicm.json");
       absolutePresetPath = require.resolve(presetPathWithConfig, {
-        paths: [process.cwd()],
+        paths: [__dirname, process.cwd()],
       });
     }
     return fs.existsSync(absolutePresetPath) ? absolutePresetPath : null;
