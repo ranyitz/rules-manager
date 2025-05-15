@@ -84,8 +84,6 @@ export async function runCommand(
   args: string = "",
 ): Promise<{ stdout: string; stderr: string; code: number }> {
   try {
-    await execPromise("npm run build", { cwd: projectRoot });
-
     const cliPath = path.join(projectRoot, "dist", "index.js");
     const command = `node ${cliPath} ${args}`;
 
@@ -94,6 +92,9 @@ export async function runCommand(
     return { stdout, stderr, code: 0 };
   } catch (error: unknown) {
     const execError = error as ExecError;
+    // uncomment when debugging
+    // console.error(execError.stdout);
+
     return {
       stdout: execError.stdout || "",
       stderr: execError.stderr || "",
