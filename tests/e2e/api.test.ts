@@ -88,7 +88,7 @@ describe("aicm Node.js API", () => {
     expect(fs.existsSync(cursorInstallPath)).toBe(true);
 
     const ruleContent = fs.readFileSync(cursorInstallPath, "utf8");
-    expect(ruleContent).toContain("Local Test Rule");
+    expect(ruleContent).toContain("Default IDE Test Rule");
     expect(ruleContent).toContain("Sample rule content");
   });
 

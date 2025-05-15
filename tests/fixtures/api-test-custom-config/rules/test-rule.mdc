@@ -1,13 +1,10 @@
 ---
-description: 
-globs: 
-alwaysApply: false
----
----
 name: Test Rule
 description: A test rule created programmatically
 globs:
-alwaysApply: true
+alwaysApply: false
 ---
 
 # This is a test rule created via the API test
+
+Sample rule content

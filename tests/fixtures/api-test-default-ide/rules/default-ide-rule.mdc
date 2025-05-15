@@ -1,13 +1,5 @@
----
-description: 
-globs: 
-alwaysApply: false
----
----
 name: Default IDE Test Rule
 description: A test rule to verify cursor as default IDE
-globs:
-alwaysApply: true
----
+alwaysApply: false
 
-# This rule tests the default IDE behavior
+# Sample rule content
