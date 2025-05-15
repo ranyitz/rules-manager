@@ -1,7 +1,6 @@
 import fs from "fs-extra";
 import path from "node:path";
 import { Config, Rules } from "../types";
-import { detectRuleType } from "./rule-detector";
 import { cosmiconfigSync } from "cosmiconfig";
 
 interface ConfigWithMeta extends Config {
@@ -10,42 +9,24 @@ interface ConfigWithMeta extends Config {
 
 const CONFIG_FILE = "aicm.json";
 
-/**
- * Get the full path to a preset file
- */
 export function getFullPresetPath(presetPath: string): string | null {
+  if (presetPath.endsWith(".json") && fs.pathExistsSync(presetPath)) {
+    return presetPath;
+  }
+
   try {
-    const ruleType = detectRuleType(presetPath);
-    let fullPresetPath = presetPath;
-
-    if (ruleType === "npm") {
-      try {
-        // Try to resolve as a file first
-        fullPresetPath = require.resolve(presetPath, {
-          paths: [process.cwd()],
-        });
-      } catch {
-        // If not a file, check if it's a directory in node_modules
-        const directPath = path.join(process.cwd(), "node_modules", presetPath);
-        if (fs.existsSync(directPath)) {
-          // If it's a directory, look for aicm.json inside
-          const aicmJsonPath = path.join(directPath, "aicm.json");
-          if (fs.existsSync(aicmJsonPath)) {
-            fullPresetPath = aicmJsonPath;
-          } else {
-            // If aicm.json doesn't exist, treat the directory as invalid
-            return null;
-          }
-        } else {
-          return null;
-        }
-      }
+    let absolutePresetPath;
+    if (presetPath.endsWith(".json")) {
+      absolutePresetPath = require.resolve(presetPath, {
+        paths: [process.cwd()],
+      });
     } else {
-      // For local files, resolve from current directory
-      fullPresetPath = path.resolve(process.cwd(), presetPath);
+      const presetPathWithConfig = path.join(presetPath, "aicm.json");
+      absolutePresetPath = require.resolve(presetPathWithConfig, {
+        paths: [process.cwd()],
+      });
     }
-
-    return fs.existsSync(fullPresetPath) ? fullPresetPath : null;
+    return fs.existsSync(absolutePresetPath) ? absolutePresetPath : null;
   } catch {
     return null;
   }

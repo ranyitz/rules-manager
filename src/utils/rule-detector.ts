@@ -1,6 +1,3 @@
-import path from "node:path";
-import fs from "fs-extra";
-
 /**
  * Detects the rule type from the source string
  */
@@ -25,18 +22,11 @@ export function detectRuleType(source: string): "npm" | "local" {
     return "local";
   }
 
-  // Check if it's an npm package with a direct node_modules reference
-  const packageName = source.split(/[/\\]/)[0]; // Support both slash types
-  if (fs.existsSync(path.resolve(process.cwd(), "node_modules", packageName))) {
-    return "npm";
-  }
-
-  // Try to interpret as npm package
   try {
+    const packageName = source.split(/[/\\]/)[0];
     require.resolve(packageName, { paths: [process.cwd()] });
     return "npm";
   } catch {
-    // If we couldn't resolve it as an npm package, assume it's a local path
     return "local";
   }
 }
