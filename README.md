@@ -176,6 +176,9 @@ Example `aicm.json`:
 - **ides**: Array of IDE names where rules should be installed. Currently supported values:
 
   - `"cursor"`: For the Cursor IDE
+  - `"windsurf"`: For the Windsurf IDE
+
+  > **Note:** The 'ides' field is default to `["cursor"]` if not specified.
 
 - **rules**: Object containing rule configurations
 
