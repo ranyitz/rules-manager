@@ -42,7 +42,7 @@ export function loadPreset(
 
   if (!fullPresetPath) {
     throw new Error(
-      `Error loading preset: File not found: ${presetPath}. Make sure the package is installed in your project.`,
+      `Error loading preset: "${presetPath}". Make sure the package is installed in your project.`,
     );
   }
 
@@ -148,15 +148,18 @@ export function loadAicmConfigCosmiconfig(): ConfigWithMeta | null {
   const explorer = cosmiconfigSync("aicm", {
     searchPlaces: ["package.json", "aicm.json"],
   });
+
   try {
     const result = explorer.search();
     if (!result || !result.config) return null;
     const config = result.config as ConfigWithMeta;
     if (!config.rules) config.rules = {};
+    if (!config.ides) config.ides = ["cursor"];
     return config;
   } catch (error) {
-    console.error("Error loading aicm config via cosmiconfig:", error);
-    return null;
+    throw new Error(
+      `Error loading aicm config: ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 }
 
@@ -165,9 +168,13 @@ export function loadAicmConfigCosmiconfig(): ConfigWithMeta | null {
  */
 export function getConfig(): Config | null {
   const config = loadAicmConfigCosmiconfig();
-  if (!config) return null;
+  if (!config) {
+    throw new Error(
+      `No config found in ${process.cwd()}, create one using "aicm init"`,
+    );
+  }
   processPresets(config);
-  return config;
+  return config as Config;
 }
 
 /**

@@ -276,7 +276,6 @@ const customConfig = {
 install({
   config: customConfig,
   cwd: "/path/to/project",
-  silent: true,
 }).then((result) => {
   // Handle result
 });
@@ -292,7 +291,6 @@ Installs rules and MCP servers based on configuration.
 
 - `cwd`: Base directory to use instead of `process.cwd()`
 - `config`: Custom config object to use instead of loading from file
-- `silent`: Whether to suppress console output
 
 **Returns:**
 
