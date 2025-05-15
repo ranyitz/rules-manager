@@ -1,0 +1,5 @@
+{
+  "rules": {
+    "default-ide-rule": "./rules/default-ide-rule.mdc"
+  }
+}

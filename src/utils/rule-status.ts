@@ -16,11 +16,7 @@ export function getIdePaths(): Record<string, string> {
 /**
  * Check if a rule is installed in the specified IDEs
  */
-export function checkRuleStatus(
-  ruleName: string,
-  ruleType: string,
-  ides: string[],
-): boolean {
+export function checkRuleStatus(ruleName: string, ides: string[]): boolean {
   const idePaths = getIdePaths();
 
   return ides.every((ide) => {

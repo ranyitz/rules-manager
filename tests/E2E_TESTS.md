@@ -36,3 +36,46 @@ tests/fixtures/e2e/list-with-multiple-rules/
     ├── rule1.mdc
     └── rule3.mdc
 ```
+
+# E2E Testing Guidelines
+
+## Key Principles
+
+1. **Always use fixtures for test state**
+
+   - Store initial test state in the `tests/fixtures` directory
+   - Create a dedicated fixture directory for each test scenario
+   - Include `.gitkeep` files in empty fixture directories
+   - **Never** create test files on-the-fly with `fs.writeFileSync()` or similar methods
+
+2. **Fixture Directory Structure**
+
+   - Name fixtures descriptively based on test scenario
+   - Follow the established pattern in existing fixtures
+   - Each fixture should be self-contained and independent
+
+3. **Using Fixtures in Tests**
+   - Use `setupFromFixture(fixtureName, testName)` to initialize test state
+   - Verify fixture content exists before running tests
+   - For empty starting states, use the `init-empty` fixture
+
+## Example
+
+```typescript
+// Good practice
+test("should do something with files", async () => {
+  await setupFromFixture("my-test-fixture", expect.getState().currentTestName);
+
+  // Test logic here
+});
+
+// Bad practice - DO NOT DO THIS
+test("should not create files directly", async () => {
+  await setupTestDir(expect.getState().currentTestName);
+
+  // DON'T DO THIS - violates test standards
+  fs.writeFileSync(path.join(testDir, "some-file.txt"), "content");
+
+  // Test logic here
+});
+```

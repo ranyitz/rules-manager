@@ -1,0 +1,5 @@
+name: Default IDE Test Rule
+description: A test rule to verify cursor as default IDE
+alwaysApply: false
+
+# Sample rule content

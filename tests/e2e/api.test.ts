@@ -11,7 +11,6 @@ describe("aicm Node.js API", () => {
     );
 
     const result = await install({
-      silent: false,
       cwd: testDir,
     });
 
@@ -23,22 +22,12 @@ describe("aicm Node.js API", () => {
   });
 
   test("should install rules using the API with custom config", async () => {
-    await setupTestDir(expect.getState().currentTestName);
-
-    const rulesDir = path.join(testDir, "rules");
-    fs.mkdirSync(rulesDir, { recursive: true });
-
-    const rulePath = path.join(rulesDir, "test-rule.mdc");
-    fs.writeFileSync(
-      rulePath,
-      `name: Test Rule
-description: A test rule created programmatically
-alwaysApply: true
-
-# This is a test rule created via the API test
-`,
+    await setupFromFixture(
+      "api-test-custom-config",
+      expect.getState().currentTestName,
     );
 
+    const rulePath = path.join(testDir, "rules", "test-rule.mdc");
     expect(fs.existsSync(rulePath)).toBe(true);
 
     const config: Config = {
@@ -57,7 +46,6 @@ alwaysApply: true
     const result = await install({
       config,
       cwd: testDir,
-      silent: true,
     });
 
     expect(result.success).toBe(true);
@@ -73,10 +61,35 @@ alwaysApply: true
     expect(fs.existsSync(installPath)).toBe(true);
 
     const ruleContent = fs.readFileSync(installPath, "utf8");
-    expect(ruleContent).toContain("alwaysApply: true");
-    expect(ruleContent).toContain(
-      "This is a test rule created via the API test",
+    expect(ruleContent).toContain("alwaysApply: false");
+    expect(ruleContent).toContain("Sample rule content");
+  });
+
+  test("should use cursor as default IDE when ides field is not specified", async () => {
+    await setupFromFixture(
+      "api-test-default-ide",
+      expect.getState().currentTestName,
     );
+
+    const result = await install({
+      cwd: testDir,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.installedRuleCount).toBe(1);
+
+    const cursorInstallPath = path.join(
+      testDir,
+      ".cursor",
+      "rules",
+      "aicm",
+      "default-ide-rule.mdc",
+    );
+    expect(fs.existsSync(cursorInstallPath)).toBe(true);
+
+    const ruleContent = fs.readFileSync(cursorInstallPath, "utf8");
+    expect(ruleContent).toContain("Default IDE Test Rule");
+    expect(ruleContent).toContain("Sample rule content");
   });
 
   test("should handle config with no rules correctly", async () => {
@@ -90,7 +103,6 @@ alwaysApply: true
     const result = await install({
       config,
       cwd: testDir,
-      silent: true,
     });
 
     expect(result.success).toBe(false);
@@ -117,7 +129,6 @@ alwaysApply: true
     const result = await install({
       cwd: subDir,
       config: customConfig,
-      silent: true,
     });
 
     expect(result.success).toBe(true);

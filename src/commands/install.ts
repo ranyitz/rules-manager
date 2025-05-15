@@ -24,10 +24,6 @@ export interface InstallOptions {
    * Custom config object to use instead of loading from file
    */
   config?: Config;
-  /**
-   * Whether to log progress to console
-   */
-  silent?: boolean;
 }
 
 /**
@@ -82,28 +78,18 @@ export async function install(
   options: InstallOptions = {},
 ): Promise<InstallResult> {
   const cwd = options.cwd || process.cwd();
-  const silent = options.silent || false;
-  const log = silent ? () => {} : console.log;
-  const error = silent ? () => {} : console.error;
 
   try {
-    // Save original process.cwd() and change to the specified cwd
     const originalCwd = process.cwd();
     if (cwd !== originalCwd) {
       process.chdir(cwd);
     }
 
-    // Initialize rule collection
     const ruleCollection = initRuleCollection();
 
-    // Use provided config or load from file
     const config = options.config || getConfig();
 
-    // If config doesn't exist, return error
     if (!config) {
-      error("Configuration file not found!");
-
-      // Restore original cwd
       if (cwd !== originalCwd) {
         process.chdir(originalCwd);
       }
@@ -119,9 +105,6 @@ export async function install(
     if (!config.rules || Object.keys(config.rules).length === 0) {
       // If there are no presets defined either, show a message
       if (!config.presets || config.presets.length === 0) {
-        error("No rules defined in configuration.");
-
-        // Restore original cwd
         if (cwd !== originalCwd) {
           process.chdir(originalCwd);
         }
@@ -157,25 +140,21 @@ export async function install(
             ruleContent = collectLocalRule(name, source, ruleBasePath);
             break;
           default:
-            error(`Unknown rule type: ${ruleType}`);
             errorMessages.push(`Unknown rule type: ${ruleType}`);
             continue;
         }
 
-        // Add rule to collection
         addRuleToCollection(ruleCollection, ruleContent, config.ides);
         installedRuleCount++;
       } catch (e) {
         hasErrors = true;
         const errorMessage = `Error processing rule ${name}: ${e instanceof Error ? e.message : String(e)}`;
-        error(errorMessage);
         errorMessages.push(errorMessage);
       }
     }
 
     // If there were errors, exit with error
     if (hasErrors) {
-      // Restore original cwd
       if (cwd !== originalCwd) {
         process.chdir(originalCwd);
       }
@@ -199,8 +178,6 @@ export async function install(
       writeMcpServersToTargets(filteredMcpServers, config.ides, cwd);
     }
 
-    log("Rules installation completed");
-
     // Restore original cwd
     if (cwd !== originalCwd) {
       process.chdir(originalCwd);
@@ -211,8 +188,7 @@ export async function install(
       installedRuleCount,
     };
   } catch (e) {
-    const errorMessage = `Error during rule installation: ${e instanceof Error ? e.message : String(e)}`;
-    error(errorMessage);
+    const errorMessage = e instanceof Error ? e.message : String(e);
 
     // If cwd was changed, restore it
     if (cwd !== process.cwd()) {
@@ -229,19 +205,17 @@ export async function install(
 
 export async function installCommand(): Promise<void> {
   try {
-    const result = await install({ silent: false });
+    const result = await install();
 
     if (!result.success) {
       console.error(chalk.red(result.error));
       process.exit(1);
+    } else {
+      console.log("Rules installation completed");
     }
   } catch (error: unknown) {
     console.error(
-      chalk.red(
-        `Error during rule installation: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      ),
+      chalk.red(error instanceof Error ? error.message : String(error)),
     );
     process.exit(1);
   }
