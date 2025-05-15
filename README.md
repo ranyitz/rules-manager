@@ -130,9 +130,7 @@ npm install --save-dev pirate-coding
 2. Create an `aicm.json` file in your project
 
 ```bash
-echo '{
-  "presets": ["pirate-coding"]
-}' > aicm.json
+echo '{ "presets": ["pirate-coding"] }' > aicm.json
 ```
 
 3. Install all rules & mcps from your configuration
