@@ -6,7 +6,7 @@ import {
 
 /**
  * Install AICM rules based on configuration
- * @param options Install options
+ * @param options Installation options
  * @returns Result of the install operation
  */
 export async function install(

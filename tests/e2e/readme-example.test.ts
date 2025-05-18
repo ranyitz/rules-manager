@@ -12,7 +12,7 @@ describe("README demo example", () => {
 
     const npmResult = await runNpmInstall("pirate-coding");
     expect(npmResult.code).toBe(0);
-    const { stdout, code } = await runCommand("install");
+    const { stdout, code } = await runCommand("install --ci");
 
     expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");

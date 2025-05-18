@@ -11,6 +11,7 @@ import {
 import { writeRulesToTargets } from "../utils/rule-writer";
 import fs from "fs-extra";
 import path from "node:path";
+import { isCI } from "ci-info";
 
 /**
  * Options for the installCore function
@@ -24,6 +25,10 @@ export interface InstallOptions {
    * Custom config object to use instead of loading from file
    */
   config?: Config;
+  /**
+   * allow installation on CI environments
+   */
+  installOnCI?: boolean;
 }
 
 /**
@@ -70,6 +75,19 @@ function writeMcpServersToTargets(
 }
 
 /**
+ * Checks if the current environment is a CI environment
+ * This function respects any explicit settings in process.env.CI
+ */
+function isInCIEnvironment(): boolean {
+  // Explicit environment variable settings take precedence
+  if (process.env.CI === "true") return true;
+  if (process.env.CI === "false") return false;
+
+  // Fall back to ci-info's detection
+  return isCI;
+}
+
+/**
  * Core implementation of the rule installation logic
  * @param options Install options
  * @returns Result of the install operation
@@ -78,6 +96,7 @@ export async function install(
   options: InstallOptions = {},
 ): Promise<InstallResult> {
   const cwd = options.cwd || process.cwd();
+  const installOnCI = options.installOnCI === true; // Default to false if not specified
 
   try {
     const originalCwd = process.cwd();
@@ -97,6 +116,21 @@ export async function install(
       return {
         success: false,
         error: "Configuration file not found!",
+        installedRuleCount: 0,
+      };
+    }
+
+    const inCI = isInCIEnvironment();
+
+    if (inCI && !installOnCI && !config.installOnCI) {
+      if (cwd !== originalCwd) {
+        process.chdir(originalCwd);
+      }
+
+      console.log(chalk.yellow("Detected CI environment, skipping install."));
+
+      return {
+        success: true,
         installedRuleCount: 0,
       };
     }
@@ -203,9 +237,9 @@ export async function install(
   }
 }
 
-export async function installCommand(): Promise<void> {
+export async function installCommand(installOnCI?: boolean): Promise<void> {
   try {
-    const result = await install();
+    const result = await install({ installOnCI });
 
     if (!result.success) {
       console.error(chalk.red(result.error));

@@ -13,7 +13,7 @@ describe("aicm install command with fixtures", () => {
       expect.getState().currentTestName,
     );
 
-    const { stderr } = await runCommand("install");
+    const { stderr } = await runCommand("install --ci");
 
     expect(stderr).toContain("No rules defined in configuration");
   });
@@ -24,7 +24,7 @@ describe("aicm install command with fixtures", () => {
       expect.getState().currentTestName,
     );
 
-    const { stderr, code } = await runCommand("install");
+    const { stderr, code } = await runCommand("install --ci");
 
     expect(code).toBe(1);
     expect(stderr).toMatch(/config|configuration|not found|init/i);
@@ -36,7 +36,7 @@ describe("aicm install command with fixtures", () => {
       expect.getState().currentTestName,
     );
 
-    const { code } = await runCommand("install");
+    const { code } = await runCommand("install --ci");
 
     expect(code).toBe(0);
 
@@ -69,7 +69,7 @@ describe("aicm install command with fixtures", () => {
       expect.getState().currentTestName,
     );
 
-    const { stderr, code } = await runCommand("install");
+    const { stderr, code } = await runCommand("install --ci");
 
     expect(code).toBe(1);
     expect(stderr).toContain("Error processing rule");
@@ -83,7 +83,7 @@ describe("aicm install command with fixtures", () => {
       expect.getState().currentTestName,
     );
 
-    const { code } = await runCommand("install");
+    const { code } = await runCommand("install --ci");
 
     expect(code).toBe(0);
 
@@ -120,7 +120,7 @@ describe("aicm install command with fixtures", () => {
       "another-stale-rule.mdc",
     );
 
-    const { code, stdout } = await runCommand("install");
+    const { code, stdout } = await runCommand("install --ci");
 
     expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");
@@ -145,7 +145,7 @@ describe("aicm install command with fixtures", () => {
     expect(windsurfRulesContent).toContain(".aicm/stale-windsurf-rule.md");
     expect(windsurfRulesContent).toContain(".aicm/another-stale-reference.md");
 
-    const { code, stdout } = await runCommand("install --ide windsurf");
+    const { code, stdout } = await runCommand("install --ci --ide windsurf");
 
     expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");
