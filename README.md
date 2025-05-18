@@ -167,7 +167,8 @@ Example `aicm.json`:
     "remote-mcp": {
       "url": "https://example.com/sse"
     }
-  }
+  },
+  "installOnCI": false
 }
 ```
 
@@ -191,6 +192,8 @@ Example `aicm.json`:
 - **presets**: Array of preset configurations to include. Each preset is a path to a JSON file (npm package or local path) that contains additional rules and mcpServers.
 
   - Preset files should contain a `rules` and `mcpServers` objects with the same structure as the main configuration.
+
+- **installOnCI**: Boolean flag (default: `false`) that controls whether installation should proceed in CI environments. When set to `true`, rules will be installed even in CI environments.
 
 ### MCP Server Installation
 
@@ -247,6 +250,10 @@ Installs all rules and MCPs configured in your `aicm.json`.
 npx aicm install
 ```
 
+Options:
+
+- `--ci`: run in CI environments (default: `false`)
+
 ## Node.js API
 
 In addition to the CLI, aicm can be used programmatically in Node.js applications:
@@ -289,6 +296,7 @@ Installs rules and MCP servers based on configuration.
 
 - `cwd`: Base directory to use instead of `process.cwd()`
 - `config`: Custom config object to use instead of loading from file
+- `installOnCI`: Run installation on CI environments (default: `false`)
 
 **Returns:**
 

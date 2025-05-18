@@ -29,6 +29,7 @@ export interface Config {
   rules: Rules;
   presets?: string[];
   mcpServers?: MCPServers;
+  installOnCI?: boolean;
 }
 
 // Rule metadata and content models

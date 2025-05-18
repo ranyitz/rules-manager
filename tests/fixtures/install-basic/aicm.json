@@ -1,0 +1,6 @@
+{
+  "ides": ["cursor"],
+  "rules": {
+    "local-rule": "./rules/local-rule.mdc"
+  }
+}

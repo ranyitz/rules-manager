@@ -6,6 +6,7 @@ const defaultConfig = {
   ides: ["cursor"],
   rules: {},
   mcpServers: {},
+  installOnCI: false,
 };
 
 export function initCommand(): void {

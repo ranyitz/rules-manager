@@ -82,12 +82,16 @@ export async function setupTestDir(testName?: string): Promise<string> {
 
 export async function runCommand(
   args: string = "",
+  options: { env?: Record<string, string> } = {},
 ): Promise<{ stdout: string; stderr: string; code: number }> {
   try {
     const cliPath = path.join(projectRoot, "dist", "index.js");
     const command = `node ${cliPath} ${args}`;
 
-    const { stdout, stderr } = await execPromise(command, { cwd: testDir });
+    const { stdout, stderr } = await execPromise(command, {
+      cwd: testDir,
+      env: options.env ? { ...process.env, ...options.env } : process.env,
+    });
 
     return { stdout, stderr, code: 0 };
   } catch (error: unknown) {

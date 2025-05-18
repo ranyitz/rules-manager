@@ -15,6 +15,7 @@ const args = arg(
   {
     "--help": Boolean,
     "--version": Boolean,
+    "--ci": Boolean,
     "-h": "--help",
     "-v": "--version",
   },
@@ -39,7 +40,7 @@ switch (command) {
     initCommand();
     break;
   case "install":
-    installCommand();
+    installCommand(args["--ci"]);
     break;
   case "list":
     listCommand();
@@ -65,6 +66,7 @@ ${chalk.bold("COMMANDS")}
 ${chalk.bold("OPTIONS")}
   -h, --help          Show this help message
   -v, --version       Show version number
+  --ci                Run in CI environments (default: \`false\`)
 
 ${chalk.bold("EXAMPLES")}
   $ aicm init
