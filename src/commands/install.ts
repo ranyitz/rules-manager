@@ -120,8 +120,6 @@ export async function install(
       };
     }
 
-    // We test process.env.CI due to NODE API tests
-    // When process.env.CI is explicitly set, it should override the ci-info package's detection
     const inCI = isInCIEnvironment();
 
     if (inCI && !installOnCI && !config.installOnCI) {

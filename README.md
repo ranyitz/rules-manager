@@ -167,8 +167,7 @@ Example `aicm.json`:
     "remote-mcp": {
       "url": "https://example.com/sse"
     }
-  },
-  "installOnCI": false
+  }
 }
 ```
 
