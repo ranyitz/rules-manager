@@ -108,7 +108,9 @@ export async function install(
     }
 
     // We test process.env.CI due to NODE API tests
-    const inCI = isCI || process.env.CI === "true";
+    // When process.env.CI is explicitly set, it should override the ci-info package's detection
+    const inCI =
+      process.env.CI === "true" || (process.env.CI !== "false" && isCI);
 
     if (inCI && !installOnCI && !config.installOnCI) {
       if (cwd !== originalCwd) {

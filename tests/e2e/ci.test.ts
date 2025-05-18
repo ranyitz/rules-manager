@@ -145,27 +145,6 @@ describe("aicm install CI behavior", () => {
       expect(fileExists(cursorRulePath)).toBe(true);
     });
 
-    test("should install when NOT in CI regardless of options", async () => {
-      await setupFromFixture(
-        "install-basic",
-        expect.getState().currentTestName,
-      );
-      delete process.env.CI; // Ensure not in CI
-
-      // Scenario 1: Default options
-      let result = await installApi({ cwd: testDir });
-      expect(result.success).toBe(true);
-      expect(result.installedRuleCount).toBeGreaterThan(0);
-      expect(fileExists(cursorRulePath)).toBe(true);
-      fs.removeSync(path.join(testDir, ".cursor")); // Clean for next sub-test
-
-      // Scenario 2: With installOnCI:true (should still install)
-      result = await installApi({ cwd: testDir, installOnCI: true });
-      expect(result.success).toBe(true);
-      expect(result.installedRuleCount).toBeGreaterThan(0);
-      expect(fileExists(cursorRulePath)).toBe(true);
-    });
-
     test("should install on CI when installOnCI is true in config", async () => {
       await setupFromFixture(
         "install-basic-ci",
@@ -177,6 +156,39 @@ describe("aicm install CI behavior", () => {
       expect(result.success).toBe(true);
       expect(result.installedRuleCount).toBeGreaterThan(0);
       expect(fileExists(cursorRulePath)).toBe(true);
+    });
+
+    test("should install when NOT in CI regardless of options", async () => {
+      await setupFromFixture(
+        "install-basic",
+        expect.getState().currentTestName,
+      );
+
+      // Save original CI value
+      const originalCI = process.env.CI;
+      process.env.CI = "false";
+
+      try {
+        // Scenario 1: Default options
+        let result = await installApi({ cwd: testDir });
+        expect(result.success).toBe(true);
+        expect(result.installedRuleCount).toBeGreaterThan(0);
+        expect(fileExists(cursorRulePath)).toBe(true);
+        fs.removeSync(path.join(testDir, ".cursor")); // Clean for next sub-test
+
+        // Scenario 2: With installOnCI:true (should still install)
+        result = await installApi({ cwd: testDir, installOnCI: true });
+        expect(result.success).toBe(true);
+        expect(result.installedRuleCount).toBeGreaterThan(0);
+        expect(fileExists(cursorRulePath)).toBe(true);
+      } finally {
+        // Restore original CI value
+        if (originalCI === undefined) {
+          delete process.env.CI;
+        } else {
+          process.env.CI = originalCI;
+        }
+      }
     });
   });
 });
