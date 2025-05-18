@@ -15,7 +15,7 @@ describe("Presets with fixtures", () => {
       expect.getState().currentTestName,
     );
 
-    const { code } = await runCommand("install");
+    const { code } = await runCommand("install --ci");
 
     expect(code).toBe(0);
 
@@ -40,7 +40,7 @@ describe("Presets with fixtures", () => {
   test("should merge rules from presets with main configuration", async () => {
     await setupFromFixture("presets-merged", expect.getState().currentTestName);
 
-    const { code } = await runCommand("install");
+    const { code } = await runCommand("install --ci");
 
     expect(code).toBe(0);
 
@@ -75,7 +75,7 @@ describe("Presets with fixtures", () => {
   test("should handle npm package presets from @company/ai-rules", async () => {
     await setupFromFixture("presets-npm", expect.getState().currentTestName);
 
-    const { code } = await runCommand("install");
+    const { code } = await runCommand("install --ci");
 
     expect(code).toBe(0);
 
@@ -92,7 +92,7 @@ describe("Presets with fixtures", () => {
   test("should support shorthand npm directory preset loading (loads aicm.json from directory)", async () => {
     await setupFromFixture("presets-npm", expect.getState().currentTestName);
 
-    const { code } = await runCommand("install");
+    const { code } = await runCommand("install --ci");
 
     expect(code).toBe(0);
     expect(
@@ -110,7 +110,7 @@ describe("Presets with fixtures", () => {
       expect.getState().currentTestName,
     );
 
-    const { stderr, code } = await runCommand("install");
+    const { stderr, code } = await runCommand("install --ci");
 
     expect(code).toBe(1);
     expect(stderr).toContain("Source file");
@@ -123,7 +123,7 @@ describe("Presets with fixtures", () => {
       expect.getState().currentTestName,
     );
 
-    const { stderr, code } = await runCommand("install");
+    const { stderr, code } = await runCommand("install --ci");
 
     expect(code).toBe(1);
 
@@ -136,7 +136,7 @@ describe("Presets with fixtures", () => {
       expect.getState().currentTestName,
     );
 
-    const { code } = await runCommand("install");
+    const { code } = await runCommand("install --ci");
     expect(code).toBe(0);
 
     // The overridden rule should be installed
@@ -170,7 +170,7 @@ describe("Presets with fixtures", () => {
     config.mcpServers["preset-mcp"] = false;
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
 
-    const { code } = await runCommand("install");
+    const { code } = await runCommand("install --ci");
     expect(code).toBe(0);
 
     // The canceled rule should not be installed

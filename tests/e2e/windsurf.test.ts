@@ -13,7 +13,7 @@ describe("aicm windsurf integration", () => {
   test("should install rules to .aicm directory and update .windsurfrules", async () => {
     await setupFromFixture("windsurf-basic", expect.getState().currentTestName);
 
-    const { stdout, code } = await runCommand("install --ide windsurf");
+    const { stdout, code } = await runCommand("install --ide windsurf --ci");
 
     expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");
@@ -50,7 +50,7 @@ describe("aicm windsurf integration", () => {
       expect.getState().currentTestName,
     );
 
-    const { stdout, code } = await runCommand("install --ide windsurf");
+    const { stdout, code } = await runCommand("install --ide windsurf --ci");
 
     expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");
@@ -72,7 +72,7 @@ describe("aicm windsurf integration", () => {
       expect.getState().currentTestName,
     );
 
-    const { stdout, code } = await runCommand("install --ide windsurf");
+    const { stdout, code } = await runCommand("install --ide windsurf --ci");
 
     expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");
@@ -111,7 +111,7 @@ describe("aicm windsurf integration", () => {
       expect.getState().currentTestName,
     );
 
-    const { stdout, code } = await runCommand("install --ide windsurf");
+    const { stdout, code } = await runCommand("install --ide windsurf --ci");
 
     expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");
@@ -154,7 +154,7 @@ This rule is used to test appending markers to an existing file without markers.
     fs.writeFileSync(path.join(testDirPath, ".windsurfrules"), existingContent);
 
     const { stdout, code } = await runCommand(
-      "install no-marker-rule ./rules/no-marker-rule.mdc --ide windsurf",
+      "install no-marker-rule ./rules/no-marker-rule.mdc --ide windsurf --ci",
     );
 
     expect(code).toBe(0);
@@ -184,7 +184,7 @@ This rule is used to test appending markers to an existing file without markers.
       expect.getState().currentTestName,
     );
 
-    const { code } = await runCommand("install --ide windsurf");
+    const { code } = await runCommand("install --ide windsurf --ci");
 
     expect(code).toBe(0);
 
@@ -205,7 +205,7 @@ This rule is used to test appending markers to an existing file without markers.
   test("should install rules to .aicm directory and update .windsurfrules", async () => {
     await setupFromFixture("windsurf-basic", expect.getState().currentTestName);
 
-    const { stdout, code } = await runCommand("install --ide windsurf");
+    const { stdout, code } = await runCommand("install --ide windsurf --ci");
 
     expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");
@@ -242,7 +242,7 @@ This rule is used to test appending markers to an existing file without markers.
       expect.getState().currentTestName,
     );
 
-    const { stdout, code } = await runCommand("install --ide windsurf");
+    const { stdout, code } = await runCommand("install --ide windsurf --ci");
 
     expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");
@@ -264,7 +264,7 @@ This rule is used to test appending markers to an existing file without markers.
       expect.getState().currentTestName,
     );
 
-    const { stdout, code } = await runCommand("install --ide windsurf");
+    const { stdout, code } = await runCommand("install --ide windsurf --ci");
 
     expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");
@@ -303,7 +303,7 @@ This rule is used to test appending markers to an existing file without markers.
       expect.getState().currentTestName,
     );
 
-    const { stdout, code } = await runCommand("install --ide windsurf");
+    const { stdout, code } = await runCommand("install --ide windsurf --ci");
 
     expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");
@@ -345,7 +345,7 @@ This rule is used to test appending markers to an existing file without markers.
     fs.writeFileSync(path.join(testDirPath, ".windsurfrules"), existingContent);
 
     const { stdout, code } = await runCommand(
-      "install no-marker-rule ./rules/no-marker-rule.mdc --ide windsurf",
+      "install no-marker-rule ./rules/no-marker-rule.mdc --ide windsurf --ci",
     );
     expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");
@@ -371,7 +371,7 @@ This rule is used to test appending markers to an existing file without markers.
       "windsurf-rule-in-subdir",
       expect.getState().currentTestName,
     );
-    const { code } = await runCommand("install --ide windsurf");
+    const { code } = await runCommand("install --ide windsurf --ci");
     expect(code).toBe(0);
 
     expect(fileExists(path.join(".aicm", "dir", "general.md"))).toBe(true);
