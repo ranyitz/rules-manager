@@ -37,12 +37,12 @@ In your project's `aicm.json`, reference the package and the specific rule:
 }
 ```
 
-2. **Add a postinstall script** to your `package.json`:
+2. **Add a prepare script** to your `package.json`:
 
 ```json
 {
   "scripts": {
-    "postinstall": "npx -y aicm install"
+    "prepare": "npx -y aicm install"
   }
 }
 ```
