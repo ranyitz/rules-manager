@@ -4,6 +4,16 @@ import { install, Config } from "../../src/api";
 import fs from "fs-extra";
 
 describe("aicm Node.js API", () => {
+  const originalCI = process.env.CI;
+
+  beforeAll(() => {
+    process.env.CI = "false";
+  });
+
+  afterAll(() => {
+    process.env.CI = originalCI;
+  });
+
   test("should install rules using the API with default options", async () => {
     await setupFromFixture(
       "install-from-config",
