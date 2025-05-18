@@ -75,6 +75,19 @@ function writeMcpServersToTargets(
 }
 
 /**
+ * Checks if the current environment is a CI environment
+ * This function respects any explicit settings in process.env.CI
+ */
+function isInCIEnvironment(): boolean {
+  // Explicit environment variable settings take precedence
+  if (process.env.CI === "true") return true;
+  if (process.env.CI === "false") return false;
+
+  // Fall back to ci-info's detection
+  return isCI;
+}
+
+/**
  * Core implementation of the rule installation logic
  * @param options Install options
  * @returns Result of the install operation
@@ -109,8 +122,7 @@ export async function install(
 
     // We test process.env.CI due to NODE API tests
     // When process.env.CI is explicitly set, it should override the ci-info package's detection
-    const inCI =
-      process.env.CI === "true" || (process.env.CI !== "false" && isCI);
+    const inCI = isInCIEnvironment();
 
     if (inCI && !installOnCI && !config.installOnCI) {
       if (cwd !== originalCwd) {
