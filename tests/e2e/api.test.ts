@@ -15,10 +15,7 @@ describe("aicm Node.js API", () => {
   });
 
   test("should install rules using the API with default options", async () => {
-    await setupFromFixture(
-      "install-from-config",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("install-from-config");
 
     const result = await install({
       cwd: testDir,
@@ -32,10 +29,7 @@ describe("aicm Node.js API", () => {
   });
 
   test("should install rules using the API with custom config", async () => {
-    await setupFromFixture(
-      "api-test-custom-config",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("api-test-custom-config");
 
     const rulePath = path.join(testDir, "rules", "test-rule.mdc");
     expect(fs.existsSync(rulePath)).toBe(true);
@@ -76,10 +70,7 @@ describe("aicm Node.js API", () => {
   });
 
   test("should use cursor as default IDE when ides field is not specified", async () => {
-    await setupFromFixture(
-      "api-test-default-ide",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("api-test-default-ide");
 
     const result = await install({
       cwd: testDir,
@@ -103,7 +94,7 @@ describe("aicm Node.js API", () => {
   });
 
   test("should handle config with no rules correctly", async () => {
-    await setupTestDir(expect.getState().currentTestName);
+    await setupTestDir();
 
     const config: Config = {
       ides: ["cursor"],
@@ -121,10 +112,7 @@ describe("aicm Node.js API", () => {
   });
 
   test("should handle custom working directory", async () => {
-    await setupFromFixture(
-      "install-from-config",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("install-from-config");
 
     const subDir = path.join(testDir, "subdir");
     fs.mkdirSync(subDir, { recursive: true });

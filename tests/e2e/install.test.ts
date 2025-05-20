@@ -8,10 +8,7 @@ import {
 
 describe("aicm install command with fixtures", () => {
   test("should show error when no rule is specified", async () => {
-    await setupFromFixture(
-      "install-no-rules",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("install-no-rules");
 
     const { stderr } = await runCommand("install --ci");
 
@@ -19,10 +16,7 @@ describe("aicm install command with fixtures", () => {
   });
 
   test("should show error when config doesn't exist", async () => {
-    await setupFromFixture(
-      "install-no-config",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("install-no-config");
 
     const { stderr, code } = await runCommand("install --ci");
 
@@ -31,10 +25,7 @@ describe("aicm install command with fixtures", () => {
   });
 
   test("should install rules from config", async () => {
-    await setupFromFixture(
-      "install-from-config",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("install-from-config");
 
     const { code } = await runCommand("install --ci");
 
@@ -64,10 +55,7 @@ describe("aicm install command with fixtures", () => {
   });
 
   test("should handle errors with missing rule files", async () => {
-    await setupFromFixture(
-      "install-missing-rules",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("install-missing-rules");
 
     const { stderr, code } = await runCommand("install --ci");
 
@@ -78,10 +66,7 @@ describe("aicm install command with fixtures", () => {
   });
 
   test("should install rules into specified subdirectory when rule key includes a directory", async () => {
-    await setupFromFixture(
-      "install-rule-in-subdir",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("install-rule-in-subdir");
 
     const { code } = await runCommand("install --ci");
 
@@ -101,10 +86,7 @@ describe("aicm install command with fixtures", () => {
   });
 
   test("should clean stale Cursor rules on installation", async () => {
-    await setupFromFixture(
-      "install-cursor-cleanup",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("install-cursor-cleanup");
 
     const staleRulePath = path.join(
       ".cursor",
@@ -131,10 +113,7 @@ describe("aicm install command with fixtures", () => {
   });
 
   test("should clean stale Windsurf rules and .aicm directory before installation", async () => {
-    await setupFromFixture(
-      "install-windsurf-cleanup",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("install-windsurf-cleanup");
 
     expect(fileExists(path.join(".aicm", "stale-windsurf-rule.md"))).toBe(true);
     const oldFreshContent = readTestFile(

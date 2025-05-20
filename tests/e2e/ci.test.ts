@@ -45,10 +45,7 @@ describe("aicm install CI behavior", () => {
 
   describe("CLI Behavior", () => {
     test("should skip install on CI by default", async () => {
-      await setupFromFixture(
-        "install-basic",
-        expect.getState().currentTestName,
-      );
+      await setupFromFixture("install-basic");
 
       const { stdout, code } = await runCommandWithCI("install");
 
@@ -58,10 +55,7 @@ describe("aicm install CI behavior", () => {
     });
 
     test("should install when --ci flag is used", async () => {
-      await setupFromFixture(
-        "install-basic",
-        expect.getState().currentTestName,
-      );
+      await setupFromFixture("install-basic");
 
       const { stdout, code } = await runCommandWithCI("install --ci");
 
@@ -71,10 +65,7 @@ describe("aicm install CI behavior", () => {
     });
 
     test("should install when installOnCI is true in config", async () => {
-      await setupFromFixture(
-        "install-basic-ci",
-        expect.getState().currentTestName,
-      );
+      await setupFromFixture("install-basic-ci");
 
       const { stdout, code } = await runCommandWithCI("install");
 
@@ -84,10 +75,7 @@ describe("aicm install CI behavior", () => {
     });
 
     test("should proceed with install when NOT in CI (regardless of flags/config)", async () => {
-      await setupFromFixture(
-        "install-basic",
-        expect.getState().currentTestName,
-      );
+      await setupFromFixture("install-basic");
       // Ensure we're NOT using CI=true for this test - we'll explicitly set it to false
 
       // Scenario 1: No flag, no special config
@@ -118,10 +106,7 @@ describe("aicm install CI behavior", () => {
 
   describe("Node API Behavior", () => {
     test("should skip install on CI by default", async () => {
-      await setupFromFixture(
-        "install-basic",
-        expect.getState().currentTestName,
-      );
+      await setupFromFixture("install-basic");
 
       const result = await runApiWithCI(() => installApi({ cwd: testDir }));
 
@@ -131,10 +116,7 @@ describe("aicm install CI behavior", () => {
     });
 
     test("should install on CI when installOnCI option is true", async () => {
-      await setupFromFixture(
-        "install-basic",
-        expect.getState().currentTestName,
-      );
+      await setupFromFixture("install-basic");
 
       const result = await runApiWithCI(() =>
         installApi({ cwd: testDir, installOnCI: true }),
@@ -146,10 +128,7 @@ describe("aicm install CI behavior", () => {
     });
 
     test("should install on CI when installOnCI is true in config", async () => {
-      await setupFromFixture(
-        "install-basic-ci",
-        expect.getState().currentTestName,
-      );
+      await setupFromFixture("install-basic-ci");
 
       const result = await runApiWithCI(() => installApi({ cwd: testDir }));
 
@@ -159,10 +138,7 @@ describe("aicm install CI behavior", () => {
     });
 
     test("should install when NOT in CI regardless of options", async () => {
-      await setupFromFixture(
-        "install-basic",
-        expect.getState().currentTestName,
-      );
+      await setupFromFixture("install-basic");
 
       // Save original CI value
       const originalCI = process.env.CI;

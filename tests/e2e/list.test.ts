@@ -2,10 +2,7 @@ import { setupFromFixture, runCommand } from "./helpers";
 
 describe("aicm list command with fixtures", () => {
   test("should list all rules in the config", async () => {
-    await setupFromFixture(
-      "list-with-multiple-rules",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("list-with-multiple-rules");
 
     const { stdout, code } = await runCommand("list");
 
@@ -17,10 +14,7 @@ describe("aicm list command with fixtures", () => {
   });
 
   test("should show message when no rules exist", async () => {
-    await setupFromFixture(
-      "list-with-no-rules",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("install-no-rules");
 
     const { stdout, stderr, code } = await runCommand("list");
 
