@@ -262,7 +262,6 @@ describe("Presets with fixtures", () => {
 
     expect(code).toBe(0);
 
-    // Check that the rules are installed in their namespaced directories
     const rootRulePath = path.join(
       ".cursor",
       "rules",
