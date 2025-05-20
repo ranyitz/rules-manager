@@ -10,7 +10,7 @@ import { testDir } from "./helpers";
 
 describe("aicm init command with fixtures", () => {
   test("should create default config file", async () => {
-    await setupFromFixture("init-empty", expect.getState().currentTestName);
+    await setupFromFixture("init-empty");
 
     await runCommand("init");
 
@@ -22,7 +22,7 @@ describe("aicm init command with fixtures", () => {
   });
 
   test("should not overwrite existing config", async () => {
-    await setupFromFixture("init-empty", expect.getState().currentTestName);
+    await setupFromFixture("init-empty");
 
     const customConfig = { ides: ["custom"], rules: {} };
     fs.writeJsonSync(path.join(testDir, "aicm.json"), customConfig);

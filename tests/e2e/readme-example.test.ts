@@ -8,7 +8,7 @@ import path from "path";
 
 describe("README demo example", () => {
   test("should install rules from preset as shown in the README", async () => {
-    await setupFromFixture("readme-demo", expect.getState().currentTestName);
+    await setupFromFixture("readme-demo");
     const npmResult = await runNpmInstall("pirate-coding");
     expect(npmResult.code).toBe(0);
     const { stdout, code } = await runCommand("install --ci");

@@ -50,7 +50,12 @@ function sanitizeFilename(name: string): string {
  * @param testFilename The name of the test file
  * @param testName The name of the individual test
  */
-export async function setupTestDir(testName?: string): Promise<string> {
+export async function setupTestDir(): Promise<string> {
+  const testPath = expect.getState().testPath!;
+  const testFileName = path.basename(testPath, ".test.ts");
+  const testName = expect.getState().currentTestName;
+
+  // Sanitize test name
   // If no test identifiers provided, use the root tmp-test directory
   if (!testName) {
     // Create the root test directory if it doesn't exist
@@ -60,13 +65,12 @@ export async function setupTestDir(testName?: string): Promise<string> {
     return testDir;
   }
 
-  // Sanitize test name
   const sanitizedTestName = testName
     ? sanitizeFilename(testName)
     : "unknown-test";
 
   // Create a directory path with just the command name and sanitized test name
-  const newTestDir = path.join(testRootDir, sanitizedTestName);
+  const newTestDir = path.join(testRootDir, testFileName, sanitizedTestName);
 
   // Remove any existing test directory
   await rimraf(newTestDir);
@@ -156,16 +160,11 @@ export function getDirectoryStructure(dir: string = ""): string[] {
 /**
  * Setup a test directory using a fixture directory
  * @param fixtureName The name of the fixture directory to use
- * @param testName Optional test name for the directory
  */
-export async function setupFromFixture(
-  fixtureName: string,
-  testName?: string,
-): Promise<string> {
+export async function setupFromFixture(fixtureName: string): Promise<string> {
   // First setup a clean test directory
-  await setupTestDir(testName);
+  await setupTestDir();
 
-  // Copy the entire fixture directory to the test directory
   const fixtureDir = path.join(e2eFixturesDir, fixtureName);
 
   if (!fs.existsSync(fixtureDir)) {

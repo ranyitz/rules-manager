@@ -13,7 +13,7 @@ import { setupFromFixture, runCommand } from "./helpers";
 describe("my test", () => {
   test("should do something", async () => {
     // Setup the test directory using a fixture
-    await setupFromFixture("fixture-name", expect.getState().currentTestName);
+    await setupFromFixture("fixture-name");
 
     // Run your test...
     const { stdout, stderr, code } = await runCommand("some-command");
@@ -55,7 +55,7 @@ tests/fixtures/e2e/list-with-multiple-rules/
    - Each fixture should be self-contained and independent
 
 3. **Using Fixtures in Tests**
-   - Use `setupFromFixture(fixtureName, testName)` to initialize test state
+   - Use `setupFromFixture(fixtureName)` to initialize test state
    - Verify fixture content exists before running tests
    - For empty starting states, use the `init-empty` fixture
 
@@ -94,7 +94,7 @@ Modifying files after fixture setup should be limited to specific test requireme
 ```typescript
 // Only modify files when testing file modification functionality
 test("should handle configuration updates", async () => {
-  await setupFromFixture("config-basic", expect.getState().currentTestName);
+  await setupFromFixture("config-basic");
 
   // Modifying only when testing specific behavior
   // Use helpers like readTestFile and carefully document the purpose
@@ -115,10 +115,7 @@ test("should handle configuration updates", async () => {
 // GOOD PRACTICE
 test("should test specific functionality", async () => {
   // Start with a complete fixture containing all needed files
-  await setupFromFixture(
-    "my-complete-fixture",
-    expect.getState().currentTestName,
-  );
+  await setupFromFixture("my-complete-fixture");
 
   // Run command
   const { code } = await runCommand("install --ci");

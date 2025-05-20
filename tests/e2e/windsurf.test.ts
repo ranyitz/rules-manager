@@ -11,7 +11,7 @@ import { parseMdcFile } from "../../src/utils/mdc-parser";
 
 describe("aicm windsurf integration", () => {
   test("should install rules to .aicm directory and update .windsurfrules", async () => {
-    await setupFromFixture("windsurf-basic", expect.getState().currentTestName);
+    await setupFromFixture("windsurf-basic");
 
     const { stdout, code } = await runCommand("install --ide windsurf --ci");
 
@@ -45,10 +45,7 @@ describe("aicm windsurf integration", () => {
   });
 
   test("should update existing .windsurfrules file", async () => {
-    await setupFromFixture(
-      "windsurf-existing",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("windsurf-existing");
 
     const { stdout, code } = await runCommand("install --ide windsurf --ci");
 
@@ -67,10 +64,7 @@ describe("aicm windsurf integration", () => {
   });
 
   test("should handle multiple rule types correctly", async () => {
-    await setupFromFixture(
-      "windsurf-multiple-types",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("windsurf-multiple-types");
 
     const { stdout, code } = await runCommand("install --ide windsurf --ci");
 
@@ -106,10 +100,7 @@ describe("aicm windsurf integration", () => {
   });
 
   test("should install multiple rules with a single command", async () => {
-    await setupFromFixture(
-      "windsurf-multiple-command",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("windsurf-multiple-command");
 
     const { stdout, code } = await runCommand("install --ide windsurf --ci");
 
@@ -179,10 +170,7 @@ This rule is used to test appending markers to an existing file without markers.
   });
 
   test("should install rules into specified subdirectory when rule key includes a directory", async () => {
-    await setupFromFixture(
-      "windsurf-rule-in-subdir",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("windsurf-rule-in-subdir");
 
     const { code } = await runCommand("install --ide windsurf --ci");
 
@@ -203,7 +191,7 @@ This rule is used to test appending markers to an existing file without markers.
   });
 
   test("should install rules to .aicm directory and update .windsurfrules", async () => {
-    await setupFromFixture("windsurf-basic", expect.getState().currentTestName);
+    await setupFromFixture("windsurf-basic");
 
     const { stdout, code } = await runCommand("install --ide windsurf --ci");
 
@@ -237,10 +225,7 @@ This rule is used to test appending markers to an existing file without markers.
   });
 
   test("should update existing .windsurfrules file", async () => {
-    await setupFromFixture(
-      "windsurf-existing",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("windsurf-existing");
 
     const { stdout, code } = await runCommand("install --ide windsurf --ci");
 
@@ -259,10 +244,7 @@ This rule is used to test appending markers to an existing file without markers.
   });
 
   test("should handle multiple rule types correctly", async () => {
-    await setupFromFixture(
-      "windsurf-multiple-types",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("windsurf-multiple-types");
 
     const { stdout, code } = await runCommand("install --ide windsurf --ci");
 
@@ -298,10 +280,7 @@ This rule is used to test appending markers to an existing file without markers.
   });
 
   test("should install multiple rules with a single command", async () => {
-    await setupFromFixture(
-      "windsurf-multiple-command",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("windsurf-multiple-command");
 
     const { stdout, code } = await runCommand("install --ide windsurf --ci");
 
@@ -367,10 +346,7 @@ This rule is used to test appending markers to an existing file without markers.
   });
 
   test("should install rules into specified subdirectory when rule key includes a directory", async () => {
-    await setupFromFixture(
-      "windsurf-rule-in-subdir",
-      expect.getState().currentTestName,
-    );
+    await setupFromFixture("windsurf-rule-in-subdir");
     const { code } = await runCommand("install --ide windsurf --ci");
     expect(code).toBe(0);
 
