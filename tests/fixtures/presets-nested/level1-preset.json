@@ -1,0 +1,7 @@
+{
+  "rules": {
+    "level1Rule1": "rules/level1-rule1.js",
+    "level1Rule2": "rules/level1-rule2.js"
+  },
+  "presets": ["./level2-preset.json"]
+}

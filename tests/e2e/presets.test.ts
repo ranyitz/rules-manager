@@ -4,7 +4,9 @@ import {
   runCommand,
   fileExists,
   readTestFile,
+  testDir,
 } from "./helpers";
+import { getConfig } from "../../src/utils/config";
 
 describe("Presets with fixtures", () => {
   test("should install rules from a preset file", async () => {
@@ -98,7 +100,6 @@ describe("Presets with fixtures", () => {
     );
     expect(localRuleContent).toContain("Local Rule");
 
-    // Assert .cursor/mcp.json exists and contains the preset-mcp
     const mcpPath = path.join(".cursor", "mcp.json");
     expect(fileExists(mcpPath)).toBe(true);
     const mcpConfig = JSON.parse(readTestFile(mcpPath));
@@ -199,7 +200,6 @@ describe("Presets with fixtures", () => {
     const { code } = await runCommand("install --ci");
     expect(code).toBe(0);
 
-    // The overridden rule should be installed
     expect(
       fileExists(path.join(".cursor", "rules", "aicm", "npm-rule.mdc")),
     ).toBe(true);
@@ -208,7 +208,6 @@ describe("Presets with fixtures", () => {
     );
     expect(ruleContent).toContain("Override Rule");
 
-    // The overridden mcpServer should be present in mcp.json
     const mcpPath = path.join(".cursor", "mcp.json");
     expect(fileExists(mcpPath)).toBe(true);
     const mcpConfig = JSON.parse(readTestFile(mcpPath));
@@ -219,18 +218,15 @@ describe("Presets with fixtures", () => {
   });
 
   test("should cancel a rule and mcpServer from a preset when set to false", async () => {
-    // Use a fixture with pre-canceled rules and mcpServers
     await setupFromFixture("presets-cancel-rules");
 
     const { code } = await runCommand("install --ci");
     expect(code).toBe(0);
 
-    // The canceled rule should not be installed
     expect(
       fileExists(path.join(".cursor", "rules", "aicm", "npm-rule.mdc")),
     ).toBe(false);
 
-    // The canceled mcpServer should not be present in mcp.json
     const mcpPath = path.join(".cursor", "mcp.json");
     expect(fileExists(mcpPath)).toBe(true);
     const mcpConfig = JSON.parse(readTestFile(mcpPath));
@@ -265,11 +261,92 @@ describe("Presets with fixtures", () => {
     expect(fileExists(rootRulePath)).toBe(true);
     expect(fileExists(subdirRulePath)).toBe(true);
 
-    // Check the content
     const rootRuleContent = readTestFile(rootRulePath);
     expect(rootRuleContent).toContain("Root Rule Content");
 
     const subdirRuleContent = readTestFile(subdirRulePath);
     expect(subdirRuleContent).toContain("Subdir Rule Content");
+  });
+
+  test("should recursively resolve nested presets", async () => {
+    await setupFromFixture("presets-nested");
+
+    const originalCwd = process.cwd();
+
+    try {
+      process.chdir(testDir);
+
+      const config = getConfig();
+
+      expect(config).not.toBeNull();
+
+      expect(config!.rules).toHaveProperty(
+        "topLevelRule",
+        "rules/top-level-rule.js",
+      );
+      expect(config!.rules).toHaveProperty(
+        "presetA-rule1",
+        "rules/preset-a-rule1.js",
+      );
+      expect(config!.rules).toHaveProperty(
+        "presetA-rule2",
+        "rules/preset-a-rule2.js",
+      );
+      expect(config!.rules).toHaveProperty(
+        "presetB-rule1",
+        "rules/preset-b-rule1.js",
+      );
+      expect(config!.rules).toHaveProperty(
+        "presetB-rule2",
+        "rules/preset-b-rule2.js",
+      );
+      expect(config!.rules).toHaveProperty(
+        "presetC-rule1",
+        "rules/preset-c-rule1.js",
+      );
+      expect(config!.rules).toHaveProperty(
+        "presetC-rule2",
+        "rules/preset-c-rule2.js",
+      );
+
+      expect(Object.keys(config!.rules).length).toBe(7);
+    } finally {
+      process.chdir(originalCwd);
+    }
+  });
+
+  test("should handle circular references between presets", async () => {
+    await setupFromFixture("presets-circular");
+
+    const originalCwd = process.cwd();
+
+    try {
+      process.chdir(testDir);
+
+      const config = getConfig();
+
+      expect(config).not.toBeNull();
+
+      expect(config!.rules).toHaveProperty(
+        "topLevelRule",
+        "rules/top-level-rule.js",
+      );
+      expect(config!.rules).toHaveProperty(
+        "circularA-rule",
+        "rules/circular-a-rule.js",
+      );
+      expect(config!.rules).toHaveProperty(
+        "circularB-rule",
+        "rules/circular-b-rule.js",
+      );
+      expect(config!.rules).toHaveProperty(
+        "circularC-rule",
+        "rules/circular-c-rule.js",
+      );
+
+      expect(Object.keys(config!.rules).length).toBe(4);
+    } finally {
+      process.chdir(originalCwd);
+    }
   });
 });

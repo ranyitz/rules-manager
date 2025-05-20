@@ -70,11 +70,13 @@ export function getFullPresetPath(presetPath: string): PresetPathInfo | null {
 }
 
 /**
- * Load a preset file and return its rules and mcpServers
+ * Load a preset file and return its contents
  */
-export function loadPreset(
-  presetPath: string,
-): { rules: Rules; mcpServers?: import("../types").MCPServers } | null {
+export function loadPreset(presetPath: string): {
+  rules: Rules;
+  mcpServers?: import("../types").MCPServers;
+  presets?: string[];
+} | null {
   const pathInfo = getFullPresetPath(presetPath);
 
   if (!pathInfo) {
@@ -101,11 +103,18 @@ export function loadPreset(
     );
   }
 
-  return { rules: preset.rules, mcpServers: preset.mcpServers };
+  return {
+    rules: preset.rules,
+    mcpServers: preset.mcpServers,
+    presets: preset.presets,
+  };
 }
 
 // Global metadata storage
 let currentMetadata: RuleMetadata | null = null;
+
+// Track processed presets to avoid circular references
+const processedPresets = new Set<string>();
 
 /**
  * Process presets and return a new config with merged rules and metadata
@@ -118,25 +127,70 @@ function processPresets(config: Config): ConfigResult {
     originalPresetPaths: {},
   };
 
-  if (!newConfig.presets || !Array.isArray(newConfig.presets)) {
-    return { config: newConfig, metadata };
+  // Clear processed presets tracking set when starting from the top level
+  processedPresets.clear();
+
+  return processPresetsInternal(newConfig, metadata);
+}
+
+/**
+ * Internal function to process presets recursively
+ */
+function processPresetsInternal(
+  config: Config,
+  metadata: RuleMetadata,
+): ConfigResult {
+  if (!config.presets || !Array.isArray(config.presets)) {
+    return { config, metadata };
   }
 
-  for (const presetPath of newConfig.presets) {
+  for (const presetPath of config.presets) {
+    const pathInfo = getFullPresetPath(presetPath);
+
+    if (!pathInfo) {
+      throw new Error(
+        `Error loading preset: "${presetPath}". Make sure the package is installed in your project.`,
+      );
+    }
+
+    // Skip if we've already processed this preset (prevents circular references)
+    if (processedPresets.has(pathInfo.fullPath)) {
+      console.warn(`Skipping already processed preset: ${presetPath}`);
+      continue;
+    }
+
+    // Mark this preset as processed
+    processedPresets.add(pathInfo.fullPath);
+
     const preset = loadPreset(presetPath);
     if (!preset) continue;
 
-    const pathInfo = getFullPresetPath(presetPath);
-    if (!pathInfo) continue;
+    // Process nested presets first (depth-first)
+    if (preset.presets && preset.presets.length > 0) {
+      // Create a temporary config with just the presets from this preset
+      const presetConfig: Config = {
+        rules: {},
+        presets: preset.presets,
+        ides: [],
+      };
+
+      // Recursively process the nested presets
+      const { config: nestedConfig } = processPresetsInternal(
+        presetConfig,
+        metadata,
+      );
+
+      Object.assign(preset.rules, nestedConfig.rules);
+    }
 
     const { updatedConfig, updatedMetadata } = mergePresetRules(
-      newConfig,
+      config,
       preset.rules,
       pathInfo,
       metadata,
     );
 
-    Object.assign(newConfig.rules, updatedConfig.rules);
+    Object.assign(config.rules, updatedConfig.rules);
     Object.assign(metadata.ruleSources, updatedMetadata.ruleSources);
     Object.assign(
       metadata.originalPresetPaths,
@@ -144,14 +198,14 @@ function processPresets(config: Config): ConfigResult {
     );
 
     if (preset.mcpServers) {
-      newConfig.mcpServers = mergePresetMcpServers(
-        newConfig.mcpServers || {},
+      config.mcpServers = mergePresetMcpServers(
+        config.mcpServers || {},
         preset.mcpServers,
       );
     }
   }
 
-  return { config: newConfig, metadata };
+  return { config, metadata };
 }
 
 /**

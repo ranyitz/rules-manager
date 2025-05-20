@@ -1,0 +1,6 @@
+{
+  "rules": {
+    "level3Rule1": "rules/level3-rule1.js",
+    "level3Rule2": "rules/level3-rule2.js"
+  }
+}
