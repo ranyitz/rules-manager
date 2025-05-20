@@ -100,7 +100,6 @@ describe("Presets with fixtures", () => {
     );
     expect(localRuleContent).toContain("Local Rule");
 
-    // Assert .cursor/mcp.json exists and contains the preset-mcp
     const mcpPath = path.join(".cursor", "mcp.json");
     expect(fileExists(mcpPath)).toBe(true);
     const mcpConfig = JSON.parse(readTestFile(mcpPath));
@@ -201,7 +200,6 @@ describe("Presets with fixtures", () => {
     const { code } = await runCommand("install --ci");
     expect(code).toBe(0);
 
-    // The overridden rule should be installed
     expect(
       fileExists(path.join(".cursor", "rules", "aicm", "npm-rule.mdc")),
     ).toBe(true);
@@ -210,7 +208,6 @@ describe("Presets with fixtures", () => {
     );
     expect(ruleContent).toContain("Override Rule");
 
-    // The overridden mcpServer should be present in mcp.json
     const mcpPath = path.join(".cursor", "mcp.json");
     expect(fileExists(mcpPath)).toBe(true);
     const mcpConfig = JSON.parse(readTestFile(mcpPath));
@@ -221,18 +218,15 @@ describe("Presets with fixtures", () => {
   });
 
   test("should cancel a rule and mcpServer from a preset when set to false", async () => {
-    // Use a fixture with pre-canceled rules and mcpServers
     await setupFromFixture("presets-cancel-rules");
 
     const { code } = await runCommand("install --ci");
     expect(code).toBe(0);
 
-    // The canceled rule should not be installed
     expect(
       fileExists(path.join(".cursor", "rules", "aicm", "npm-rule.mdc")),
     ).toBe(false);
 
-    // The canceled mcpServer should not be present in mcp.json
     const mcpPath = path.join(".cursor", "mcp.json");
     expect(fileExists(mcpPath)).toBe(true);
     const mcpConfig = JSON.parse(readTestFile(mcpPath));
@@ -267,7 +261,6 @@ describe("Presets with fixtures", () => {
     expect(fileExists(rootRulePath)).toBe(true);
     expect(fileExists(subdirRulePath)).toBe(true);
 
-    // Check the content
     const rootRuleContent = readTestFile(rootRulePath);
     expect(rootRuleContent).toContain("Root Rule Content");
 
@@ -278,20 +271,15 @@ describe("Presets with fixtures", () => {
   test("should recursively resolve nested presets", async () => {
     await setupFromFixture("presets-nested");
 
-    // Store original working directory
     const originalCwd = process.cwd();
 
     try {
-      // Change to test directory to load config directly
       process.chdir(testDir);
 
-      // Get the config with nested presets
       const config = getConfig();
 
-      // Verify that all the rules from nested presets are resolved correctly
       expect(config).not.toBeNull();
 
-      // Check proper rule resolution from different levels
       expect(config!.rules).toHaveProperty(
         "topLevelRule",
         "rules/top-level-rule.js",
@@ -321,10 +309,8 @@ describe("Presets with fixtures", () => {
         "rules/preset-c-rule2.js",
       );
 
-      // Verify the correct number of rules (1 from top level + 2 from each preset)
       expect(Object.keys(config!.rules).length).toBe(7);
     } finally {
-      // Restore original working directory
       process.chdir(originalCwd);
     }
   });
@@ -332,20 +318,15 @@ describe("Presets with fixtures", () => {
   test("should handle circular references between presets", async () => {
     await setupFromFixture("presets-circular");
 
-    // Store original working directory
     const originalCwd = process.cwd();
 
     try {
-      // Change to test directory to load config directly
       process.chdir(testDir);
 
-      // Get the config with circular references
       const config = getConfig();
 
-      // Verify all rules are correctly resolved despite circular references
       expect(config).not.toBeNull();
 
-      // Use non-null assertion since we've verified config is not null
       expect(config!.rules).toHaveProperty(
         "topLevelRule",
         "rules/top-level-rule.js",
@@ -363,10 +344,8 @@ describe("Presets with fixtures", () => {
         "rules/circular-c-rule.js",
       );
 
-      // Verify the correct number of rules (1 from top level + 1 from each preset)
       expect(Object.keys(config!.rules).length).toBe(4);
     } finally {
-      // Restore original working directory
       process.chdir(originalCwd);
     }
   });
