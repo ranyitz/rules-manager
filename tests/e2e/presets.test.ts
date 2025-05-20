@@ -1,6 +1,4 @@
 import path from "path";
-import * as fs from "fs";
-import { testDir } from "./helpers";
 import {
   setupFromFixture,
   runCommand,
@@ -20,19 +18,47 @@ describe("Presets with fixtures", () => {
     expect(code).toBe(0);
 
     expect(
-      fileExists(path.join(".cursor", "rules", "aicm", "typescript-rule.mdc")),
+      fileExists(
+        path.join(
+          ".cursor",
+          "rules",
+          "aicm",
+          "company-preset-full.json",
+          "typescript-rule.mdc",
+        ),
+      ),
     ).toBe(true);
     expect(
-      fileExists(path.join(".cursor", "rules", "aicm", "react-rule.mdc")),
+      fileExists(
+        path.join(
+          ".cursor",
+          "rules",
+          "aicm",
+          "company-preset-full.json",
+          "react-rule.mdc",
+        ),
+      ),
     ).toBe(true);
 
     const typescriptRuleContent = readTestFile(
-      path.join(".cursor", "rules", "aicm", "typescript-rule.mdc"),
+      path.join(
+        ".cursor",
+        "rules",
+        "aicm",
+        "company-preset-full.json",
+        "typescript-rule.mdc",
+      ),
     );
     expect(typescriptRuleContent).toContain("TypeScript Best Practices");
 
     const reactRuleContent = readTestFile(
-      path.join(".cursor", "rules", "aicm", "react-rule.mdc"),
+      path.join(
+        ".cursor",
+        "rules",
+        "aicm",
+        "company-preset-full.json",
+        "react-rule.mdc",
+      ),
     );
     expect(reactRuleContent).toContain("React Best Practices");
   });
@@ -45,14 +71,28 @@ describe("Presets with fixtures", () => {
     expect(code).toBe(0);
 
     expect(
-      fileExists(path.join(".cursor", "rules", "aicm", "preset-rule.mdc")),
+      fileExists(
+        path.join(
+          ".cursor",
+          "rules",
+          "aicm",
+          "company-preset.json",
+          "preset-rule.mdc",
+        ),
+      ),
     ).toBe(true);
     expect(
       fileExists(path.join(".cursor", "rules", "aicm", "local-rule.mdc")),
     ).toBe(true);
 
     const presetRuleContent = readTestFile(
-      path.join(".cursor", "rules", "aicm", "preset-rule.mdc"),
+      path.join(
+        ".cursor",
+        "rules",
+        "aicm",
+        "company-preset.json",
+        "preset-rule.mdc",
+      ),
     );
     expect(presetRuleContent).toContain("Preset Rule");
 
@@ -80,11 +120,27 @@ describe("Presets with fixtures", () => {
     expect(code).toBe(0);
 
     expect(
-      fileExists(path.join(".cursor", "rules", "aicm", "npm-rule.mdc")),
+      fileExists(
+        path.join(
+          ".cursor",
+          "rules",
+          "aicm",
+          "@company",
+          "ai-rules",
+          "npm-rule.mdc",
+        ),
+      ),
     ).toBe(true);
 
     const npmRuleContent = readTestFile(
-      path.join(".cursor", "rules", "aicm", "npm-rule.mdc"),
+      path.join(
+        ".cursor",
+        "rules",
+        "aicm",
+        "@company",
+        "ai-rules",
+        "npm-rule.mdc",
+      ),
     );
     expect(npmRuleContent).toContain("NPM Package Rule");
   });
@@ -96,10 +152,26 @@ describe("Presets with fixtures", () => {
 
     expect(code).toBe(0);
     expect(
-      fileExists(path.join(".cursor", "rules", "aicm", "npm-rule.mdc")),
+      fileExists(
+        path.join(
+          ".cursor",
+          "rules",
+          "aicm",
+          "@company",
+          "ai-rules",
+          "npm-rule.mdc",
+        ),
+      ),
     ).toBe(true);
     const npmRuleContent = readTestFile(
-      path.join(".cursor", "rules", "aicm", "npm-rule.mdc"),
+      path.join(
+        ".cursor",
+        "rules",
+        "aicm",
+        "@company",
+        "ai-rules",
+        "npm-rule.mdc",
+      ),
     );
     expect(npmRuleContent).toContain("NPM Package Rule");
   });
@@ -159,16 +231,11 @@ describe("Presets with fixtures", () => {
   });
 
   test("should cancel a rule and mcpServer from a preset when set to false", async () => {
-    // Setup fixture, then modify aicm.json to cancel rule and mcpServer
+    // Use a fixture with pre-canceled rules and mcpServers
     await setupFromFixture(
-      "presets-npm-override",
+      "presets-cancel-rules",
       expect.getState().currentTestName,
     );
-    const configPath = path.join(testDir, "aicm.json");
-    const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
-    config.rules["npm-rule"] = false;
-    config.mcpServers["preset-mcp"] = false;
-    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
 
     const { code } = await runCommand("install --ci");
     expect(code).toBe(0);
@@ -183,5 +250,44 @@ describe("Presets with fixtures", () => {
     expect(fileExists(mcpPath)).toBe(true);
     const mcpConfig = JSON.parse(readTestFile(mcpPath));
     expect(mcpConfig.mcpServers["preset-mcp"]).toBeUndefined();
+  });
+
+  test("should support namespaced directories for preset rules", async () => {
+    await setupFromFixture(
+      "presets-namespaced-dirs",
+      expect.getState().currentTestName,
+    );
+
+    const { code } = await runCommand("install --ci");
+
+    expect(code).toBe(0);
+
+    const rootRulePath = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "@aicm",
+      "test-preset",
+      "root-rule.mdc",
+    );
+    const subdirRulePath = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "@aicm",
+      "test-preset",
+      "subdir",
+      "subdir-rule.mdc",
+    );
+
+    expect(fileExists(rootRulePath)).toBe(true);
+    expect(fileExists(subdirRulePath)).toBe(true);
+
+    // Check the content
+    const rootRuleContent = readTestFile(rootRulePath);
+    expect(rootRuleContent).toContain("Root Rule Content");
+
+    const subdirRuleContent = readTestFile(subdirRulePath);
+    expect(subdirRuleContent).toContain("Subdir Rule Content");
   });
 });

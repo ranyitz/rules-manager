@@ -5,13 +5,19 @@ import { cosmiconfigSync } from "cosmiconfig";
 
 interface ConfigWithMeta extends Config {
   __ruleSources?: Record<string, string>;
+  __originalPresetPaths?: Record<string, string>;
 }
 
 const CONFIG_FILE = "aicm.json";
 
-export function getFullPresetPath(presetPath: string): string | null {
+export interface PresetPathInfo {
+  fullPath: string;
+  originalPath: string;
+}
+
+export function getFullPresetPath(presetPath: string): PresetPathInfo | null {
   if (presetPath.endsWith(".json") && fs.pathExistsSync(presetPath)) {
-    return presetPath;
+    return { fullPath: presetPath, originalPath: presetPath };
   }
 
   try {
@@ -26,7 +32,9 @@ export function getFullPresetPath(presetPath: string): string | null {
         paths: [__dirname, process.cwd()],
       });
     }
-    return fs.existsSync(absolutePresetPath) ? absolutePresetPath : null;
+    return fs.existsSync(absolutePresetPath)
+      ? { fullPath: absolutePresetPath, originalPath: presetPath }
+      : null;
   } catch {
     return null;
   }
@@ -38,15 +46,15 @@ export function getFullPresetPath(presetPath: string): string | null {
 export function loadPreset(
   presetPath: string,
 ): { rules: Rules; mcpServers?: import("../types").MCPServers } | null {
-  const fullPresetPath = getFullPresetPath(presetPath);
+  const pathInfo = getFullPresetPath(presetPath);
 
-  if (!fullPresetPath) {
+  if (!pathInfo) {
     throw new Error(
       `Error loading preset: "${presetPath}". Make sure the package is installed in your project.`,
     );
   }
 
-  const presetContent = fs.readFileSync(fullPresetPath, "utf8");
+  const presetContent = fs.readFileSync(pathInfo.fullPath, "utf8");
   let preset;
 
   try {
@@ -79,10 +87,10 @@ function processPresets(config: ConfigWithMeta): void {
     const preset = loadPreset(presetPath);
     if (!preset) continue;
 
-    const fullPresetPath = getFullPresetPath(presetPath);
-    if (!fullPresetPath) continue;
+    const pathInfo = getFullPresetPath(presetPath);
+    if (!pathInfo) continue;
 
-    mergePresetRules(config, preset.rules, fullPresetPath);
+    mergePresetRules(config, preset.rules, pathInfo);
     if (preset.mcpServers) {
       mergePresetMcpServers(config, preset.mcpServers);
     }
@@ -95,7 +103,7 @@ function processPresets(config: ConfigWithMeta): void {
 function mergePresetRules(
   config: ConfigWithMeta,
   presetRules: Rules,
-  presetPath: string,
+  pathInfo: PresetPathInfo,
 ): void {
   for (const [ruleName, rulePath] of Object.entries(presetRules)) {
     // Cancel if set to false in config
@@ -105,13 +113,17 @@ function mergePresetRules(
     ) {
       delete config.rules[ruleName];
       if (config.__ruleSources) delete config.__ruleSources[ruleName];
+      if (config.__originalPresetPaths)
+        delete config.__originalPresetPaths[ruleName];
       continue;
     }
     // Only add if not already defined in config (override handled by config)
     if (!Object.prototype.hasOwnProperty.call(config.rules, ruleName)) {
       config.rules[ruleName] = rulePath;
       config.__ruleSources = config.__ruleSources || {};
-      config.__ruleSources[ruleName] = presetPath;
+      config.__ruleSources[ruleName] = pathInfo.fullPath;
+      config.__originalPresetPaths = config.__originalPresetPaths || {};
+      config.__originalPresetPaths[ruleName] = pathInfo.originalPath;
     }
   }
 }
@@ -185,6 +197,16 @@ export function getRuleSource(
   ruleName: string,
 ): string | undefined {
   return (config as ConfigWithMeta).__ruleSources?.[ruleName];
+}
+
+/**
+ * Get the original preset path for a rule if it came from a preset
+ */
+export function getOriginalPresetPath(
+  config: Config,
+  ruleName: string,
+): string | undefined {
+  return (config as ConfigWithMeta).__originalPresetPaths?.[ruleName];
 }
 
 /**

@@ -9,7 +9,6 @@ import path from "path";
 describe("README demo example", () => {
   test("should install rules from preset as shown in the README", async () => {
     await setupFromFixture("readme-demo", expect.getState().currentTestName);
-
     const npmResult = await runNpmInstall("pirate-coding");
     expect(npmResult.code).toBe(0);
     const { stdout, code } = await runCommand("install --ci");
@@ -17,7 +16,9 @@ describe("README demo example", () => {
     expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");
     expect(
-      fileExists(path.join(".cursor", "rules", "aicm", "pirate-coding.mdc")),
+      fileExists(
+        path.join(".cursor", "rules", "aicm", "pirate-coding", "rule.mdc"),
+      ),
     ).toBe(true);
     expect(fileExists(path.join(".cursor", "mcp.json"))).toBe(true);
   });

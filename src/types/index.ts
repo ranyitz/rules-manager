@@ -47,6 +47,7 @@ export interface RuleContent {
   content: string;
   metadata: RuleMetadata;
   sourcePath: string;
+  presetPath?: string;
 }
 
 // Collection of rules to be processed
