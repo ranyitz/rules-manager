@@ -1,0 +1,6 @@
+{
+  "rules": {
+    "circularA-rule": "rules/circular-a-rule.js"
+  },
+  "presets": ["./circular-b.json"]
+}
