@@ -1,5 +1,9 @@
 import chalk from "chalk";
-import { getConfig, getRuleSource } from "../utils/config";
+import {
+  getConfig,
+  getRuleSource,
+  getOriginalPresetPath,
+} from "../utils/config";
 import { detectRuleType } from "../utils/rule-detector";
 import { Config } from "../types";
 import {
@@ -162,6 +166,8 @@ export async function install(
       const ruleType = detectRuleType(source);
       // Get the base path of the preset file if this rule came from a preset
       const ruleBasePath = getRuleSource(config, name);
+      // Get the original preset path for namespacing
+      const originalPresetPath = getOriginalPresetPath(config, name);
 
       // Collect the rule based on its type
       try {
@@ -176,6 +182,11 @@ export async function install(
           default:
             errorMessages.push(`Unknown rule type: ${ruleType}`);
             continue;
+        }
+
+        // Add the preset path to the rule content for namespacing
+        if (originalPresetPath) {
+          ruleContent.presetPath = originalPresetPath;
         }
 
         addRuleToCollection(ruleCollection, ruleContent, config.ides);

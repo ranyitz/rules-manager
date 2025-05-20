@@ -59,23 +59,74 @@ tests/fixtures/e2e/list-with-multiple-rules/
    - Verify fixture content exists before running tests
    - For empty starting states, use the `init-empty` fixture
 
-## Example
+## Anti-patterns to Avoid
+
+### 1. Creating Files Dynamically in Tests
+
+Creating files dynamically with fs operations during testing is a major anti-pattern:
 
 ```typescript
-// Good practice
-test("should do something with files", async () => {
-  await setupFromFixture("my-test-fixture", expect.getState().currentTestName);
-
-  // Test logic here
-});
-
-// Bad practice - DO NOT DO THIS
-test("should not create files directly", async () => {
+// BAD PRACTICE - NEVER DO THIS
+test("wrong way to test", async () => {
   await setupTestDir(expect.getState().currentTestName);
 
-  // DON'T DO THIS - violates test standards
-  fs.writeFileSync(path.join(testDir, "some-file.txt"), "content");
+  // Anti-pattern: Creating files on-the-fly
+  fs.writeJsonSync("aicm.json", { ides: ["cursor"], presets: ["@my-preset"] });
+  fs.ensureDirSync("node_modules/@my-preset");
+  fs.writeFileSync("node_modules/@my-preset/rule.mdc", "Content");
 
-  // Test logic here
+  // Test logic...
 });
 ```
+
+Problems with this approach:
+
+- Makes tests harder to review and maintain
+- Creates non-deterministic test environments
+- Makes it difficult to inspect test inputs
+- Can lead to flaky tests and unexpected behavior
+- Violates test setup principles
+
+### 2. Modifying Fixture Files During Tests
+
+Modifying files after fixture setup should be limited to specific test requirements:
+
+```typescript
+// Only modify files when testing file modification functionality
+test("should handle configuration updates", async () => {
+  await setupFromFixture("config-basic", expect.getState().currentTestName);
+
+  // Modifying only when testing specific behavior
+  // Use helpers like readTestFile and carefully document the purpose
+  const config = JSON.parse(readTestFile("aicm.json"));
+  config.rules["test-rule"] = false; // Testing rule cancellation
+  fs.writeFileSync(
+    path.join(testDir, "aicm.json"),
+    JSON.stringify(config, null, 2),
+  );
+
+  // Test logic...
+});
+```
+
+## Recommended Pattern
+
+```typescript
+// GOOD PRACTICE
+test("should test specific functionality", async () => {
+  // Start with a complete fixture containing all needed files
+  await setupFromFixture(
+    "my-complete-fixture",
+    expect.getState().currentTestName,
+  );
+
+  // Run command
+  const { code } = await runCommand("install --ci");
+
+  // Assert results
+  expect(code).toBe(0);
+  expect(fileExists(".cursor/rules/aicm/my-rule.mdc")).toBe(true);
+});
+```
+
+For tests requiring complex setups, create multiple fixtures rather than modifying files during the test.

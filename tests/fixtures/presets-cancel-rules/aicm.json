@@ -1,0 +1,10 @@
+{
+  "ides": ["cursor"],
+  "presets": ["./preset.json"],
+  "rules": {
+    "npm-rule": false
+  },
+  "mcpServers": {
+    "preset-mcp": false
+  }
+}
