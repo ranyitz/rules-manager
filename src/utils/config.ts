@@ -72,9 +72,7 @@ export function getFullPresetPath(presetPath: string): PresetPathInfo | null {
 /**
  * Load a preset file and return its contents
  */
-export function loadPreset(
-  presetPath: string,
-): {
+export function loadPreset(presetPath: string): {
   rules: Rules;
   mcpServers?: import("../types").MCPServers;
   presets?: string[];
@@ -148,7 +146,7 @@ function processPresetsInternal(
 
   for (const presetPath of config.presets) {
     const pathInfo = getFullPresetPath(presetPath);
-    // Throw an error if a preset path can't be found, don't silently skip it
+
     if (!pathInfo) {
       throw new Error(
         `Error loading preset: "${presetPath}". Make sure the package is installed in your project.`,
@@ -173,7 +171,7 @@ function processPresetsInternal(
       const presetConfig: Config = {
         rules: {},
         presets: preset.presets,
-        ides: ["cursor"], // Add required property
+        ides: [],
       };
 
       // Recursively process the nested presets
@@ -182,11 +180,9 @@ function processPresetsInternal(
         metadata,
       );
 
-      // Merge the rules from nested presets
       Object.assign(preset.rules, nestedConfig.rules);
     }
 
-    // Now merge this preset's rules into our config
     const { updatedConfig, updatedMetadata } = mergePresetRules(
       config,
       preset.rules,
