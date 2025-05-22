@@ -9,16 +9,18 @@ import { getConfig } from "../../utils/config";
  * @returns Array of aicm.json file paths
  */
 function findAicmFiles(rootDir: string): string[] {
-  const output = execSync("git ls-files --cached --others --exclude-standard", {
-    cwd: rootDir,
-    encoding: "utf8",
-  });
+  const output = execSync(
+    "git ls-files --cached --others --exclude-standard aicm.json **/aicm.json",
+    {
+      cwd: rootDir,
+      encoding: "utf8",
+    },
+  );
 
   return output
     .trim()
     .split("\n")
     .filter(Boolean)
-    .filter((file) => file.endsWith("aicm.json"))
     .map((file) => path.resolve(rootDir, file));
 }
 
