@@ -40,11 +40,14 @@ export async function discoverPackagesWithAicm(
     const packageDir = path.dirname(aicmFile);
     const relativePath = path.relative(rootDir, packageDir);
 
+    // Normalize to forward slashes for cross-platform compatibility
+    const normalizedRelativePath = relativePath.replace(/\\/g, "/");
+
     const config = getConfig(packageDir);
 
     if (config) {
       packages.push({
-        relativePath: relativePath || ".",
+        relativePath: normalizedRelativePath || ".",
         absolutePath: packageDir,
         config,
       });
