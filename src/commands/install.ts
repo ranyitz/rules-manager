@@ -61,6 +61,10 @@ export interface InstallResult {
    * Number of rules installed
    */
   installedRuleCount: number;
+  /**
+   * Number of packages installed
+   */
+  packagesCount: number;
 }
 
 /**
@@ -122,6 +126,7 @@ async function handleMonorepoInstallation(
       success: false,
       error: "No packages with aicm configurations found in monorepo.",
       installedRuleCount: 0,
+      packagesCount: 0,
     };
   }
 
@@ -140,7 +145,6 @@ async function handleMonorepoInstallation(
   });
 
   if (verbose) {
-    // Print installation results
     result.packages.forEach((pkg) => {
       if (pkg.success) {
         console.log(
@@ -152,8 +156,8 @@ async function handleMonorepoInstallation(
     });
   }
 
-  // Print summary (always shown)
   const failedPackages = result.packages.filter((r) => !r.success);
+
   if (failedPackages.length > 0) {
     console.log(chalk.yellow(`Installation completed with errors`));
     if (verbose) {
@@ -168,12 +172,21 @@ async function handleMonorepoInstallation(
         ),
       );
     }
-  } else {
-    console.log(
-      chalk.green(
-        `Successfully installed ${result.totalRuleCount} rules across ${result.packages.length} packages`,
-      ),
-    );
+
+    if (cwd !== originalCwd) {
+      process.chdir(originalCwd);
+    }
+
+    const errorDetails = failedPackages
+      .map((p) => `${p.path}: ${p.error}`)
+      .join("; ");
+
+    return {
+      success: false,
+      error: `Package installation failed for ${failedPackages.length} package(s): ${errorDetails}`,
+      installedRuleCount: result.totalRuleCount,
+      packagesCount: result.packages.length,
+    };
   }
 
   if (cwd !== originalCwd) {
@@ -181,9 +194,9 @@ async function handleMonorepoInstallation(
   }
 
   return {
-    success: result.success,
-    error: result.success ? undefined : "Some packages failed to install",
+    success: true,
     installedRuleCount: result.totalRuleCount,
+    packagesCount: result.packages.length,
   };
 }
 
@@ -237,6 +250,7 @@ export async function install(
         success: false,
         error: "Configuration file not found!",
         installedRuleCount: 0,
+        packagesCount: 0,
       };
     }
 
@@ -252,6 +266,7 @@ export async function install(
       return {
         success: true,
         installedRuleCount: 0,
+        packagesCount: 0,
       };
     }
 
@@ -267,6 +282,7 @@ export async function install(
           success: false,
           error: "No rules defined in configuration.",
           installedRuleCount: 0,
+          packagesCount: 0,
         };
       }
     }
@@ -324,6 +340,7 @@ export async function install(
         success: false,
         error: errorMessages.join("; "),
         installedRuleCount,
+        packagesCount: 0,
       };
     }
 
@@ -347,6 +364,7 @@ export async function install(
     return {
       success: true,
       installedRuleCount,
+      packagesCount: 1,
     };
   } catch (e) {
     const errorMessage = e instanceof Error ? e.message : String(e);
@@ -360,6 +378,7 @@ export async function install(
       success: false,
       error: errorMessage,
       installedRuleCount: 0,
+      packagesCount: 0,
     };
   }
 }
@@ -376,7 +395,17 @@ export async function installCommand(
       console.error(chalk.red(result.error));
       process.exit(1);
     } else {
-      console.log("Rules installation completed");
+      if (result.packagesCount > 1) {
+        console.log(
+          `Successfully installed ${result.installedRuleCount} rules across ${result.packagesCount} packages`,
+        );
+      } else if (monorepo) {
+        console.log(
+          `Successfully installed ${result.installedRuleCount} rules across ${result.packagesCount} packages`,
+        );
+      } else {
+        console.log("Rules installation completed");
+      }
     }
   } catch (error: unknown) {
     console.error(
