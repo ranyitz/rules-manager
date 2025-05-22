@@ -54,5 +54,6 @@ export async function discoverPackagesWithAicm(
     }
   }
 
-  return packages;
+  // Sort packages by relativePath for deterministic order
+  return packages.sort((a, b) => a.relativePath.localeCompare(b.relativePath));
 }
