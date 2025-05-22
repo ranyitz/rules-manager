@@ -1,0 +1,1 @@
+# Bazel BUILD file for backend service 

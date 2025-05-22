@@ -1,0 +1,6 @@
+{
+  "ides": ["cursor"],
+  "rules": {
+    "build-tools-rule": "./rules/build-tools.md"
+  }
+}

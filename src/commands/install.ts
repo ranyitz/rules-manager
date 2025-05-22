@@ -16,6 +16,8 @@ import { writeRulesToTargets } from "../utils/rule-writer";
 import fs from "fs-extra";
 import path from "node:path";
 import { isCI } from "ci-info";
+import { discoverPackagesWithAicm } from "./monorepo/discovery";
+import { installMonorepoPackages } from "./monorepo/monorepo-install";
 
 /**
  * Options for the installCore function
@@ -33,6 +35,14 @@ export interface InstallOptions {
    * allow installation on CI environments
    */
   installOnCI?: boolean;
+  /**
+   * Enable monorepo mode
+   */
+  monorepo?: boolean;
+  /**
+   * Show verbose output during installation
+   */
+  verbose?: boolean;
 }
 
 /**
@@ -91,6 +101,92 @@ function isInCIEnvironment(): boolean {
   return isCI;
 }
 
+async function handleMonorepoInstallation(
+  cwd: string,
+  installOnCI: boolean,
+  originalCwd: string,
+  verbose: boolean = false,
+): Promise<InstallResult> {
+  if (verbose) {
+    console.log(chalk.blue("🔍 Discovering packages..."));
+  }
+
+  const packages = await discoverPackagesWithAicm(cwd);
+
+  if (packages.length === 0) {
+    if (cwd !== originalCwd) {
+      process.chdir(originalCwd);
+    }
+
+    return {
+      success: false,
+      error: "No packages with aicm configurations found in monorepo.",
+      installedRuleCount: 0,
+    };
+  }
+
+  if (verbose) {
+    console.log(
+      chalk.blue(`Found ${packages.length} packages with aicm configurations:`),
+    );
+    packages.forEach((pkg) => {
+      console.log(chalk.gray(`  - ${pkg.relativePath}`));
+    });
+
+    console.log(chalk.blue(`📦 Installing configurations...`));
+  }
+  const result = await installMonorepoPackages(packages, {
+    installOnCI,
+  });
+
+  if (verbose) {
+    // Print installation results
+    result.packages.forEach((pkg) => {
+      if (pkg.success) {
+        console.log(
+          chalk.green(`✅ ${pkg.path} (${pkg.installedRuleCount} rules)`),
+        );
+      } else {
+        console.log(chalk.red(`❌ ${pkg.path}: ${pkg.error}`));
+      }
+    });
+  }
+
+  // Print summary (always shown)
+  const failedPackages = result.packages.filter((r) => !r.success);
+  if (failedPackages.length > 0) {
+    console.log(chalk.yellow(`Installation completed with errors`));
+    if (verbose) {
+      console.log(
+        chalk.green(
+          `Successfully installed: ${result.packages.length - failedPackages.length}/${result.packages.length} packages (${result.totalRuleCount} rules total)`,
+        ),
+      );
+      console.log(
+        chalk.red(
+          `Failed packages: ${failedPackages.map((p) => p.path).join(", ")}`,
+        ),
+      );
+    }
+  } else {
+    console.log(
+      chalk.green(
+        `Successfully installed ${result.totalRuleCount} rules across ${result.packages.length} packages`,
+      ),
+    );
+  }
+
+  if (cwd !== originalCwd) {
+    process.chdir(originalCwd);
+  }
+
+  return {
+    success: result.success,
+    error: result.success ? undefined : "Some packages failed to install",
+    installedRuleCount: result.totalRuleCount,
+  };
+}
+
 /**
  * Core implementation of the rule installation logic
  * @param options Install options
@@ -108,9 +204,29 @@ export async function install(
       process.chdir(cwd);
     }
 
-    const ruleCollection = initRuleCollection();
+    // Handle monorepo mode first, before checking for config
+    if (options.monorepo) {
+      return await handleMonorepoInstallation(
+        cwd,
+        installOnCI,
+        originalCwd,
+        options.verbose,
+      );
+    }
 
     const config = options.config || getConfig();
+
+    // Handle monorepo mode from config
+    if (config?.monorepo) {
+      return await handleMonorepoInstallation(
+        cwd,
+        installOnCI,
+        originalCwd,
+        options.verbose,
+      );
+    }
+
+    const ruleCollection = initRuleCollection();
 
     if (!config) {
       if (cwd !== originalCwd) {
@@ -248,9 +364,13 @@ export async function install(
   }
 }
 
-export async function installCommand(installOnCI?: boolean): Promise<void> {
+export async function installCommand(
+  installOnCI?: boolean,
+  monorepo?: boolean,
+  verbose?: boolean,
+): Promise<void> {
   try {
-    const result = await install({ installOnCI });
+    const result = await install({ installOnCI, monorepo, verbose });
 
     if (!result.success) {
       console.error(chalk.red(result.error));

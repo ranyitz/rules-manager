@@ -30,6 +30,7 @@ export interface Config {
   presets?: string[];
   mcpServers?: MCPServers;
   installOnCI?: boolean;
+  monorepo?: boolean;
 }
 
 // Rule metadata and content models
@@ -54,4 +55,21 @@ export interface RuleContent {
 export interface RuleCollection {
   cursor: RuleContent[];
   windsurf: RuleContent[];
+}
+
+export interface PackageInfo {
+  relativePath: string;
+  absolutePath: string;
+  config: Config;
+}
+
+export interface MonorepoInstallResult {
+  success: boolean;
+  packages: Array<{
+    path: string;
+    success: boolean;
+    error?: string;
+    installedRuleCount: number;
+  }>;
+  totalRuleCount: number;
 }

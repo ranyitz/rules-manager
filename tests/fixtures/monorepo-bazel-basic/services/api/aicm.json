@@ -1,0 +1,6 @@
+{
+  "ides": ["cursor"],
+  "rules": {
+    "api-service-rule": "./rules/api-service.md"
+  }
+}

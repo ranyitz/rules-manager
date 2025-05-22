@@ -1,0 +1,6 @@
+{
+  "ides": ["cursor"],
+  "rules": {
+    "backend-service-rule": "./rules/backend-service.md"
+  }
+}
