@@ -25,7 +25,7 @@ function findAicmFiles(rootDir: string): string[] {
 }
 
 /**
- * Discover all packages with aicm configurations in a workspace
+ * Discover all packages with aicm configurations
  * @param rootDir The root directory to search from
  * @returns Array of discovered packages
  */

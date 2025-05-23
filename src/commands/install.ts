@@ -124,7 +124,7 @@ async function handleWorkspacesInstallation(
 
     return {
       success: false,
-      error: "No packages with aicm configurations found in workspace.",
+      error: "No packages with aicm configurations found",
       installedRuleCount: 0,
       packagesCount: 0,
     };
@@ -217,7 +217,6 @@ export async function install(
       process.chdir(cwd);
     }
 
-    // Handle workspaces mode first, before checking for config
     if (options.workspaces) {
       return await handleWorkspacesInstallation(
         cwd,
@@ -238,7 +237,7 @@ export async function install(
 
       return {
         success: false,
-        error: "Configuration file not found!",
+        error: "Configuration file not found",
         installedRuleCount: 0,
         packagesCount: 0,
       };
@@ -270,7 +269,7 @@ export async function install(
 
         return {
           success: false,
-          error: "No rules defined in configuration.",
+          error: "No rules defined in configuration",
           installedRuleCount: 0,
           packagesCount: 0,
         };
