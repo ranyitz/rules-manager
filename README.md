@@ -188,18 +188,6 @@ Running `npx aicm install --monorepo` will install rules for each package in the
 - `packages/backend/.cursor/rules/aicm/`
 - `services/api/.cursor/rules/aicm/`
 
-You can also enable monorepo mode in your configuration file:
-
-```json
-{
-  "monorepo": true,
-  "ides": ["cursor"],
-  "rules": {
-    "shared-rule": "./rules/shared.mdc"
-  }
-}
-```
-
 ## Configuration
 
 To configure aicm, use either:

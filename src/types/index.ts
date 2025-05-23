@@ -30,7 +30,6 @@ export interface Config {
   presets?: string[];
   mcpServers?: MCPServers;
   installOnCI?: boolean;
-  monorepo?: boolean;
 }
 
 // Rule metadata and content models

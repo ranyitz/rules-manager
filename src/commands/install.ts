@@ -229,16 +229,6 @@ export async function install(
 
     const config = options.config || getConfig();
 
-    // Handle monorepo mode from config
-    if (config?.monorepo) {
-      return await handleMonorepoInstallation(
-        cwd,
-        installOnCI,
-        originalCwd,
-        options.verbose,
-      );
-    }
-
     const ruleCollection = initRuleCollection();
 
     if (!config) {
