@@ -16,7 +16,7 @@ const args = arg(
     "--help": Boolean,
     "--version": Boolean,
     "--ci": Boolean,
-    "--monorepo": Boolean,
+    "--workspaces": Boolean,
     "--verbose": Boolean,
     "-h": "--help",
     "-v": "--version",
@@ -42,7 +42,7 @@ switch (command) {
     initCommand();
     break;
   case "install":
-    installCommand(args["--ci"], args["--monorepo"], args["--verbose"]);
+    installCommand(args["--ci"], args["--workspaces"], args["--verbose"]);
     break;
   case "list":
     listCommand();
@@ -69,13 +69,13 @@ ${chalk.bold("OPTIONS")}
   -h, --help          Show this help message
   -v, --version       Show version number
   --ci                Run in CI environments (default: \`false\`)
-  --monorepo          Install rules across all packages in a monorepo
+  --workspaces        Install rules across all workspaces
   --verbose           Show detailed output during installation
 
 ${chalk.bold("EXAMPLES")}
   $ aicm init
   $ aicm install
-  $ aicm install --monorepo
+  $ aicm install --workspaces
   $ aicm list
 `);
 }

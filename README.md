@@ -147,16 +147,14 @@ After installation, open Cursor and ask it to do something. Your AI assistant wi
 
 To prevent [prompt-injection](https://en.wikipedia.org/wiki/Prompt_injection), use only packages from trusted sources.
 
-## Monorepo Support
+## Workspaces Support
 
-aicm supports monorepos by automatically discovering and installing configurations across multiple packages in your repository.
+aicm supports workspaces by automatically discovering and installing configurations across multiple packages in your repository.
 
-### Using Monorepo Mode
-
-To enable monorepo mode, use the `--monorepo` flag:
+To enable workspaces mode, use the `--workspaces` flag:
 
 ```bash
-npx aicm install --monorepo
+npx aicm install --workspaces
 ```
 
 This will:
@@ -168,10 +166,9 @@ This will:
 
 Each directory containing an `aicm.json` file is treated as a separate package with its own configuration.
 
-For example, in a monorepo structure like:
+For example, in a workspace structure like:
 
 ```
-my-monorepo/
 ├── packages/
 │   ├── frontend/
 │   │   └── aicm.json
@@ -182,7 +179,7 @@ my-monorepo/
         └── aicm.json
 ```
 
-Running `npx aicm install --monorepo` will install rules for each package in their respective directories:
+Running `npx aicm install --workspaces` will install rules for each package in their respective directories:
 
 - `packages/frontend/.cursor/rules/aicm/`
 - `packages/backend/.cursor/rules/aicm/`
@@ -293,7 +290,7 @@ npx aicm install
 Options:
 
 - `--ci`: run in CI environments (default: `false`)
-- `--monorepo`: enable monorepo mode to discover and install configurations across multiple packages
+- `--workspaces`: enable workspaces mode to discover and install configurations across multiple packages
 - `--verbose`: show detailed output during installation
 
 ## Node.js API
@@ -339,7 +336,7 @@ Installs rules and MCP servers based on configuration.
 - `cwd`: Base directory to use instead of `process.cwd()`
 - `config`: Custom config object to use instead of loading from file
 - `installOnCI`: Run installation on CI environments (default: `false`)
-- `monorepo`: Enable monorepo mode (default: `false`)
+- `workspaces`: Enable workspaces mode (default: `false`)
 - `verbose`: Show verbose output during installation (default: `false`)
 
 **Returns:**

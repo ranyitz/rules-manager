@@ -62,7 +62,7 @@ export interface PackageInfo {
   config: Config;
 }
 
-export interface MonorepoInstallResult {
+export interface WorkspacesInstallResult {
   success: boolean;
   packages: Array<{
     path: string;

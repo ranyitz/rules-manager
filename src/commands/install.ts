@@ -16,8 +16,8 @@ import { writeRulesToTargets } from "../utils/rule-writer";
 import fs from "fs-extra";
 import path from "node:path";
 import { isCI } from "ci-info";
-import { discoverPackagesWithAicm } from "./monorepo/discovery";
-import { installMonorepoPackages } from "./monorepo/monorepo-install";
+import { discoverPackagesWithAicm } from "./workspaces/discovery";
+import { installWorkspacesPackages } from "./workspaces/workspaces-install";
 
 /**
  * Options for the installCore function
@@ -36,9 +36,9 @@ export interface InstallOptions {
    */
   installOnCI?: boolean;
   /**
-   * Enable monorepo mode
+   * Enable workspaces mode
    */
-  monorepo?: boolean;
+  workspaces?: boolean;
   /**
    * Show verbose output during installation
    */
@@ -105,7 +105,7 @@ function isInCIEnvironment(): boolean {
   return isCI;
 }
 
-async function handleMonorepoInstallation(
+async function handleWorkspacesInstallation(
   cwd: string,
   installOnCI: boolean,
   originalCwd: string,
@@ -124,7 +124,7 @@ async function handleMonorepoInstallation(
 
     return {
       success: false,
-      error: "No packages with aicm configurations found in monorepo.",
+      error: "No packages with aicm configurations found in workspace.",
       installedRuleCount: 0,
       packagesCount: 0,
     };
@@ -140,7 +140,7 @@ async function handleMonorepoInstallation(
 
     console.log(chalk.blue(`📦 Installing configurations...`));
   }
-  const result = await installMonorepoPackages(packages, {
+  const result = await installWorkspacesPackages(packages, {
     installOnCI,
   });
 
@@ -217,9 +217,9 @@ export async function install(
       process.chdir(cwd);
     }
 
-    // Handle monorepo mode first, before checking for config
-    if (options.monorepo) {
-      return await handleMonorepoInstallation(
+    // Handle workspaces mode first, before checking for config
+    if (options.workspaces) {
+      return await handleWorkspacesInstallation(
         cwd,
         installOnCI,
         originalCwd,
@@ -375,11 +375,11 @@ export async function install(
 
 export async function installCommand(
   installOnCI?: boolean,
-  monorepo?: boolean,
+  workspaces?: boolean,
   verbose?: boolean,
 ): Promise<void> {
   try {
-    const result = await install({ installOnCI, monorepo, verbose });
+    const result = await install({ installOnCI, workspaces, verbose });
 
     if (!result.success) {
       console.error(chalk.red(result.error));
@@ -389,7 +389,7 @@ export async function installCommand(
         console.log(
           `Successfully installed ${result.installedRuleCount} rules across ${result.packagesCount} packages`,
         );
-      } else if (monorepo) {
+      } else if (workspaces) {
         console.log(
           `Successfully installed ${result.installedRuleCount} rules across ${result.packagesCount} packages`,
         );
