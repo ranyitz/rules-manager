@@ -1,0 +1,6 @@
+{
+  "ides": ["cursor"],
+  "rules": {
+    "ui-components-rule": "./rules/ui-components.md"
+  }
+}

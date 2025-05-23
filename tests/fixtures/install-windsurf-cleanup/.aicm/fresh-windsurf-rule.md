@@ -1,3 +1,3 @@
-# Fresh Windsurf Rule (Old)
+# Fresh Windsurf Rule
 
-This is OLD fresh Windsurf content.
+This is OLD fresh Windsurf content

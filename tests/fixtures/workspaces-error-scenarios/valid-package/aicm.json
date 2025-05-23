@@ -1,0 +1,6 @@
+{
+  "ides": ["cursor"],
+  "rules": {
+    "valid-rule": "./rules/valid-rule.md"
+  }
+}

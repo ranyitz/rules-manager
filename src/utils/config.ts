@@ -22,10 +22,20 @@ export interface PresetPathInfo {
   originalPath: string;
 }
 
-export function getFullPresetPath(presetPath: string): PresetPathInfo | null {
-  // If it's a local file with .json extension and exists, return as is
-  if (presetPath.endsWith(".json") && fs.pathExistsSync(presetPath)) {
-    return { fullPath: presetPath, originalPath: presetPath };
+export function getFullPresetPath(
+  presetPath: string,
+  cwd?: string,
+): PresetPathInfo | null {
+  const workingDir = cwd || process.cwd();
+
+  // If it's a local file with .json extension, check relative to the working directory
+  if (presetPath.endsWith(".json")) {
+    const absolutePath = path.isAbsolute(presetPath)
+      ? presetPath
+      : path.resolve(workingDir, presetPath);
+    if (fs.pathExistsSync(absolutePath)) {
+      return { fullPath: absolutePath, originalPath: presetPath };
+    }
   }
 
   try {
@@ -34,7 +44,7 @@ export function getFullPresetPath(presetPath: string): PresetPathInfo | null {
     // Handle npm package with explicit JSON path
     if (presetPath.endsWith(".json")) {
       absolutePresetPath = require.resolve(presetPath, {
-        paths: [__dirname, process.cwd()],
+        paths: [__dirname, workingDir],
       });
     }
     // Handle npm package without explicit JSON path (add aicm.json)
@@ -43,12 +53,12 @@ export function getFullPresetPath(presetPath: string): PresetPathInfo | null {
       const presetPathWithConfig = path.join(presetPath, "aicm.json");
       try {
         absolutePresetPath = require.resolve(presetPathWithConfig, {
-          paths: [__dirname, process.cwd()],
+          paths: [__dirname, workingDir],
         });
       } catch {
         // If direct resolution fails, try as a package name
         absolutePresetPath = require.resolve(presetPath, {
-          paths: [__dirname, process.cwd()],
+          paths: [__dirname, workingDir],
         });
         // If we found the package but not the config file, look for aicm.json
         if (fs.existsSync(absolutePresetPath)) {
@@ -72,12 +82,15 @@ export function getFullPresetPath(presetPath: string): PresetPathInfo | null {
 /**
  * Load a preset file and return its contents
  */
-export function loadPreset(presetPath: string): {
+export function loadPreset(
+  presetPath: string,
+  cwd?: string,
+): {
   rules: Rules;
   mcpServers?: import("../types").MCPServers;
   presets?: string[];
 } | null {
-  const pathInfo = getFullPresetPath(presetPath);
+  const pathInfo = getFullPresetPath(presetPath, cwd);
 
   if (!pathInfo) {
     throw new Error(
@@ -119,7 +132,7 @@ const processedPresets = new Set<string>();
 /**
  * Process presets and return a new config with merged rules and metadata
  */
-function processPresets(config: Config): ConfigResult {
+function processPresets(config: Config, cwd?: string): ConfigResult {
   // Create a deep copy of the config to avoid mutations
   const newConfig: Config = JSON.parse(JSON.stringify(config));
   const metadata: RuleMetadata = {
@@ -130,7 +143,7 @@ function processPresets(config: Config): ConfigResult {
   // Clear processed presets tracking set when starting from the top level
   processedPresets.clear();
 
-  return processPresetsInternal(newConfig, metadata);
+  return processPresetsInternal(newConfig, metadata, cwd);
 }
 
 /**
@@ -139,13 +152,14 @@ function processPresets(config: Config): ConfigResult {
 function processPresetsInternal(
   config: Config,
   metadata: RuleMetadata,
+  cwd?: string,
 ): ConfigResult {
   if (!config.presets || !Array.isArray(config.presets)) {
     return { config, metadata };
   }
 
   for (const presetPath of config.presets) {
-    const pathInfo = getFullPresetPath(presetPath);
+    const pathInfo = getFullPresetPath(presetPath, cwd);
 
     if (!pathInfo) {
       throw new Error(
@@ -162,7 +176,7 @@ function processPresetsInternal(
     // Mark this preset as processed
     processedPresets.add(pathInfo.fullPath);
 
-    const preset = loadPreset(presetPath);
+    const preset = loadPreset(presetPath, cwd);
     if (!preset) continue;
 
     // Process nested presets first (depth-first)
@@ -178,6 +192,7 @@ function processPresetsInternal(
       const { config: nestedConfig } = processPresetsInternal(
         presetConfig,
         metadata,
+        cwd,
       );
 
       Object.assign(preset.rules, nestedConfig.rules);
@@ -279,13 +294,13 @@ function mergePresetMcpServers(
  * Load the aicm config using cosmiconfigSync, supporting both aicm.json and package.json.
  * Returns the config object or null if not found.
  */
-export function loadAicmConfigCosmiconfig(): Config | null {
+export function loadAicmConfigCosmiconfig(searchFrom?: string): Config | null {
   const explorer = cosmiconfigSync("aicm", {
     searchPlaces: ["package.json", "aicm.json"],
   });
 
   try {
-    const result = explorer.search();
+    const result = explorer.search(searchFrom);
     if (!result || !result.config) return null;
     const config = result.config as Config;
     if (!config.rules) config.rules = {};
@@ -301,14 +316,18 @@ export function loadAicmConfigCosmiconfig(): Config | null {
 /**
  * Get the configuration from aicm.json or package.json (using cosmiconfigSync) and merge with any presets
  */
-export function getConfig(): Config | null {
-  const config = loadAicmConfigCosmiconfig();
+export function getConfig(cwd?: string): Config | null {
+  const workingDir = cwd || process.cwd();
+  const config = loadAicmConfigCosmiconfig(workingDir);
   if (!config) {
     throw new Error(
-      `No config found in ${process.cwd()}, create one using "aicm init"`,
+      `No config found in ${workingDir}, create one using "aicm init"`,
     );
   }
-  const { config: processedConfig, metadata } = processPresets(config);
+  const { config: processedConfig, metadata } = processPresets(
+    config,
+    workingDir,
+  );
   // Store metadata for later access
   currentMetadata = metadata;
   return processedConfig;
@@ -337,8 +356,9 @@ export function getOriginalPresetPath(
 /**
  * Save the configuration to the aicm.json file
  */
-export function saveConfig(config: Config): boolean {
-  const configPath = path.join(process.cwd(), CONFIG_FILE);
+export function saveConfig(config: Config, cwd?: string): boolean {
+  const workingDir = cwd || process.cwd();
+  const configPath = path.join(workingDir, CONFIG_FILE);
 
   try {
     fs.writeJsonSync(configPath, config, { spaces: 2 });

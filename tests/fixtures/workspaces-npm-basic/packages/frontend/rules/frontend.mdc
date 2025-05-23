@@ -1,0 +1,10 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+name: Frontend Development Rules
+description: A test rule for local installation
+alwaysApply: false
+
+# Sample rule content

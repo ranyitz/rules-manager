@@ -173,6 +173,8 @@ export async function setupFromFixture(fixtureName: string): Promise<string> {
 
   fs.copySync(fixtureDir, testDir);
 
+  await execPromise("git init", { cwd: testDir });
+
   return testDir;
 }
 

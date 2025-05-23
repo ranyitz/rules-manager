@@ -1,0 +1,6 @@
+{
+  "ides": ["cursor"],
+  "rules": {
+    "web-app-rule": "./rules/web-app.md"
+  }
+}

@@ -16,6 +16,8 @@ import { writeRulesToTargets } from "../utils/rule-writer";
 import fs from "fs-extra";
 import path from "node:path";
 import { isCI } from "ci-info";
+import { discoverPackagesWithAicm } from "./workspaces/discovery";
+import { installWorkspacesPackages } from "./workspaces/workspaces-install";
 
 /**
  * Options for the installCore function
@@ -33,6 +35,14 @@ export interface InstallOptions {
    * allow installation on CI environments
    */
   installOnCI?: boolean;
+  /**
+   * Enable workspaces mode
+   */
+  workspaces?: boolean;
+  /**
+   * Show verbose output during installation
+   */
+  verbose?: boolean;
 }
 
 /**
@@ -51,6 +61,32 @@ export interface InstallResult {
    * Number of rules installed
    */
   installedRuleCount: number;
+  /**
+   * Number of packages installed
+   */
+  packagesCount: number;
+}
+
+/**
+ * Helper function to execute a function within a specific working directory
+ * and ensure the original directory is always restored
+ */
+async function withWorkingDirectory<T>(
+  targetDir: string,
+  fn: () => Promise<T>,
+): Promise<T> {
+  const originalCwd = process.cwd();
+  if (targetDir !== originalCwd) {
+    process.chdir(targetDir);
+  }
+
+  try {
+    return await fn();
+  } finally {
+    if (targetDir !== originalCwd) {
+      process.chdir(originalCwd);
+    }
+  }
 }
 
 /**
@@ -91,6 +127,92 @@ function isInCIEnvironment(): boolean {
   return isCI;
 }
 
+async function handleWorkspacesInstallation(
+  cwd: string,
+  installOnCI: boolean,
+  verbose: boolean = false,
+): Promise<InstallResult> {
+  return withWorkingDirectory(cwd, async () => {
+    if (verbose) {
+      console.log(chalk.blue("🔍 Discovering packages..."));
+    }
+
+    const packages = await discoverPackagesWithAicm(cwd);
+
+    if (packages.length === 0) {
+      return {
+        success: false,
+        error: "No packages with aicm configurations found",
+        installedRuleCount: 0,
+        packagesCount: 0,
+      };
+    }
+
+    if (verbose) {
+      console.log(
+        chalk.blue(
+          `Found ${packages.length} packages with aicm configurations:`,
+        ),
+      );
+      packages.forEach((pkg) => {
+        console.log(chalk.gray(`  - ${pkg.relativePath}`));
+      });
+
+      console.log(chalk.blue(`📦 Installing configurations...`));
+    }
+    const result = await installWorkspacesPackages(packages, {
+      installOnCI,
+    });
+
+    if (verbose) {
+      result.packages.forEach((pkg) => {
+        if (pkg.success) {
+          console.log(
+            chalk.green(`✅ ${pkg.path} (${pkg.installedRuleCount} rules)`),
+          );
+        } else {
+          console.log(chalk.red(`❌ ${pkg.path}: ${pkg.error}`));
+        }
+      });
+    }
+
+    const failedPackages = result.packages.filter((r) => !r.success);
+
+    if (failedPackages.length > 0) {
+      console.log(chalk.yellow(`Installation completed with errors`));
+      if (verbose) {
+        console.log(
+          chalk.green(
+            `Successfully installed: ${result.packages.length - failedPackages.length}/${result.packages.length} packages (${result.totalRuleCount} rules total)`,
+          ),
+        );
+        console.log(
+          chalk.red(
+            `Failed packages: ${failedPackages.map((p) => p.path).join(", ")}`,
+          ),
+        );
+      }
+
+      const errorDetails = failedPackages
+        .map((p) => `${p.path}: ${p.error}`)
+        .join("; ");
+
+      return {
+        success: false,
+        error: `Package installation failed for ${failedPackages.length} package(s): ${errorDetails}`,
+        installedRuleCount: result.totalRuleCount,
+        packagesCount: result.packages.length,
+      };
+    }
+
+    return {
+      success: true,
+      installedRuleCount: result.totalRuleCount,
+      packagesCount: result.packages.length,
+    };
+  });
+}
+
 /**
  * Core implementation of the rule installation logic
  * @param options Install options
@@ -102,40 +224,37 @@ export async function install(
   const cwd = options.cwd || process.cwd();
   const installOnCI = options.installOnCI === true; // Default to false if not specified
 
-  try {
-    const originalCwd = process.cwd();
-    if (cwd !== originalCwd) {
-      process.chdir(cwd);
+  return withWorkingDirectory(cwd, async () => {
+    if (options.workspaces) {
+      return await handleWorkspacesInstallation(
+        cwd,
+        installOnCI,
+        options.verbose,
+      );
     }
-
-    const ruleCollection = initRuleCollection();
 
     const config = options.config || getConfig();
 
-    if (!config) {
-      if (cwd !== originalCwd) {
-        process.chdir(originalCwd);
-      }
+    const ruleCollection = initRuleCollection();
 
+    if (!config) {
       return {
         success: false,
-        error: "Configuration file not found!",
+        error: "Configuration file not found",
         installedRuleCount: 0,
+        packagesCount: 0,
       };
     }
 
     const inCI = isInCIEnvironment();
 
     if (inCI && !installOnCI && !config.installOnCI) {
-      if (cwd !== originalCwd) {
-        process.chdir(originalCwd);
-      }
-
       console.log(chalk.yellow("Detected CI environment, skipping install."));
 
       return {
         success: true,
         installedRuleCount: 0,
+        packagesCount: 0,
       };
     }
 
@@ -143,14 +262,11 @@ export async function install(
     if (!config.rules || Object.keys(config.rules).length === 0) {
       // If there are no presets defined either, show a message
       if (!config.presets || config.presets.length === 0) {
-        if (cwd !== originalCwd) {
-          process.chdir(originalCwd);
-        }
-
         return {
           success: false,
-          error: "No rules defined in configuration.",
+          error: "No rules defined in configuration",
           installedRuleCount: 0,
+          packagesCount: 0,
         };
       }
     }
@@ -200,14 +316,11 @@ export async function install(
 
     // If there were errors, exit with error
     if (hasErrors) {
-      if (cwd !== originalCwd) {
-        process.chdir(originalCwd);
-      }
-
       return {
         success: false,
         error: errorMessages.join("; "),
         installedRuleCount,
+        packagesCount: 0,
       };
     }
 
@@ -223,40 +336,37 @@ export async function install(
       writeMcpServersToTargets(filteredMcpServers, config.ides, cwd);
     }
 
-    // Restore original cwd
-    if (cwd !== originalCwd) {
-      process.chdir(originalCwd);
-    }
-
     return {
       success: true,
       installedRuleCount,
+      packagesCount: 1,
     };
-  } catch (e) {
-    const errorMessage = e instanceof Error ? e.message : String(e);
-
-    // If cwd was changed, restore it
-    if (cwd !== process.cwd()) {
-      process.chdir(cwd);
-    }
-
-    return {
-      success: false,
-      error: errorMessage,
-      installedRuleCount: 0,
-    };
-  }
+  });
 }
 
-export async function installCommand(installOnCI?: boolean): Promise<void> {
+export async function installCommand(
+  installOnCI?: boolean,
+  workspaces?: boolean,
+  verbose?: boolean,
+): Promise<void> {
   try {
-    const result = await install({ installOnCI });
+    const result = await install({ installOnCI, workspaces, verbose });
 
     if (!result.success) {
       console.error(chalk.red(result.error));
       process.exit(1);
     } else {
-      console.log("Rules installation completed");
+      if (result.packagesCount > 1) {
+        console.log(
+          `Successfully installed ${result.installedRuleCount} rules across ${result.packagesCount} packages`,
+        );
+      } else if (workspaces) {
+        console.log(
+          `Successfully installed ${result.installedRuleCount} rules across ${result.packagesCount} packages`,
+        );
+      } else {
+        console.log("Rules installation completed");
+      }
     }
   } catch (error: unknown) {
     console.error(

@@ -1,0 +1,20 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: Backend development rules
+globs:
+alwaysApply: false
+---
+
+# Backend Development Rules
+
+This rule contains guidelines for backend development.
+
+## API Best Practices
+
+- Use RESTful conventions
+- Implement proper error handling
+- Add comprehensive logging

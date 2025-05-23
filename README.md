@@ -147,6 +147,44 @@ After installation, open Cursor and ask it to do something. Your AI assistant wi
 
 To prevent [prompt-injection](https://en.wikipedia.org/wiki/Prompt_injection), use only packages from trusted sources.
 
+## Workspaces Support
+
+aicm supports workspaces by automatically discovering and installing configurations across multiple packages in your repository.
+
+To enable workspaces mode, use the `--workspaces` flag:
+
+```bash
+npx aicm install --workspaces
+```
+
+This will:
+
+1. **Discover packages**: Automatically find all directories containing `aicm.json` files in your repository
+2. **Install per package**: Install rules and MCPs for each package individually in their respective directories
+
+### How It Works
+
+Each directory containing an `aicm.json` file is treated as a separate package with its own configuration.
+
+For example, in a workspace structure like:
+
+```
+├── packages/
+│   ├── frontend/
+│   │   └── aicm.json
+│   └── backend/
+│       └── aicm.json
+└── services/
+    └── api/
+        └── aicm.json
+```
+
+Running `npx aicm install --workspaces` will install rules for each package in their respective directories:
+
+- `packages/frontend/.cursor/rules/aicm/`
+- `packages/backend/.cursor/rules/aicm/`
+- `services/api/.cursor/rules/aicm/`
+
 ## Configuration
 
 To configure aicm, use either:
@@ -252,6 +290,8 @@ npx aicm install
 Options:
 
 - `--ci`: run in CI environments (default: `false`)
+- `--workspaces`: enable workspaces mode to discover and install configurations across multiple packages
+- `--verbose`: show detailed output during installation
 
 ## Node.js API
 
@@ -296,6 +336,8 @@ Installs rules and MCP servers based on configuration.
 - `cwd`: Base directory to use instead of `process.cwd()`
 - `config`: Custom config object to use instead of loading from file
 - `installOnCI`: Run installation on CI environments (default: `false`)
+- `workspaces`: Enable workspaces mode (default: `false`)
+- `verbose`: Show verbose output during installation (default: `false`)
 
 **Returns:**
 
