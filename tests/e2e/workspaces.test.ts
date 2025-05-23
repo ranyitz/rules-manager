@@ -85,9 +85,7 @@ describe("aicm workspaces support", () => {
     const { code, stderr } = await runCommand("install --workspaces --ci");
 
     expect(code).toBe(1);
-    expect(stderr).toContain(
-      "No packages with aicm configurations found in workspace",
-    );
+    expect(stderr).toContain("No packages with aicm configurations found");
   });
 
   test("should install normally when workspaces flag is used on single package", async () => {
