@@ -47,7 +47,7 @@ export function writeMcpServersToFile(
   const userMcpServers: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(existingMcpServers)) {
-    if (typeof value === "object" && value !== null && !value.aicm) {
+    if (typeof value === "object" && value !== null && value.aicm !== true) {
       userMcpServers[key] = value;
     }
   }
