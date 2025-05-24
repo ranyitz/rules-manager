@@ -48,9 +48,11 @@ describe("aicm install command with fixtures", () => {
       command: "./scripts/start-mcp.sh",
       args: ["--test"],
       env: { MCP_TOKEN: "test123" },
+      aicm: true,
     });
     expect(mcpConfig.mcpServers["remote-mcp"]).toMatchObject({
       env: { MCP_TOKEN: "test456" },
+      aicm: true,
     });
   });
 
@@ -176,7 +178,6 @@ describe("aicm install command with fixtures", () => {
       env: { USER_TOKEN: "user123" },
     });
     expect(finalMcpConfig.mcpServers["another-user-server"]).toMatchObject({
-      url: "https://user.example.com/mcp",
       env: { USER_API_KEY: "user456" },
     });
 
@@ -184,6 +185,7 @@ describe("aicm install command with fixtures", () => {
       command: "./scripts/aicm-server.sh",
       args: ["--aicm"],
       env: { AICM_TOKEN: "aicm123" },
+      aicm: true,
     });
   });
 
@@ -221,21 +223,122 @@ describe("aicm install command with fixtures", () => {
       command: "./scripts/aicm-updated-server.sh",
       args: ["--aicm-updated"],
       env: { AICM_TOKEN: "aicm-new-token" },
+      aicm: true,
     });
 
     expect(finalMcpConfig.mcpServers["aicm-only-server"]).toMatchObject({
       command: "./scripts/aicm-only.sh",
       env: { AICM_ONLY: "true" },
+      aicm: true,
     });
 
     expect(finalMcpConfig.mcpServers["user-only-server"]).toMatchObject({
-      url: "https://user.example.com/mcp-only",
       env: { USER_ONLY_TOKEN: "useronly456" },
     });
 
     expect(finalMcpConfig.userSettings).toMatchObject({
       editor: "vim",
       fontSize: 14,
+    });
+  });
+
+  test("should clean up stale aicm servers while preserving user servers", async () => {
+    await setupFromFixture("install-mcp-stale-cleanup");
+
+    const mcpPath = path.join(".cursor", "mcp.json");
+
+    expect(fileExists(mcpPath)).toBe(true);
+    const existingMcpConfig = JSON.parse(readTestFile(mcpPath));
+    expect(existingMcpConfig.mcpServers["user-server"]).toBeDefined();
+    expect(existingMcpConfig.mcpServers["existing-aicm-server"]).toMatchObject({
+      aicm: true,
+    });
+    expect(existingMcpConfig.mcpServers["stale-aicm-server"]).toMatchObject({
+      aicm: true,
+    });
+    expect(existingMcpConfig.userSettings).toMatchObject({
+      preference: "keep-this",
+    });
+
+    const { code } = await runCommand("install --ci");
+
+    expect(code).toBe(0);
+
+    expect(
+      fileExists(
+        path.join(".cursor", "rules", "aicm", "cleanup-test-rule.mdc"),
+      ),
+    ).toBe(true);
+
+    const finalMcpConfig = JSON.parse(readTestFile(mcpPath));
+
+    expect(finalMcpConfig.mcpServers["user-server"]).toMatchObject({
+      command: "./user-scripts/user-server.sh",
+      env: { USER_TOKEN: "user789" },
+    });
+    expect(finalMcpConfig.mcpServers["user-server"].aicm).toBeUndefined();
+
+    expect(finalMcpConfig.mcpServers["existing-aicm-server"]).toMatchObject({
+      command: "./scripts/updated-existing-server.sh",
+      args: ["--updated"],
+      env: { UPDATED_TOKEN: "updated456" },
+      aicm: true,
+    });
+
+    expect(finalMcpConfig.mcpServers["new-aicm-server"]).toMatchObject({
+      command: "./scripts/new-aicm-server.sh",
+      args: ["--new"],
+      env: { NEW_TOKEN: "new123" },
+      aicm: true,
+    });
+
+    expect(finalMcpConfig.mcpServers["stale-aicm-server"]).toBeUndefined();
+
+    expect(finalMcpConfig.userSettings).toMatchObject({
+      preference: "keep-this",
+    });
+  });
+
+  test("should handle canceled mcp servers correctly", async () => {
+    await setupFromFixture("install-mcp-canceled-servers");
+
+    const mcpPath = path.join(".cursor", "mcp.json");
+
+    expect(fileExists(mcpPath)).toBe(true);
+    const existingMcpConfig = JSON.parse(readTestFile(mcpPath));
+    expect(existingMcpConfig.mcpServers["user-server"]).toBeDefined();
+    expect(existingMcpConfig.mcpServers["canceled-server"]).toMatchObject({
+      aicm: true,
+    });
+    expect(existingMcpConfig.userConfig).toMatchObject({
+      setting: "preserve-this",
+    });
+
+    const { code } = await runCommand("install --ci");
+
+    expect(code).toBe(0);
+
+    expect(
+      fileExists(path.join(".cursor", "rules", "aicm", "cancel-test-rule.mdc")),
+    ).toBe(true);
+
+    const finalMcpConfig = JSON.parse(readTestFile(mcpPath));
+
+    expect(finalMcpConfig.mcpServers["user-server"]).toMatchObject({
+      command: "./user-scripts/user-server.sh",
+      env: { USER_TOKEN: "user123" },
+    });
+
+    expect(finalMcpConfig.mcpServers["active-server"]).toMatchObject({
+      command: "./scripts/active-server.sh",
+      env: { ACTIVE_TOKEN: "active123" },
+      aicm: true,
+    });
+
+    expect(finalMcpConfig.mcpServers["canceled-server"]).toBeUndefined();
+
+    expect(finalMcpConfig.userConfig).toMatchObject({
+      setting: "preserve-this",
     });
   });
 });

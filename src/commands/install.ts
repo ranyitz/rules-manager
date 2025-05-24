@@ -13,11 +13,10 @@ import {
   addRuleToCollection,
 } from "../utils/rule-collector";
 import { writeRulesToTargets } from "../utils/rule-writer";
-import fs from "fs-extra";
-import path from "node:path";
 import { isCI } from "ci-info";
 import { discoverPackagesWithAicm } from "./workspaces/discovery";
 import { installWorkspacesPackages } from "./workspaces/workspaces-install";
+import { writeMcpServersToTargets } from "../utils/mcp-writer";
 
 /**
  * Options for the installCore function
@@ -85,45 +84,6 @@ async function withWorkingDirectory<T>(
   } finally {
     if (targetDir !== originalCwd) {
       process.chdir(originalCwd);
-    }
-  }
-}
-
-/**
- * Write MCP servers configuration to IDE targets
- * @param mcpServers The MCP servers configuration
- * @param ides The IDEs to write to
- * @param cwd The current working directory
- */
-function writeMcpServersToTargets(
-  mcpServers: Config["mcpServers"],
-  ides: string[],
-  cwd: string,
-): void {
-  if (!mcpServers) return;
-  for (const ide of ides) {
-    let mcpPath: string | null = null;
-
-    // Windsurf does not support project mcpServers, so skip
-    if (ide === "cursor") {
-      mcpPath = path.join(cwd, ".cursor", "mcp.json");
-      fs.ensureDirSync(path.dirname(mcpPath));
-    }
-
-    if (mcpPath) {
-      const existingConfig = fs.existsSync(mcpPath)
-        ? fs.readJsonSync(mcpPath)
-        : {};
-
-      const mergedConfig = {
-        ...existingConfig,
-        mcpServers: {
-          ...existingConfig.mcpServers,
-          ...mcpServers,
-        },
-      };
-
-      fs.writeJsonSync(mcpPath, mergedConfig, { spaces: 2 });
     }
   }
 }
