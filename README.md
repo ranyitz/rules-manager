@@ -4,9 +4,7 @@
 
 A CLI tool for syncing and managing Agentic IDE rules across projects
 
-
 https://github.com/user-attachments/assets/e80dedbc-89c4-4747-9acf-b7ecb7493fcc
-
 
 ## Why
 
