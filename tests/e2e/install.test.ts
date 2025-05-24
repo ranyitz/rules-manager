@@ -149,4 +149,93 @@ describe("aicm install command with fixtures", () => {
     );
     expect(windsurfRulesContent).toContain(".aicm/fresh-windsurf-rule.md");
   });
+
+  test("should preserve existing mcp configuration when installing new servers", async () => {
+    await setupFromFixture("install-mcp-preserve-existing");
+
+    const mcpPath = path.join(".cursor", "mcp.json");
+
+    expect(fileExists(mcpPath)).toBe(true);
+    const existingMcpConfig = JSON.parse(readTestFile(mcpPath));
+    expect(existingMcpConfig.mcpServers["user-defined-server"]).toBeDefined();
+    expect(existingMcpConfig.mcpServers["another-user-server"]).toBeDefined();
+
+    const { code } = await runCommand("install --ci");
+
+    expect(code).toBe(0);
+
+    expect(
+      fileExists(path.join(".cursor", "rules", "aicm", "test-rule.mdc")),
+    ).toBe(true);
+
+    const finalMcpConfig = JSON.parse(readTestFile(mcpPath));
+
+    expect(finalMcpConfig.mcpServers["user-defined-server"]).toMatchObject({
+      command: "./user-scripts/user-server.sh",
+      args: ["--user"],
+      env: { USER_TOKEN: "user123" },
+    });
+    expect(finalMcpConfig.mcpServers["another-user-server"]).toMatchObject({
+      url: "https://user.example.com/mcp",
+      env: { USER_API_KEY: "user456" },
+    });
+
+    expect(finalMcpConfig.mcpServers["aicm-managed-server"]).toMatchObject({
+      command: "./scripts/aicm-server.sh",
+      args: ["--aicm"],
+      env: { AICM_TOKEN: "aicm123" },
+    });
+  });
+
+  test("should override existing mcp servers with same key while preserving others", async () => {
+    await setupFromFixture("install-mcp-override-same-key");
+
+    const mcpPath = path.join(".cursor", "mcp.json");
+
+    expect(fileExists(mcpPath)).toBe(true);
+    const existingMcpConfig = JSON.parse(readTestFile(mcpPath));
+    expect(existingMcpConfig.mcpServers["shared-server"]).toMatchObject({
+      command: "./old-scripts/old-server.sh",
+      args: ["--old"],
+      env: { OLD_TOKEN: "old123" },
+    });
+    expect(existingMcpConfig.mcpServers["user-only-server"]).toBeDefined();
+    expect(existingMcpConfig.userSettings).toMatchObject({
+      editor: "vim",
+      fontSize: 14,
+    });
+
+    const { code } = await runCommand("install --ci");
+
+    expect(code).toBe(0);
+
+    expect(
+      fileExists(
+        path.join(".cursor", "rules", "aicm", "override-test-rule.mdc"),
+      ),
+    ).toBe(true);
+
+    const finalMcpConfig = JSON.parse(readTestFile(mcpPath));
+
+    expect(finalMcpConfig.mcpServers["shared-server"]).toMatchObject({
+      command: "./scripts/aicm-updated-server.sh",
+      args: ["--aicm-updated"],
+      env: { AICM_TOKEN: "aicm-new-token" },
+    });
+
+    expect(finalMcpConfig.mcpServers["aicm-only-server"]).toMatchObject({
+      command: "./scripts/aicm-only.sh",
+      env: { AICM_ONLY: "true" },
+    });
+
+    expect(finalMcpConfig.mcpServers["user-only-server"]).toMatchObject({
+      url: "https://user.example.com/mcp-only",
+      env: { USER_ONLY_TOKEN: "useronly456" },
+    });
+
+    expect(finalMcpConfig.userSettings).toMatchObject({
+      editor: "vim",
+      fontSize: 14,
+    });
+  });
 });

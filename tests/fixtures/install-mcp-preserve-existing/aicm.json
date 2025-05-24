@@ -1,0 +1,13 @@
+{
+  "ides": ["cursor"],
+  "rules": {
+    "test-rule": "./rules/test-rule.mdc"
+  },
+  "mcpServers": {
+    "aicm-managed-server": {
+      "command": "./scripts/aicm-server.sh",
+      "args": ["--aicm"],
+      "env": { "AICM_TOKEN": "aicm123" }
+    }
+  }
+}

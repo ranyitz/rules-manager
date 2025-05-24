@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "user-defined-server": {
+      "command": "./user-scripts/user-server.sh",
+      "args": ["--user"],
+      "env": { "USER_TOKEN": "user123" }
+    },
+    "another-user-server": {
+      "url": "https://user.example.com/mcp",
+      "env": { "USER_API_KEY": "user456" }
+    }
+  }
+}
