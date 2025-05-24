@@ -103,13 +103,27 @@ function writeMcpServersToTargets(
   if (!mcpServers) return;
   for (const ide of ides) {
     let mcpPath: string | null = null;
+
+    // Windsurf does not support project mcpServers, so skip
     if (ide === "cursor") {
       mcpPath = path.join(cwd, ".cursor", "mcp.json");
       fs.ensureDirSync(path.dirname(mcpPath));
     }
-    // Windsurf does not support project mcpServers, so skip
+
     if (mcpPath) {
-      fs.writeJsonSync(mcpPath, { mcpServers }, { spaces: 2 });
+      const existingConfig = fs.existsSync(mcpPath)
+        ? fs.readJsonSync(mcpPath)
+        : {};
+
+      const mergedConfig = {
+        ...existingConfig,
+        mcpServers: {
+          ...existingConfig.mcpServers,
+          ...mcpServers,
+        },
+      };
+
+      fs.writeJsonSync(mcpPath, mergedConfig, { spaces: 2 });
     }
   }
 }

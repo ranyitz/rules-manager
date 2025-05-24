@@ -1,0 +1,17 @@
+{
+  "ides": ["cursor"],
+  "rules": {
+    "override-test-rule": "./rules/override-test-rule.mdc"
+  },
+  "mcpServers": {
+    "shared-server": {
+      "command": "./scripts/aicm-updated-server.sh",
+      "args": ["--aicm-updated"],
+      "env": { "AICM_TOKEN": "aicm-new-token" }
+    },
+    "aicm-only-server": {
+      "command": "./scripts/aicm-only.sh",
+      "env": { "AICM_ONLY": "true" }
+    }
+  }
+}
