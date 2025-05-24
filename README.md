@@ -4,6 +4,10 @@
 
 A CLI tool for syncing and managing Agentic IDE rules across projects
 
+
+https://github.com/user-attachments/assets/c460eaec-05dc-4791-bca0-6b6454063a00
+
+
 ## Why
 
 With the rise of Agentic IDEs like cursor and windsurf, we have an opportunity to enforce best practices through rules. However, these rules are typically isolated within individual developers or projects.
