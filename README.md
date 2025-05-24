@@ -2,15 +2,14 @@
 
 > Agentic IDE Configuration Manager
 
-A CLI tool for syncing and managing Agentic IDE rules across projects
+A CLI tool for managing Agentic IDE configurations across projects
 
 https://github.com/user-attachments/assets/e80dedbc-89c4-4747-9acf-b7ecb7493fcc
 
 ## Why
 
-With the rise of Agentic IDEs like cursor and windsurf, we have an opportunity to enforce best practices through rules. However, these rules are typically isolated within individual developers or projects.
-
-**aicm** is a CLI tool for distributing Agentic IDE configurations, rules, and MCPs across projects. It leverages package managers to copy configurations from node_modules to the correct locations in your file system.
+With the rise of Agentic IDEs, we have an opportunity to enforce best practices through rules. However, these rules are typically isolated within individual projects.
+**aicm** is a CLI tool for distributing Agentic IDE configurations, rules, and MCPs across projects. It leverages node package managers, copy configurations from node_modules to the correct locations in your file system.
 
 ## Getting Started
 
@@ -35,6 +34,11 @@ In your project's `aicm.json`, reference the package and the specific rule:
   "rules": {
     "typescript": "@myteam/ai-tools/rules/typescript.mdc",
     "react": "@myteam/ai-tools/rules/react.mdc"
+  },
+  "mcpServers": {
+    "my-mcp": {
+      "url": "https://example.com/sse"
+    }
   }
 }
 ```
@@ -49,7 +53,7 @@ In your project's `aicm.json`, reference the package and the specific rule:
 }
 ```
 
-Now the rules will be linked to `.cursor/rules/aicm/` when you run `npm install`.
+Now, when you run `npm install`, the rules will be added to `.cursor/rules/aicm/` and the mcps to `.cursor/mcp.json`.
 
 ### Using Presets
 
