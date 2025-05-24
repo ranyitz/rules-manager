@@ -107,6 +107,7 @@ describe("Presets with fixtures", () => {
     expect(mcpConfig.mcpServers["preset-mcp"]).toMatchObject({
       command: "./scripts/preset-mcp.sh",
       env: { MCP_TOKEN: "preset" },
+      aicm: true,
     });
   });
 
@@ -214,6 +215,7 @@ describe("Presets with fixtures", () => {
     expect(mcpConfig.mcpServers["preset-mcp"]).toMatchObject({
       command: "./scripts/override-mcp.sh",
       env: { MCP_TOKEN: "override" },
+      aicm: true,
     });
   });
 
