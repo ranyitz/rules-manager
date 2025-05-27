@@ -4,7 +4,7 @@
 
 A CLI tool for managing Agentic IDE configurations across projects
 
-https://github.com/user-attachments/assets/e80dedbc-89c4-4747-9acf-b7ecb7493fcc
+![aicm](https://github.com/user-attachments/assets/ca38f2d6-ece6-43ad-a127-6f4fce8b2a5a)
 
 ## Why
 
