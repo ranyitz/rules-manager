@@ -1,8 +1,9 @@
 ---
-description: 
+description: Development standards and package management practices for the AICM project
 globs: 
 alwaysApply: true
 ---
+
 ## Development Standards
 
 - Use yarn for package management
