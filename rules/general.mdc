@@ -1,5 +1,5 @@
 ---
-description: Development standards and package management practices for the AICM project
+description: General development standards
 globs: 
 alwaysApply: true
 ---
