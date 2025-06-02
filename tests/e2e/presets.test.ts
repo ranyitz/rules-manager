@@ -2,6 +2,7 @@ import path from "path";
 import {
   setupFromFixture,
   runCommand,
+  runFailedCommand,
   fileExists,
   readTestFile,
   testDir,
@@ -12,9 +13,7 @@ describe("Presets with fixtures", () => {
   test("should install rules from a preset file", async () => {
     await setupFromFixture("presets-from-file");
 
-    const { code } = await runCommand("install --ci");
-
-    expect(code).toBe(0);
+    await runCommand("install --ci");
 
     expect(
       fileExists(
@@ -65,9 +64,7 @@ describe("Presets with fixtures", () => {
   test("should merge rules from presets with main configuration", async () => {
     await setupFromFixture("presets-merged");
 
-    const { code } = await runCommand("install --ci");
-
-    expect(code).toBe(0);
+    await runCommand("install --ci");
 
     expect(
       fileExists(
@@ -114,9 +111,7 @@ describe("Presets with fixtures", () => {
   test("should handle npm package presets from @company/ai-rules", async () => {
     await setupFromFixture("presets-npm");
 
-    const { code } = await runCommand("install --ci");
-
-    expect(code).toBe(0);
+    await runCommand("install --ci");
 
     expect(
       fileExists(
@@ -178,9 +173,8 @@ describe("Presets with fixtures", () => {
   test("should handle errors with missing rule files", async () => {
     await setupFromFixture("presets-missing-rules");
 
-    const { stderr, code } = await runCommand("install --ci");
+    const { stderr } = await runFailedCommand("install --ci");
 
-    expect(code).toBe(1);
     expect(stderr).toContain("Source file");
     expect(stderr).toContain("not found");
   });
@@ -188,9 +182,7 @@ describe("Presets with fixtures", () => {
   test("should handle errors with missing preset files", async () => {
     await setupFromFixture("presets-missing-preset");
 
-    const { stderr, code } = await runCommand("install --ci");
-
-    expect(code).toBe(1);
+    const { stderr } = await runFailedCommand("install --ci");
 
     expect(stderr).toContain("Error loading preset");
   });
@@ -198,8 +190,7 @@ describe("Presets with fixtures", () => {
   test("should override a rule and mcpServer from a preset", async () => {
     await setupFromFixture("presets-npm-override");
 
-    const { code } = await runCommand("install --ci");
-    expect(code).toBe(0);
+    await runCommand("install --ci");
 
     expect(
       fileExists(path.join(".cursor", "rules", "aicm", "npm-rule.mdc")),
@@ -222,8 +213,7 @@ describe("Presets with fixtures", () => {
   test("should cancel a rule and mcpServer from a preset when set to false", async () => {
     await setupFromFixture("presets-cancel-rules");
 
-    const { code } = await runCommand("install --ci");
-    expect(code).toBe(0);
+    await runCommand("install --ci");
 
     expect(
       fileExists(path.join(".cursor", "rules", "aicm", "npm-rule.mdc")),
@@ -238,9 +228,7 @@ describe("Presets with fixtures", () => {
   test("should support namespaced directories for preset rules", async () => {
     await setupFromFixture("presets-namespaced-dirs");
 
-    const { code } = await runCommand("install --ci");
-
-    expect(code).toBe(0);
+    await runCommand("install --ci");
 
     const rootRulePath = path.join(
       ".cursor",

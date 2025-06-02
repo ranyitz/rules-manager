@@ -2,6 +2,7 @@ import path from "path";
 import {
   setupFromFixture,
   runCommand,
+  runFailedCommand,
   fileExists,
   readTestFile,
 } from "./helpers";
@@ -10,7 +11,7 @@ describe("aicm install command with fixtures", () => {
   test("should show error when no rule is specified", async () => {
     await setupFromFixture("install-no-rules");
 
-    const { stderr } = await runCommand("install --ci");
+    const { stderr } = await runFailedCommand("install --ci");
 
     expect(stderr).toContain("No rules defined in configuration");
   });
@@ -18,18 +19,15 @@ describe("aicm install command with fixtures", () => {
   test("should show error when config doesn't exist", async () => {
     await setupFromFixture("install-no-config");
 
-    const { stderr, code } = await runCommand("install --ci");
+    const { stderr } = await runFailedCommand("install --ci");
 
-    expect(code).toBe(1);
     expect(stderr).toMatch(/config|configuration|not found|init/i);
   });
 
   test("should install rules from config", async () => {
     await setupFromFixture("install-from-config");
 
-    const { code } = await runCommand("install --ci");
-
-    expect(code).toBe(0);
+    await runCommand("install --ci");
 
     expect(
       fileExists(path.join(".cursor", "rules", "aicm", "local-rule.mdc")),
@@ -59,9 +57,8 @@ describe("aicm install command with fixtures", () => {
   test("should handle errors with missing rule files", async () => {
     await setupFromFixture("install-missing-rules");
 
-    const { stderr, code } = await runCommand("install --ci");
+    const { stderr } = await runFailedCommand("install --ci");
 
-    expect(code).toBe(1);
     expect(stderr).toContain("Error processing rule");
     expect(stderr).toContain("Source file");
     expect(stderr).toContain("does-not-exist.mdc not found");
@@ -70,9 +67,7 @@ describe("aicm install command with fixtures", () => {
   test("should install rules into specified subdirectory when rule key includes a directory", async () => {
     await setupFromFixture("install-rule-in-subdir");
 
-    const { code } = await runCommand("install --ci");
-
-    expect(code).toBe(0);
+    await runCommand("install --ci");
 
     expect(
       fileExists(path.join(".cursor", "rules", "aicm", "dir", "general.mdc")),
@@ -104,9 +99,8 @@ describe("aicm install command with fixtures", () => {
       "another-stale-rule.mdc",
     );
 
-    const { code, stdout } = await runCommand("install --ci");
+    const { stdout } = await runCommand("install --ci");
 
-    expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");
 
     expect(fileExists(staleRulePath)).toBe(false);
@@ -126,9 +120,8 @@ describe("aicm install command with fixtures", () => {
     expect(windsurfRulesContent).toContain(".aicm/stale-windsurf-rule.md");
     expect(windsurfRulesContent).toContain(".aicm/another-stale-reference.md");
 
-    const { code, stdout } = await runCommand("install --ci --ide windsurf");
+    const { stdout } = await runCommand("install --ci --ide windsurf");
 
-    expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");
 
     expect(fileExists(path.join(".aicm", "stale-windsurf-rule.md"))).toBe(
@@ -162,9 +155,7 @@ describe("aicm install command with fixtures", () => {
     expect(existingMcpConfig.mcpServers["user-defined-server"]).toBeDefined();
     expect(existingMcpConfig.mcpServers["another-user-server"]).toBeDefined();
 
-    const { code } = await runCommand("install --ci");
-
-    expect(code).toBe(0);
+    await runCommand("install --ci");
 
     expect(
       fileExists(path.join(".cursor", "rules", "aicm", "test-rule.mdc")),
@@ -207,9 +198,7 @@ describe("aicm install command with fixtures", () => {
       fontSize: 14,
     });
 
-    const { code } = await runCommand("install --ci");
-
-    expect(code).toBe(0);
+    await runCommand("install --ci");
 
     expect(
       fileExists(
@@ -260,9 +249,7 @@ describe("aicm install command with fixtures", () => {
       preference: "keep-this",
     });
 
-    const { code } = await runCommand("install --ci");
-
-    expect(code).toBe(0);
+    await runCommand("install --ci");
 
     expect(
       fileExists(
@@ -314,9 +301,7 @@ describe("aicm install command with fixtures", () => {
       setting: "preserve-this",
     });
 
-    const { code } = await runCommand("install --ci");
-
-    expect(code).toBe(0);
+    await runCommand("install --ci");
 
     expect(
       fileExists(path.join(".cursor", "rules", "aicm", "cancel-test-rule.mdc")),

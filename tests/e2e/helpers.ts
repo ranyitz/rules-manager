@@ -84,7 +84,107 @@ export async function setupTestDir(): Promise<string> {
   return testDir;
 }
 
+/**
+ * Run a command expecting success (exit code 0)
+ * Throws with detailed debugging info if the command fails
+ */
 export async function runCommand(
+  args: string = "",
+  options: { env?: Record<string, string> } = {},
+): Promise<{ stdout: string; stderr: string; code: number }> {
+  try {
+    const cliPath = path.join(projectRoot, "dist", "index.js");
+    const command = `node ${cliPath} ${args}`;
+
+    const { stdout, stderr } = await execPromise(command, {
+      cwd: testDir,
+      env: options.env ? { ...process.env, ...options.env } : process.env,
+    });
+
+    const result = { stdout, stderr, code: 0 };
+
+    // Command succeeded as expected
+    return result;
+  } catch (error: unknown) {
+    const execError = error as ExecError;
+    const result = {
+      stdout: execError.stdout || "",
+      stderr: execError.stderr || "",
+      code: execError.code || 1,
+    };
+
+    // Command failed when we expected success - show debugging info
+    console.error("\n=== COMMAND EXECUTION FAILED (Expected Success) ===");
+    console.error(
+      `Command: node ${path.join(projectRoot, "dist", "index.js")} ${args}`,
+    );
+    console.error(`Working Directory: ${testDir}`);
+    console.error(`Expected exit code: 0`);
+    console.error(`Actual exit code: ${result.code}`);
+    console.error("\n--- STDOUT ---");
+    console.error(result.stdout || "(empty)");
+    console.error("\n--- STDERR ---");
+    console.error(result.stderr || "(empty)");
+    console.error("=== END COMMAND FAILURE ===\n");
+
+    throw new Error(
+      `Command "${args}" failed with exit code ${result.code}, expected success (0)`,
+    );
+  }
+}
+
+/**
+ * Run a command expecting failure (exit code 1)
+ * Throws with detailed debugging info if the command succeeds instead
+ */
+export async function runFailedCommand(
+  args: string = "",
+  options: { env?: Record<string, string> } = {},
+): Promise<{ stdout: string; stderr: string; code: number }> {
+  try {
+    const cliPath = path.join(projectRoot, "dist", "index.js");
+    const command = `node ${cliPath} ${args}`;
+
+    const { stdout, stderr } = await execPromise(command, {
+      cwd: testDir,
+      env: options.env ? { ...process.env, ...options.env } : process.env,
+    });
+
+    const result = { stdout, stderr, code: 0 };
+
+    // Command succeeded when we expected failure - show debugging info
+    console.error("\n=== COMMAND EXECUTION SUCCEEDED (Expected Failure) ===");
+    console.error(`Command: ${command}`);
+    console.error(`Working Directory: ${testDir}`);
+    console.error(`Expected exit code: 1`);
+    console.error(`Actual exit code: ${result.code}`);
+    console.error("\n--- STDOUT ---");
+    console.error(result.stdout || "(empty)");
+    console.error("\n--- STDERR ---");
+    console.error(result.stderr || "(empty)");
+    console.error("=== END UNEXPECTED SUCCESS ===\n");
+
+    throw new Error(
+      `Command "${args}" succeeded with exit code ${result.code}, expected failure (1)`,
+    );
+  } catch (error: unknown) {
+    const execError = error as ExecError;
+    const result = {
+      stdout: execError.stdout || "",
+      stderr: execError.stderr || "",
+      code: execError.code || 1,
+    };
+
+    // Command failed as expected
+    return result;
+  }
+}
+
+/**
+ * Run a command without asserting exit code (original behavior)
+ * Use this when you want to manually check the exit code in your test
+ */
+export async function runCommandRaw(
   args: string = "",
   options: { env?: Record<string, string> } = {},
 ): Promise<{ stdout: string; stderr: string; code: number }> {
@@ -100,8 +200,6 @@ export async function runCommand(
     return { stdout, stderr, code: 0 };
   } catch (error: unknown) {
     const execError = error as ExecError;
-    // uncomment when debugging
-    // console.error(execError.stdout);
 
     return {
       stdout: execError.stdout || "",

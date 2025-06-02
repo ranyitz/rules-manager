@@ -13,9 +13,7 @@ describe("aicm windsurf integration", () => {
   test("should install rules to .aicm directory and update .windsurfrules", async () => {
     await setupFromFixture("windsurf-basic");
 
-    const { stdout, code } = await runCommand("install --ide windsurf --ci");
-
-    expect(code).toBe(0);
+    const { stdout } = await runCommand("install --ide windsurf --ci");
     expect(stdout).toContain("Rules installation completed");
 
     expect(fileExists(path.join(".aicm", "always-rule.md"))).toBe(true);
@@ -172,9 +170,7 @@ This rule is used to test appending markers to an existing file without markers.
   test("should install rules into specified subdirectory when rule key includes a directory", async () => {
     await setupFromFixture("windsurf-rule-in-subdir");
 
-    const { code } = await runCommand("install --ide windsurf --ci");
-
-    expect(code).toBe(0);
+    await runCommand("install --ide windsurf --ci");
 
     expect(fileExists(path.join(".aicm", "dir", "general.md"))).toBe(true);
 
@@ -347,8 +343,7 @@ This rule is used to test appending markers to an existing file without markers.
 
   test("should install rules into specified subdirectory when rule key includes a directory", async () => {
     await setupFromFixture("windsurf-rule-in-subdir");
-    const { code } = await runCommand("install --ide windsurf --ci");
-    expect(code).toBe(0);
+    await runCommand("install --ide windsurf --ci");
 
     expect(fileExists(path.join(".aicm", "dir", "general.md"))).toBe(true);
     const installedContent = readTestFile(

@@ -10,9 +10,7 @@ describe("aicm glob patterns", () => {
   it("should expand glob patterns and install rules with correct namespacing", async () => {
     await setupFromFixture("install-glob-basic");
 
-    const { stdout, code } = await runCommand("install --verbose --ci");
-
-    expect(code).toBe(0);
+    const { stdout } = await runCommand("install --verbose --ci");
     expect(stdout).toContain("Rules installation completed");
 
     // Check that verbose output shows pattern expansion
@@ -73,9 +71,7 @@ describe("aicm glob patterns", () => {
   it("should handle mixed glob patterns and explicit rules", async () => {
     await setupFromFixture("install-glob-basic");
 
-    const { stdout, code } = await runCommand("install --ci");
-
-    expect(code).toBe(0);
+    const { stdout } = await runCommand("install --ci");
     expect(stdout).toContain("Rules installation completed");
 
     // Check that both glob-discovered and explicit rules are installed
@@ -103,9 +99,7 @@ describe("aicm glob patterns", () => {
 it("should handle empty glob patterns gracefully", async () => {
   await setupFromFixture("install-glob-empty");
 
-  const { stdout, code } = await runCommand("install --ci");
-
-  expect(code).toBe(0);
+  const { stdout } = await runCommand("install --ci");
   expect(stdout).toContain("Rules installation completed");
 
   // Explicit rule should still be installed even when glob pattern is empty
