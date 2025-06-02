@@ -352,3 +352,167 @@ describe("Presets with fixtures", () => {
     }
   });
 });
+
+describe("aicm install with glob patterns in presets", () => {
+  test("should install rules from glob pattern within a preset", async () => {
+    await setupFromFixture("presets-glob-basic");
+    const { code, stderr } = await runCommand("install --ci");
+
+    expect(stderr).toBe(""); // Expect no errors for basic glob resolution
+    expect(code).toBe(0);
+
+    // Check main config rule
+    const mainRulePath = path.join(".cursor", "rules", "aicm", "main-rule.mdc");
+    expect(fileExists(mainRulePath)).toBe(true);
+    expect(readTestFile(mainRulePath)).toContain("Main Config Rule");
+
+    // Check preset's explicit rule (namespaced)
+    const presetExplicitRulePath = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "my-preset.json",
+      "preset-explicit.mdc",
+    );
+    expect(fileExists(presetExplicitRulePath)).toBe(true);
+    expect(readTestFile(presetExplicitRulePath)).toContain(
+      "Preset Explicit Rule",
+    );
+
+    // Check preset's glob-generated rules (namespaced)
+    const presetGlobRule1Path = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "my-preset.json",
+      "preset-glob1.mdc",
+    );
+    expect(fileExists(presetGlobRule1Path)).toBe(true);
+    expect(readTestFile(presetGlobRule1Path)).toContain("Preset Glob Rule 1");
+
+    const presetGlobRule2Path = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "my-preset.json",
+      "preset-glob2.mdc",
+    );
+    expect(fileExists(presetGlobRule2Path)).toBe(true);
+    expect(readTestFile(presetGlobRule2Path)).toContain("Preset Glob Rule 2");
+
+    // Assert that the glob key itself from the preset is not treated as a rule/directory
+    expect(
+      fileExists(
+        path.join(
+          ".cursor",
+          "rules",
+          "aicm",
+          "my-preset.json",
+          "generated-rules",
+        ),
+      ),
+    ).toBe(false);
+    expect(
+      fileExists(
+        path.join(
+          ".cursor",
+          "rules",
+          "aicm",
+          "my-preset.json",
+          "generated-rules.mdc",
+        ),
+      ),
+    ).toBe(false);
+  });
+
+  test("should handle preset glob conflicts, overrides, and cancellations by main config", async () => {
+    await setupFromFixture("presets-glob-conflict");
+    const { code } = await runCommand("install --ci"); // stderr removed
+
+    // Warnings about conflicts might appear in stderr or stdout.
+    // For now, focusing on the final file state and successful execution.
+    expect(code).toBe(0);
+
+    // preset-glob1: Overridden by main config (not namespaced)
+    const overriddenPg1Path = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "preset-glob1.mdc",
+    );
+    expect(fileExists(overriddenPg1Path)).toBe(true);
+    expect(readTestFile(overriddenPg1Path)).toContain("Overridden PG1");
+    // Ensure the namespaced version from preset (which would be from glob) is NOT present
+    const namespacedOriginalPg1Path = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "conflicting-preset.json",
+      "preset-glob1.mdc",
+    );
+    expect(fileExists(namespacedOriginalPg1Path)).toBe(false);
+
+    // preset-glob2: Cancelled by main config
+    const cancelledPg2Path = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "conflicting-preset.json",
+      "preset-glob2.mdc",
+    );
+    const unCancelledPg2Path = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "preset-glob2.mdc",
+    );
+    expect(fileExists(cancelledPg2Path)).toBe(false); // Should not exist namespaced
+    expect(fileExists(unCancelledPg2Path)).toBe(false); // Should not exist un-namespaced either
+
+    // preset-glob3: Should be installed from preset glob (namespaced)
+    const presetGlob3Path = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "conflicting-preset.json",
+      "preset-glob3.mdc",
+    );
+    expect(fileExists(presetGlob3Path)).toBe(true);
+    expect(readTestFile(presetGlob3Path)).toContain("Preset Original PG3");
+
+    // explicit-in-preset: Should be installed from preset (namespaced)
+    const explicitInPresetPath = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "conflicting-preset.json",
+      "explicit-in-preset.mdc",
+    );
+    expect(fileExists(explicitInPresetPath)).toBe(true);
+    expect(readTestFile(explicitInPresetPath)).toContain("Preset Explicit EP");
+
+    // extra1.mdc (from another-glob-group): Should be installed from preset glob (namespaced)
+    const extra1Path = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "conflicting-preset.json",
+      "extra1.mdc",
+    );
+    expect(fileExists(extra1Path)).toBe(true);
+    expect(readTestFile(extra1Path)).toContain("Preset Extra Glob 1");
+
+    // Assert that glob keys from preset are not treated as rules/directories
+    expect(
+      fileExists(
+        path.join(
+          ".cursor",
+          "rules",
+          "aicm",
+          "conflicting-preset.json",
+          "another-glob-group",
+        ),
+      ),
+    ).toBe(false);
+  });
+});

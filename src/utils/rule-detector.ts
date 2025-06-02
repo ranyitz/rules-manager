@@ -2,6 +2,14 @@
  * Detects the rule type from the source string
  */
 export function detectRuleType(source: string): "npm" | "local" {
+  if (typeof source !== "string") {
+    // This should ideally not be hit if upstream logic (e.g., config processing) is correct
+    // and ensures all rule sources are resolved to strings or handled (like 'false' values) before this point.
+    throw new Error(
+      `Invalid rule source type: expected string, got ${typeof source}. Value: ${JSON.stringify(source)}`,
+    );
+  }
+
   if (source.startsWith("http://") || source.startsWith("https://")) {
     throw new Error(
       "URL-based rules are not supported due to security concerns. Please use npm packages or local files instead.",

@@ -1,0 +1,6 @@
+{
+  "rules": {
+    "preset-explicit": "preset-rules/explicit.mdc",
+    "generated-rules": { "glob": "globbed/*.mdc" }
+  }
+}

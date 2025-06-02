@@ -1,0 +1,9 @@
+{
+  "rules": {
+    "preset-glob1": { "glob": "globbed/pg1.mdc" },
+    "preset-glob2": { "glob": "globbed/pg2.mdc" },
+    "preset-glob3": { "glob": "globbed/pg3.mdc" },
+    "explicit-in-preset": "explicit/ep.mdc",
+    "another-glob-group": { "glob": "globbed/extra/*.mdc" }
+  }
+}

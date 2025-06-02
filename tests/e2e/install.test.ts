@@ -342,3 +342,105 @@ describe("aicm install command with fixtures", () => {
     });
   });
 });
+
+describe("aicm install with glob patterns in aicm.json", () => {
+  test("should install rules from basic glob pattern", async () => {
+    await setupFromFixture("install-glob-basic");
+    const { code, stderr } = await runCommand("install --ci");
+
+    expect(stderr).toBe("");
+    expect(code).toBe(0);
+
+    const explicitRulePath = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "explicit-main-rule.mdc",
+    );
+    expect(fileExists(explicitRulePath)).toBe(true);
+    expect(readTestFile(explicitRulePath)).toContain("Explicit Main Rule");
+
+    const globRule1Path = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "glob-rule1.mdc",
+    );
+    expect(fileExists(globRule1Path)).toBe(true);
+    expect(readTestFile(globRule1Path)).toContain("Glob Rule 1");
+
+    const globRule2Path = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "glob-rule2.mdc",
+    );
+    expect(fileExists(globRule2Path)).toBe(true);
+    expect(readTestFile(globRule2Path)).toContain("Glob Rule 2");
+
+    expect(
+      fileExists(path.join(".cursor", "rules", "aicm", "rule-group")),
+    ).toBe(false);
+    expect(
+      fileExists(path.join(".cursor", "rules", "aicm", "rule-group.mdc")),
+    ).toBe(false);
+  });
+
+  test("should handle empty glob pattern with no matches", async () => {
+    await setupFromFixture("install-glob-empty");
+    const { code, stderr } = await runCommand("install --ci");
+
+    expect(stderr).toBe("");
+    expect(code).toBe(0);
+
+    expect(
+      fileExists(path.join(".cursor", "rules", "aicm", "no-match-group.mdc")),
+    ).toBe(false);
+    expect(
+      fileExists(path.join(".cursor", "rules", "aicm", "no-match-group")),
+    ).toBe(false);
+  });
+
+  test("should handle glob conflicts and cancellations correctly", async () => {
+    await setupFromFixture("install-glob-conflict");
+    // Warnings about conflicts are expected, so we don't check stderr for emptiness here.
+    // We could capture and check stderr for specific warnings if the test framework supports it easily.
+    const { code } = await runCommand("install --ci");
+    expect(code).toBe(0); // Command should still succeed even with conflicts (which are warned)
+
+    const explicitGlobRule1Path = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "glob-rule1.mdc",
+    );
+    expect(fileExists(explicitGlobRule1Path)).toBe(true);
+    expect(readTestFile(explicitGlobRule1Path)).toContain(
+      "Explicit glob-rule1",
+    );
+
+    const cancelledGlobRule2Path = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "glob-rule2.mdc",
+    );
+    expect(fileExists(cancelledGlobRule2Path)).toBe(false);
+
+    const globRule3Path = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "glob-rule3.mdc",
+    );
+    expect(fileExists(globRule3Path)).toBe(true);
+    expect(readTestFile(globRule3Path)).toContain("From Glob glob-rule3");
+
+    expect(
+      fileExists(path.join(".cursor", "rules", "aicm", "another-group")),
+    ).toBe(false);
+    expect(
+      fileExists(path.join(".cursor", "rules", "aicm", "another-group.mdc")),
+    ).toBe(false);
+  });
+});

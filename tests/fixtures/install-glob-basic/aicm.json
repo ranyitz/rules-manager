@@ -1,0 +1,7 @@
+{
+  "ides": ["cursor"],
+  "rules": {
+    "explicit-main": "main-rules/explicit-main-rule.mdc",
+    "rule-group": { "glob": "glob-rules/*.mdc" }
+  }
+}

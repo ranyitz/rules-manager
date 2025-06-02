@@ -1,0 +1,7 @@
+{
+  "ides": ["cursor"],
+  "presets": ["./my-preset.json"],
+  "rules": {
+    "main-rule": "main-rules/main.mdc"
+  }
+}
