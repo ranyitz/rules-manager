@@ -127,6 +127,24 @@ export function readTestFile(filePath: string): string {
 }
 
 /**
+ * Write a file to the test directory
+ */
+export function writeTestFile(filePath: string, content: string): void {
+  const fullPath = path.join(testDir, filePath);
+  fs.writeFileSync(fullPath, content);
+}
+
+/**
+ * Remove a file from the test directory
+ */
+export function removeTestFile(filePath: string): void {
+  const fullPath = path.join(testDir, filePath);
+  if (fs.existsSync(fullPath)) {
+    fs.removeSync(fullPath);
+  }
+}
+
+/**
  * Get the structure of files in the test directory
  */
 export function getDirectoryStructure(dir: string = ""): string[] {

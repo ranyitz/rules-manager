@@ -29,9 +29,10 @@ export async function expandGlobPattern(
       onlyFiles: true,
     });
 
-    // Filter to only .mdc files and sort for deterministic behavior
+    // Filter to only .mdc files, normalize paths, and sort for deterministic behavior
     return matches
       .filter((file: string) => file.endsWith(".mdc"))
+      .map((file: string) => file.replace(/\\/g, "/")) // Normalize Windows backslashes to forward slashes
       .sort((a: string, b: string) => a.localeCompare(b));
   } catch (error) {
     throw new Error(
@@ -75,21 +76,22 @@ export function generateGlobRuleKey(
  * @returns The base directory path without glob characters
  */
 export function getGlobBase(pattern: string): string {
+  // Normalize path separators to forward slashes for consistent behavior
+  const normalizedPattern = pattern.replace(/\\/g, "/");
+
   // Find the first occurrence of glob characters
-  const globIndex = pattern.search(/[*?{}[\]]/);
+  const globIndex = normalizedPattern.search(/[*?{}[\]]/);
 
   if (globIndex === -1) {
     // No glob characters, return the directory
-    return path.dirname(pattern);
+    return path.dirname(normalizedPattern);
   }
 
   // Get the path up to the first glob character
-  const basePath = pattern.substring(0, globIndex);
+  const basePath = normalizedPattern.substring(0, globIndex);
 
   // Find the last path separator before the glob
-  const lastSlash = basePath.lastIndexOf("/");
-  const lastBackslash = basePath.lastIndexOf("\\");
-  const lastSeparator = Math.max(lastSlash, lastBackslash);
+  const lastSeparator = basePath.lastIndexOf("/");
 
   if (lastSeparator === -1) {
     return ".";

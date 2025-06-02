@@ -3,9 +3,10 @@ import {
   runCommand,
   fileExists,
   readTestFile,
+  writeTestFile,
+  removeTestFile,
 } from "./helpers";
 import path from "node:path";
-import fs from "fs-extra";
 
 describe("aicm glob patterns", () => {
   it("should expand glob patterns and install rules with correct namespacing", async () => {
@@ -71,38 +72,6 @@ describe("aicm glob patterns", () => {
     );
   });
 
-  it("should handle empty glob patterns gracefully", async () => {
-    await setupFromFixture("install-glob-basic");
-
-    // Create a config with a glob pattern that matches no files
-    const configContent = {
-      ides: ["cursor"],
-      rules: {
-        "empty-pattern": "./rules/nonexistent/*.mdc",
-        "explicit-rule": "./rules/explicit.mdc",
-      },
-    };
-
-    // Remove the original config and create a new one with only our test patterns
-    fs.removeSync("aicm.json");
-    fs.writeFileSync("aicm.json", JSON.stringify(configContent, null, 2));
-
-    const { stdout, code } = await runCommand("install --ci");
-
-    expect(code).toBe(0);
-    expect(stdout).toContain("Rules installation completed");
-
-    // Explicit rule should still be installed even when glob pattern is empty
-    expect(
-      fileExists(path.join(".cursor", "rules", "aicm", "explicit-rule.mdc")),
-    ).toBe(true);
-
-    // Empty pattern should not create any files
-    expect(
-      fileExists(path.join(".cursor", "rules", "aicm", "empty-pattern")),
-    ).toBe(false);
-  });
-
   it("should handle mixed glob patterns and explicit rules", async () => {
     await setupFromFixture("install-glob-basic");
 
@@ -132,4 +101,35 @@ describe("aicm glob patterns", () => {
       fileExists(path.join(".cursor", "rules", "aicm", "explicit-rule.mdc")),
     ).toBe(true);
   });
+});
+it("should handle empty glob patterns gracefully", async () => {
+  await setupFromFixture("install-glob-basic");
+
+  // Create a config with a glob pattern that matches no files
+  const configContent = {
+    ides: ["cursor"],
+    rules: {
+      "empty-pattern": "./rules/nonexistent/*.mdc",
+      "explicit-rule": "./rules/explicit.mdc",
+    },
+  };
+
+  // Remove the original config and create a new one with only our test patterns
+  removeTestFile("aicm.json");
+  writeTestFile("aicm.json", JSON.stringify(configContent, null, 2));
+
+  const { stdout, code } = await runCommand("install --ci");
+
+  expect(code).toBe(0);
+  expect(stdout).toContain("Rules installation completed");
+
+  // Explicit rule should still be installed even when glob pattern is empty
+  expect(
+    fileExists(path.join(".cursor", "rules", "aicm", "explicit-rule.mdc")),
+  ).toBe(true);
+
+  // Empty pattern should not create any files
+  expect(
+    fileExists(path.join(".cursor", "rules", "aicm", "empty-pattern")),
+  ).toBe(false);
 });
