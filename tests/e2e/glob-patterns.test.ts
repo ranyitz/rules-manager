@@ -11,7 +11,7 @@ describe("aicm glob patterns", () => {
   it("should expand glob patterns and install rules with correct namespacing", async () => {
     await setupFromFixture("install-glob-basic");
 
-    const { stdout, code } = await runCommand("install --verbose");
+    const { stdout, code } = await runCommand("install --verbose --ci");
 
     expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");
@@ -87,7 +87,7 @@ describe("aicm glob patterns", () => {
     fs.removeSync("aicm.json");
     fs.writeFileSync("aicm.json", JSON.stringify(configContent, null, 2));
 
-    const { stdout, code } = await runCommand("install");
+    const { stdout, code } = await runCommand("install --ci");
 
     expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");
@@ -106,7 +106,7 @@ describe("aicm glob patterns", () => {
   it("should handle mixed glob patterns and explicit rules", async () => {
     await setupFromFixture("install-glob-basic");
 
-    const { stdout, code } = await runCommand("install");
+    const { stdout, code } = await runCommand("install --ci");
 
     expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");
