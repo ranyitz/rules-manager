@@ -1,8 +1,9 @@
 ---
-description: 
+description: General development standards
 globs: 
 alwaysApply: true
 ---
+
 ## Development Standards
 
 - Use yarn for package management
