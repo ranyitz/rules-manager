@@ -1,0 +1,10 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# TypeScript Strict Mode Rules
+
+- Use strict type checking
+- Enable all strict mode flags
+- Prefer interfaces over types for public APIs
