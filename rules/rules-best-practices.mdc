@@ -40,7 +40,8 @@ const incorrect = false;
 ## Guidelines
 
 - Start with overview, then specifics
-- Use bullet points for clarity
+- Write concisely - include only what's necessary
+- Use bullet points
 - Include both DO/DON'T examples
-- Reference existing code over theory
-- Do not repeat yourself by cross-referencing other rule files
+- Reference existing code
+- Do not repeat yourself by cross-referencing other rule file
