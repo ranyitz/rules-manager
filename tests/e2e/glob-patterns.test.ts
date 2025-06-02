@@ -3,8 +3,6 @@ import {
   runCommand,
   fileExists,
   readTestFile,
-  writeTestFile,
-  removeTestFile,
 } from "./helpers";
 import path from "node:path";
 
@@ -103,20 +101,7 @@ describe("aicm glob patterns", () => {
   });
 });
 it("should handle empty glob patterns gracefully", async () => {
-  await setupFromFixture("install-glob-basic");
-
-  // Create a config with a glob pattern that matches no files
-  const configContent = {
-    ides: ["cursor"],
-    rules: {
-      "empty-pattern": "./rules/nonexistent/*.mdc",
-      "explicit-rule": "./rules/explicit.mdc",
-    },
-  };
-
-  // Remove the original config and create a new one with only our test patterns
-  removeTestFile("aicm.json");
-  writeTestFile("aicm.json", JSON.stringify(configContent, null, 2));
+  await setupFromFixture("install-glob-empty");
 
   const { stdout, code } = await runCommand("install --ci");
 

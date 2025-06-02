@@ -1,0 +1,7 @@
+{
+  "ides": ["cursor"],
+  "rules": {
+    "empty-pattern": "./rules/nonexistent/*.mdc",
+    "explicit-rule": "./rules/explicit.mdc"
+  }
+}
