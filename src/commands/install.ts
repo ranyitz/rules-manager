@@ -17,6 +17,7 @@ import { isCI } from "ci-info";
 import { discoverPackagesWithAicm } from "./workspaces/discovery";
 import { installWorkspacesPackages } from "./workspaces/workspaces-install";
 import { writeMcpServersToTargets } from "../utils/mcp-writer";
+import { expandRulesGlobPatterns } from "../utils/glob-handler";
 
 /**
  * Options for the installCore function
@@ -245,21 +246,39 @@ export async function install(
       }
     }
 
-    // Process each rule
+    let expandedRules: Record<string, string>;
+
+    try {
+      const expansion = await expandRulesGlobPatterns(config.rules, cwd);
+      expandedRules = expansion.expandedRules;
+
+      if (options.verbose) {
+        for (const [expandedKey, originalPattern] of Object.entries(
+          expansion.globSources,
+        )) {
+          console.log(
+            chalk.gray(`  Pattern "${originalPattern}" → ${expandedKey}`),
+          );
+        }
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: `Error expanding glob patterns: ${error instanceof Error ? error.message : String(error)}`,
+        installedRuleCount: 0,
+        packagesCount: 0,
+      };
+    }
+
     let hasErrors = false;
     const errorMessages: string[] = [];
     let installedRuleCount = 0;
 
-    for (const [name, source] of Object.entries(config.rules)) {
-      if (source === false) continue; // skip canceled rules
-      // Detect rule type from the source string
+    for (const [name, source] of Object.entries(expandedRules)) {
       const ruleType = detectRuleType(source);
-      // Get the base path of the preset file if this rule came from a preset
       const ruleBasePath = getRuleSource(config, name);
-      // Get the original preset path for namespacing
       const originalPresetPath = getOriginalPresetPath(config, name);
 
-      // Collect the rule based on its type
       try {
         let ruleContent;
         switch (ruleType) {
@@ -274,7 +293,6 @@ export async function install(
             continue;
         }
 
-        // Add the preset path to the rule content for namespacing
         if (originalPresetPath) {
           ruleContent.presetPath = originalPresetPath;
         }
@@ -288,7 +306,6 @@ export async function install(
       }
     }
 
-    // If there were errors, exit with error
     if (hasErrors) {
       return {
         success: false,
@@ -298,12 +315,9 @@ export async function install(
       };
     }
 
-    // Write all collected rules to their targets
     writeRulesToTargets(ruleCollection);
 
-    // Write mcpServers config to IDE targets
     if (config.mcpServers) {
-      // Filter out canceled servers
       const filteredMcpServers = Object.fromEntries(
         Object.entries(config.mcpServers).filter(([, v]) => v !== false),
       );

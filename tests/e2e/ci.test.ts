@@ -1,6 +1,12 @@
 import path from "path";
 import fs from "fs-extra";
-import { setupFromFixture, runCommand, fileExists, testDir } from "./helpers";
+import {
+  setupFromFixture,
+  runCommand,
+  runCommandRaw,
+  fileExists,
+  testDir,
+} from "./helpers";
 import { install as installApi } from "../../src/api";
 
 // Helper to run command with CI=true environment variable
@@ -47,9 +53,7 @@ describe("aicm install CI behavior", () => {
     test("should skip install on CI by default", async () => {
       await setupFromFixture("install-basic");
 
-      const { stdout, code } = await runCommandWithCI("install");
-
-      expect(code).toBe(0);
+      const { stdout } = await runCommandWithCI("install");
       expect(stdout).toContain("Detected CI environment, skipping install");
       expect(fileExists(cursorRulePath)).toBe(false);
     });
@@ -57,9 +61,7 @@ describe("aicm install CI behavior", () => {
     test("should install when --ci flag is used", async () => {
       await setupFromFixture("install-basic");
 
-      const { stdout, code } = await runCommandWithCI("install --ci");
-
-      expect(code).toBe(0);
+      const { stdout } = await runCommandWithCI("install --ci");
       expect(stdout).toContain("Rules installation completed");
       expect(fileExists(cursorRulePath)).toBe(true);
     });
@@ -67,9 +69,7 @@ describe("aicm install CI behavior", () => {
     test("should install when installOnCI is true in config", async () => {
       await setupFromFixture("install-basic-ci");
 
-      const { stdout, code } = await runCommandWithCI("install");
-
-      expect(code).toBe(0);
+      const { stdout } = await runCommandWithCI("install");
       expect(stdout).toContain("Rules installation completed");
       expect(fileExists(cursorRulePath)).toBe(true);
     });
@@ -79,14 +79,14 @@ describe("aicm install CI behavior", () => {
       // Ensure we're NOT using CI=true for this test - we'll explicitly set it to false
 
       // Scenario 1: No flag, no special config
-      let result = await runCommand("install", { env: { CI: "false" } });
+      let result = await runCommandRaw("install", { env: { CI: "false" } });
       expect(result.code).toBe(0);
       expect(result.stdout).toContain("Rules installation completed");
       expect(fileExists(cursorRulePath)).toBe(true);
       fs.removeSync(path.join(testDir, ".cursor")); // Clean for next sub-test
 
       // Scenario 2: With --ci flag (should still install)
-      result = await runCommand("install --ci", { env: { CI: "false" } });
+      result = await runCommandRaw("install --ci", { env: { CI: "false" } });
       expect(result.code).toBe(0);
       expect(result.stdout).toContain("Rules installation completed");
       expect(fileExists(cursorRulePath)).toBe(true);
@@ -97,7 +97,7 @@ describe("aicm install CI behavior", () => {
       const config = fs.readJsonSync(configPath);
       config.installOnCI = true;
       fs.writeJsonSync(configPath, config);
-      result = await runCommand("install", { env: { CI: "false" } });
+      result = await runCommandRaw("install", { env: { CI: "false" } });
       expect(result.code).toBe(0);
       expect(result.stdout).toContain("Rules installation completed");
       expect(fileExists(cursorRulePath)).toBe(true);

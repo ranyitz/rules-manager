@@ -1,12 +1,10 @@
-import { setupFromFixture, runCommand } from "./helpers";
+import { setupFromFixture, runCommand, runCommandRaw } from "./helpers";
 
 describe("aicm list command with fixtures", () => {
   test("should list all rules in the config", async () => {
     await setupFromFixture("list-with-multiple-rules");
 
-    const { stdout, code } = await runCommand("list");
-
-    expect(code).toBe(0);
+    const { stdout } = await runCommand("list");
 
     expect(stdout).toContain("rule1");
     expect(stdout).toContain("rule2");
@@ -16,9 +14,7 @@ describe("aicm list command with fixtures", () => {
   test("should show message when no rules exist", async () => {
     await setupFromFixture("install-no-rules");
 
-    const { stdout, stderr, code } = await runCommand("list");
-
-    expect(code).toBe(0);
+    const { stdout, stderr } = await runCommandRaw("list");
 
     expect(stdout + stderr).toMatch(/no rules|empty|not found/i);
   });

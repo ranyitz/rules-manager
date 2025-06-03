@@ -1,0 +1,15 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+---
+description: Explicit rule for empty glob test
+alwaysApply: false
+---
+# Explicit Rule
+
+This rule should be installed even when glob patterns are empty.
+
+- This rule is not discovered through glob patterns
+- It should always be installed when explicitly referenced

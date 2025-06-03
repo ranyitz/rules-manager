@@ -1,0 +1,10 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Unit Testing Best Practices
+
+- Write descriptive test names
+- Use arrange, act, assert pattern
+- Mock external dependencies

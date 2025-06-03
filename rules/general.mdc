@@ -10,3 +10,9 @@ alwaysApply: true
 - Development workflow: e2e tests → implementation → verification
 - Document all features in README.md
 - Never modify CHANGELOG.md
+
+## Code Formatting
+
+- Use Prettier for code formatting with the configuration in [.prettierrc](mdc:.prettierrc)
+- Run `yarn format` to format all files
+- All code should be formatted for minimal diff previews

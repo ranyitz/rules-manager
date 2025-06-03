@@ -11,9 +11,7 @@ describe("README demo example", () => {
     await setupFromFixture("readme-demo");
     const npmResult = await runNpmInstall("pirate-coding");
     expect(npmResult.code).toBe(0);
-    const { stdout, code } = await runCommand("install --ci");
-
-    expect(code).toBe(0);
+    const { stdout } = await runCommand("install --ci");
     expect(stdout).toContain("Rules installation completed");
     expect(
       fileExists(

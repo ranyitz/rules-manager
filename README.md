@@ -225,7 +225,32 @@ Example `aicm.json`:
 - **rules**: Object containing rule configurations
 
   - **rule-name**: A unique identifier for the rule. Can include a directory path to install the rule to a specific directory.
-  - **source-location**: Location of the rule file (path within an npm package or local path)
+  - **source-location**: Location of the rule file (path within an npm package or local path). Supports glob patterns for automatic file discovery.
+
+#### Glob Pattern Support
+
+Rules support glob patterns for automatic discovery of multiple `.mdc` files. This is particularly useful when you have multiple related rules organized in directories.
+
+```json
+{
+  "rules": {
+    "typescript": "./rules/typescript/*.mdc",
+    "tests": "./rules/testing/**/*.mdc"
+  }
+}
+```
+
+The key becomes the base namespace for discovered files:
+
+- `./rules/typescript/strict.mdc` → installed as `typescript/strict`
+- `./rules/typescript/interfaces.mdc` → installed as `typescript/interfaces`
+- `./rules/testing/unit/setup.mdc` → installed as `tests/unit/setup`
+
+**Installation Behavior:**
+
+- Glob patterns are expanded during installation
+- Only `.mdc` files are included
+- Files are sorted alphabetically for consistent behavior
 
 - **mcpServers**: Object containing MCP server configurations. Each key is a unique server name, and the value is an object with either:
 

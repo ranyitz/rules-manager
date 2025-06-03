@@ -1,10 +1,7 @@
 {
   "ides": ["cursor", "windsurf"],
   "rules": {
-    "general": "./rules/general.mdc",
-    "test": "./rules/test.mdc",
-    "rules-best-practices": "./rules/rules-best-practices.mdc",
-    "rules-maintenance": "./rules/rules-maintenance.mdc"
+    "/": "./rules/*"
   },
   "mcpServers": {
     "context7": {

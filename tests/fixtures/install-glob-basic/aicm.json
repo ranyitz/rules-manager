@@ -1,0 +1,8 @@
+{
+  "ides": ["cursor"],
+  "rules": {
+    "typescript": "./rules/typescript/*.mdc",
+    "testing": "./rules/testing/*.mdc",
+    "explicit-rule": "./rules/explicit.mdc"
+  }
+}
