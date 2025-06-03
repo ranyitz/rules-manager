@@ -18,13 +18,16 @@ export async function expandGlobPattern(
   pattern: string,
   basePath?: string,
 ): Promise<string[]> {
-  const resolvedPattern = basePath ? path.resolve(basePath, pattern) : pattern;
+  // Normalize the pattern to use forward slashes for consistent behavior
+  const normalizedPattern = pattern.replace(/\\/g, "/");
 
   try {
-    const matches = await fg(resolvedPattern, {
+    const matches = await fg(normalizedPattern, {
       ignore: ["**/.*"], // Ignore hidden files
       absolute: false,
       onlyFiles: true,
+      // Set the working directory if basePath is provided
+      cwd: basePath,
     });
 
     // Filter to only .mdc files, normalize paths, and sort for deterministic behavior
