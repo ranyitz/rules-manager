@@ -1,4 +1,5 @@
 import path from "node:path";
+import fg from "fast-glob";
 
 /**
  * Check if a rule source string contains glob patterns
@@ -20,10 +21,7 @@ export async function expandGlobPattern(
   const resolvedPattern = basePath ? path.resolve(basePath, pattern) : pattern;
 
   try {
-    // Use dynamic import to avoid ES module warnings
-    const { globby } = await import("globby");
-
-    const matches = await globby(resolvedPattern, {
+    const matches = await fg(resolvedPattern, {
       ignore: ["**/.*"], // Ignore hidden files
       absolute: false,
       onlyFiles: true,

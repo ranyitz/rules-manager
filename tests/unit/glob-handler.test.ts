@@ -1,3 +1,7 @@
+// Mock fast-glob module
+const mockFg = jest.fn();
+jest.mock("fast-glob", () => mockFg);
+
 import {
   isGlobPattern,
   generateGlobRuleKey,
@@ -5,12 +9,6 @@ import {
   expandGlobPattern,
   expandRulesGlobPatterns,
 } from "../../src/utils/glob-handler";
-
-// Mock globby module
-const mockGlobby = jest.fn();
-jest.doMock("globby", () => ({
-  globby: mockGlobby,
-}));
 
 describe("Glob Handler", () => {
   beforeEach(() => {
@@ -87,7 +85,7 @@ describe("Glob Handler", () => {
 
   describe("expandGlobPattern", () => {
     it("should expand glob pattern to matching files", async () => {
-      mockGlobby.mockResolvedValue([
+      mockFg.mockResolvedValue([
         "rules/typescript/strict.mdc",
         "rules/typescript/interfaces.mdc",
       ]);
@@ -101,7 +99,7 @@ describe("Glob Handler", () => {
     });
 
     it("should filter to only .mdc files", async () => {
-      mockGlobby.mockResolvedValue([
+      mockFg.mockResolvedValue([
         "rules/typescript/strict.mdc",
         "rules/typescript/readme.md",
         "rules/typescript/interfaces.mdc",
@@ -116,7 +114,7 @@ describe("Glob Handler", () => {
     });
 
     it("should sort results alphabetically", async () => {
-      mockGlobby.mockResolvedValue([
+      mockFg.mockResolvedValue([
         "rules/z-rule.mdc",
         "rules/a-rule.mdc",
         "rules/m-rule.mdc",
@@ -132,7 +130,7 @@ describe("Glob Handler", () => {
     });
 
     it("should handle glob errors", async () => {
-      mockGlobby.mockRejectedValue(new Error("Permission denied"));
+      mockFg.mockRejectedValue(new Error("Permission denied"));
 
       await expect(expandGlobPattern("./rules/*.mdc")).rejects.toThrow(
         'Error expanding glob pattern "./rules/*.mdc": Permission denied',
@@ -142,7 +140,7 @@ describe("Glob Handler", () => {
 
   describe("expandRulesGlobPatterns", () => {
     it("should expand glob patterns and preserve explicit rules", async () => {
-      mockGlobby
+      mockFg
         .mockResolvedValueOnce([
           "rules/typescript/strict.mdc",
           "rules/typescript/interfaces.mdc",
@@ -177,7 +175,7 @@ describe("Glob Handler", () => {
         disabled: false as const,
       };
 
-      mockGlobby.mockResolvedValue(["rules/typescript/strict.mdc"]);
+      mockFg.mockResolvedValue(["rules/typescript/strict.mdc"]);
 
       const result = await expandRulesGlobPatterns(rules);
 
@@ -187,7 +185,7 @@ describe("Glob Handler", () => {
     });
 
     it("should handle empty glob results", async () => {
-      mockGlobby.mockResolvedValue([]);
+      mockFg.mockResolvedValue([]);
 
       // Mock console.warn to avoid output during tests
       const consoleSpy = jest.spyOn(console, "warn").mockImplementation();
@@ -207,7 +205,7 @@ describe("Glob Handler", () => {
     });
 
     it("should handle glob expansion errors", async () => {
-      mockGlobby.mockRejectedValue(new Error("Invalid pattern"));
+      mockFg.mockRejectedValue(new Error("Invalid pattern"));
 
       const rules = {
         "bad-pattern": "./rules/[invalid.mdc",
