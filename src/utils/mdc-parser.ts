@@ -39,7 +39,9 @@ export function parseMdcFile(filePath: string): {
         metadata = parsed as Record<string, boolean | string | string[]>;
       }
     } catch (e) {
-      throw new Error(`Invalid metadata in ${filePath}: ${e instanceof Error ? e.message : String(e)}`);
+      throw new Error(
+        `Invalid metadata in ${filePath}: ${e instanceof Error ? e.message : String(e)}`,
+      );
     }
   }
   return {
