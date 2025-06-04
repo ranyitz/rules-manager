@@ -126,7 +126,7 @@ globs: ["*.ts", "*.tsx"]
 
       expect(result.metadata.description).toBe("File pattern rule example");
       expect(result.metadata.alwaysApply).toBe(false);
-      expect(result.metadata.globs).toBe('["*.ts", "*.tsx"]');
+      expect(result.metadata.globs).toEqual(["*.ts", "*.tsx"]);
       expect(result.content).toBe(
         "## TypeScript Best Practices\n\n- Use strict type checking\n- Prefer interfaces over types for public APIs",
       );

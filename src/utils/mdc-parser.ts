@@ -1,4 +1,5 @@
 import fs from "fs-extra";
+import yaml from "yaml";
 
 /**
  * Parse an MDC file and extract its content
@@ -29,33 +30,18 @@ export function parseMdcFile(filePath: string): {
   const metadataStr = fileContent.substring(3, endOfMetadata).trim();
   const content = fileContent.substring(endOfMetadata + 3).trim();
 
-  const metadata: Record<string, boolean | string | string[]> = {};
+  let metadata: Record<string, boolean | string | string[]> = {};
 
-  metadataStr.split("\n").forEach((line) => {
-    const colonIndex = line.indexOf(":");
-    if (colonIndex !== -1) {
-      const key = line.substring(0, colonIndex).trim();
-      const valueStr = line.substring(colonIndex + 1).trim();
-
-      // Handle different value types
-      let value: boolean | string | string[] = "";
-
-      if (valueStr === "true") {
-        value = true;
-      } else if (valueStr === "false") {
-        value = false;
-      } else if (valueStr.startsWith('"') && valueStr.endsWith('"')) {
-        // Remove quotes from string values
-        value = valueStr.substring(1, valueStr.length - 1);
-      } else {
-        // Default to using the string value as is
-        value = valueStr;
+  if (metadataStr.length > 0) {
+    try {
+      const parsed = yaml.parse(metadataStr);
+      if (parsed && typeof parsed === "object") {
+        metadata = parsed as Record<string, boolean | string | string[]>;
       }
-
-      metadata[key] = value;
+    } catch (e) {
+      throw new Error(`Invalid metadata in ${filePath}: ${e instanceof Error ? e.message : String(e)}`);
     }
-  });
-
+  }
   return {
     metadata,
     content,
