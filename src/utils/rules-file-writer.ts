@@ -24,7 +24,7 @@ ${RULES_END}`;
  * If the file doesn't exist, it will create it
  * If the markers don't exist, it will append them to the existing content
  */
-export function writeWindsurfRules(
+export function writeRulesFile(
   rulesContent: string,
   rulesFilePath: string = path.join(process.cwd(), ".windsurfrules"),
 ): void {
@@ -69,9 +69,9 @@ export function writeWindsurfRules(
 }
 
 /**
- * Generate the Windsurf rules content based on rule files
+ * Generate the rules file content based on rule files
  */
-export function generateWindsurfRulesContent(
+export function generateRulesFileContent(
   ruleFiles: {
     name: string;
     path: string;

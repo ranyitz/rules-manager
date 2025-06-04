@@ -1,5 +1,5 @@
 {
-  "ides": ["cursor", "windsurf"],
+  "ides": ["cursor", "windsurf", "codex"],
   "rules": {
     "/": "./rules/*"
   },

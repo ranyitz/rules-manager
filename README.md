@@ -94,7 +94,7 @@ When you run `npx aicm install`, all rules from the preset will be installed to 
 ### Notes
 
 - Generated rules are always placed in a subdirectory for deterministic cleanup and easy gitignore.
-- Users may add `.cursor/rules/aicm/` and `.aicm/` (for Windsurf) to their `.gitignore` if they do not want to track generated rules.
+- Users may add `.cursor/rules/aicm/` and `.aicm/` (for Windsurf/Codex) to their `.gitignore` if they do not want to track generated rules.
 
 ### Overriding and Disabling Rules and MCP Servers from Presets
 
@@ -219,6 +219,7 @@ Example `aicm.json`:
 
   - `"cursor"`: For the Cursor IDE
   - `"windsurf"`: For the Windsurf IDE
+  - `"codex"`: For the Codex Agent
 
   > **Note:** The 'ides' field is default to `["cursor"]` if not specified.
 
@@ -292,6 +293,7 @@ Rules stored locally in your project or filesystem. Any path containing slashes 
 
 - **Cursor**: Rules are installed as individual `.mdc` files in the Cursor rules directory (`.cursor/rules/aicm/`), mcp servers are installed to `.cursor/mcp.json`
 - **Windsurf**: Rules are installed in the `.aicm` directory which should be added to your `.gitignore` file. Our approach for Windsurf is to create links from the `.windsurfrules` file to the respective rules in the `.aicm` directory. There is no support for local mcp servers at the moment.
+- **Codex**: Rules are installed in the `.aicm` directory and referenced from `AGENTS.md` using the same markers as Windsurf.
 
 ## Commands
 

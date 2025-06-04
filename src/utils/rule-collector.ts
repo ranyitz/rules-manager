@@ -63,6 +63,7 @@ export function initRuleCollection(): RuleCollection {
   return {
     cursor: [],
     windsurf: [],
+    codex: [],
   };
 }
 
@@ -88,6 +89,11 @@ export function addRuleToCollection(
       !collection.windsurf.some((r) => r.name === rule.name)
     ) {
       collection.windsurf.push(rule);
+    } else if (
+      ide === "codex" &&
+      !collection.codex.some((r) => r.name === rule.name)
+    ) {
+      collection.codex.push(rule);
     }
   }
 }
