@@ -1,0 +1,6 @@
+{
+  "ides": ["codex"],
+  "rules": {
+    "no-marker-rule": "./rules/no-marker-rule.mdc"
+  }
+}

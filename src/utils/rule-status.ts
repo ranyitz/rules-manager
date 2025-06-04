@@ -10,6 +10,7 @@ export function getIdePaths(): Record<string, string> {
   return {
     cursor: path.join(projectDir, ".cursor", "rules", "aicm"),
     windsurf: path.join(projectDir, ".aicm"),
+    codex: path.join(projectDir, ".aicm"),
   };
 }
 
@@ -39,6 +40,20 @@ export function checkRuleStatus(ruleName: string, ides: string[]): boolean {
         return (
           ruleExists && windsurfRulesContent.includes(`.aicm/${ruleName}.md`)
         );
+      }
+
+      return false;
+    }
+
+    if (ide === "codex") {
+      const ruleExists = fs.existsSync(
+        path.join(idePaths[ide], `${ruleName}.md`),
+      );
+
+      const codexFilePath = path.join(process.cwd(), "AGENTS.md");
+      if (fs.existsSync(codexFilePath)) {
+        const codexContent = fs.readFileSync(codexFilePath, "utf8");
+        return ruleExists && codexContent.includes(`.aicm/${ruleName}.md`);
       }
 
       return false;

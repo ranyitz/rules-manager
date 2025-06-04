@@ -54,6 +54,7 @@ export interface RuleContent {
 export interface RuleCollection {
   cursor: RuleContent[];
   windsurf: RuleContent[];
+  codex: RuleContent[];
 }
 
 export interface PackageInfo {

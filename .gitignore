@@ -17,6 +17,8 @@ dist/
 # windsurf
 .windsurfrules
 !tests/fixtures/*/.windsurfrules
+AGENTS.md
+!tests/fixtures/*/AGENTS.md
 
 # aicm
 .aicm

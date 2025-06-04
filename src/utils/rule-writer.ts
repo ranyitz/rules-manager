@@ -3,9 +3,9 @@ import path from "node:path";
 import { getIdePaths } from "./rule-status";
 import { RuleCollection, RuleContent } from "../types";
 import {
-  writeWindsurfRules,
-  generateWindsurfRulesContent,
-} from "./windsurf-writer";
+  writeRulesFile,
+  generateRulesFileContent,
+} from "./rules-file-writer";
 
 /**
  * Write all collected rules to their respective IDE targets
@@ -21,7 +21,15 @@ export function writeRulesToTargets(collection: RuleCollection): void {
 
   // Write Windsurf rules
   if (collection.windsurf.length > 0) {
-    writeWindsurfRulesFromCollection(collection.windsurf, idePaths.windsurf);
+    writeRulesForFile(
+      collection.windsurf,
+      idePaths.windsurf,
+      ".windsurfrules",
+    );
+  }
+
+  if (collection.codex.length > 0) {
+    writeRulesForFile(collection.codex, idePaths.codex, "AGENTS.md");
   }
 }
 
@@ -79,12 +87,13 @@ function writeCursorRules(rules: RuleContent[], cursorRulesDir: string): void {
 }
 
 /**
- * Write rules to Windsurf's rules directory and update .windsurfrules file
+ * Write rules to a shared directory and update the given rules file
  * @param rules The rules to write
  */
-function writeWindsurfRulesFromCollection(
+function writeRulesForFile(
   rules: RuleContent[],
   ruleDir: string,
+  rulesFile: string,
 ): void {
   fs.emptyDirSync(ruleDir);
 
@@ -110,7 +119,7 @@ function writeWindsurfRulesFromCollection(
 
     const relativeRuleDir = path.basename(ruleDir); // Gets '.rules'
 
-    // For the Windsurf rules file, we need to maintain the same structure
+    // For the rules file, maintain the same structure
     let windsurfPath;
     if (rule.presetPath) {
       const namespace = extractNamespaceFromPresetPath(rule.presetPath);
@@ -130,6 +139,6 @@ function writeWindsurfRulesFromCollection(
     };
   });
 
-  const windsurfRulesContent = generateWindsurfRulesContent(ruleFiles);
-  writeWindsurfRules(windsurfRulesContent);
+  const windsurfRulesContent = generateRulesFileContent(ruleFiles);
+  writeRulesFile(windsurfRulesContent, path.join(process.cwd(), rulesFile));
 }
