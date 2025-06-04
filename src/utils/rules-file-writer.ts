@@ -154,9 +154,3 @@ export function generateRulesFileContent(
 
   return content.trim();
 }
-
-// Backwards compatibility exports
-export {
-  writeRulesFile as writeWindsurfRules,
-  generateRulesFileContent as generateWindsurfRulesContent,
-};
