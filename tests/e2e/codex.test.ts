@@ -44,7 +44,8 @@ This rule is used to test appending markers to an existing file without markers.
       ruleContent,
     );
 
-    const existingContent = "# Existing Codex Rules\n\nThese are some existing rules.";
+    const existingContent =
+      "# Existing Codex Rules\n\nThese are some existing rules.";
     fs.writeFileSync(path.join(testDirPath, "AGENTS.md"), existingContent);
 
     const { stdout } = await runCommand(
@@ -60,7 +61,9 @@ This rule is used to test appending markers to an existing file without markers.
     expect(agentsContent).toContain(".aicm/no-marker-rule.md");
 
     const beginMarkerIndex = agentsContent.indexOf("<!-- AICM:BEGIN -->");
-    const existingContentIndex = agentsContent.indexOf("# Existing Codex Rules");
+    const existingContentIndex = agentsContent.indexOf(
+      "# Existing Codex Rules",
+    );
     expect(existingContentIndex).toBeLessThan(beginMarkerIndex);
   });
 });

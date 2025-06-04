@@ -94,7 +94,7 @@ When you run `npx aicm install`, all rules from the preset will be installed to 
 ### Notes
 
 - Generated rules are always placed in a subdirectory for deterministic cleanup and easy gitignore.
- - Users may add `.cursor/rules/aicm/`, `.aicm/`, and `AGENTS.md` (for Codex) to their `.gitignore` if they do not want to track generated rules.
+- Users may add `.cursor/rules/aicm/`, `.aicm/`, and `AGENTS.md` (for Codex) to their `.gitignore` if they do not want to track generated rules.
 
 ### Overriding and Disabling Rules and MCP Servers from Presets
 
