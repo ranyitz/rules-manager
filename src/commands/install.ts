@@ -5,7 +5,7 @@ import {
   getOriginalPresetPath,
 } from "../utils/config";
 import { detectRuleType } from "../utils/rule-detector";
-import { Config } from "../types";
+import { NormalizedConfig } from "../types";
 import {
   collectLocalRule,
   collectNpmRule,
@@ -30,7 +30,7 @@ export interface InstallOptions {
   /**
    * Custom config object to use instead of loading from file
    */
-  config?: Config;
+  config?: NormalizedConfig;
   /**
    * allow installation on CI environments
    */

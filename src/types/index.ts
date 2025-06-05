@@ -25,11 +25,16 @@ export interface MCPServers {
 }
 
 export interface Config {
-  ides: string[];
-  rules: Rules;
+  ides?: string[];
+  rules?: Rules | string;
   presets?: string[];
   mcpServers?: MCPServers;
   installOnCI?: boolean;
+}
+
+export interface NormalizedConfig extends Omit<Config, "rules"> {
+  ides: string[];
+  rules: Rules;
 }
 
 // Rule metadata and content models
@@ -60,7 +65,7 @@ export interface RuleCollection {
 export interface PackageInfo {
   relativePath: string;
   absolutePath: string;
-  config: Config;
+  config: NormalizedConfig;
 }
 
 export interface WorkspacesInstallResult {

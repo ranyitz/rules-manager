@@ -1,0 +1,4 @@
+{
+  "ides": ["cursor"],
+  "rules": "./rules/*"
+}

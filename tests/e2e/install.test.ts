@@ -54,6 +54,16 @@ describe("aicm install command with fixtures", () => {
     });
   });
 
+  test("should support string syntax for root rules directory", async () => {
+    await setupFromFixture("install-root-string");
+
+    await runCommand("install --ci");
+
+    expect(
+      fileExists(path.join(".cursor", "rules", "aicm", "local-rule.mdc")),
+    ).toBe(true);
+  });
+
   test("should handle errors with missing rule files", async () => {
     await setupFromFixture("install-missing-rules");
 

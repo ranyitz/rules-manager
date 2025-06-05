@@ -1,6 +1,6 @@
 import fs from "fs-extra";
 import path from "node:path";
-import { Config, Rules } from "../types";
+import { Config, NormalizedConfig, Rules } from "../types";
 import { cosmiconfigSync } from "cosmiconfig";
 
 // Metadata about rules and their sources
@@ -11,11 +11,19 @@ export interface RuleMetadata {
 
 // Return type for config operations that includes both config and metadata
 export interface ConfigResult {
-  config: Config;
+  config: NormalizedConfig;
   metadata: RuleMetadata;
 }
 
 const CONFIG_FILE = "aicm.json";
+
+export function normalizeRules(rules: Rules | string | undefined): Rules {
+  if (!rules) return {};
+  if (typeof rules === "string") {
+    return { "/": rules };
+  }
+  return rules;
+}
 
 export interface PresetPathInfo {
   fullPath: string;
@@ -110,14 +118,16 @@ export function loadPreset(
     );
   }
 
-  if (!preset.rules || typeof preset.rules !== "object") {
+  if (!preset.rules) {
     throw new Error(
       `Error loading preset: Invalid format in ${presetPath} - missing or invalid 'rules' object`,
     );
   }
 
+  const normalizedRules = normalizeRules(preset.rules);
+
   return {
-    rules: preset.rules,
+    rules: normalizedRules,
     mcpServers: preset.mcpServers,
     presets: preset.presets,
   };
@@ -132,9 +142,9 @@ const processedPresets = new Set<string>();
 /**
  * Process presets and return a new config with merged rules and metadata
  */
-function processPresets(config: Config, cwd?: string): ConfigResult {
+function processPresets(config: NormalizedConfig, cwd?: string): ConfigResult {
   // Create a deep copy of the config to avoid mutations
-  const newConfig: Config = JSON.parse(JSON.stringify(config));
+  const newConfig: NormalizedConfig = JSON.parse(JSON.stringify(config));
   const metadata: RuleMetadata = {
     ruleSources: {},
     originalPresetPaths: {},
@@ -150,7 +160,7 @@ function processPresets(config: Config, cwd?: string): ConfigResult {
  * Internal function to process presets recursively
  */
 function processPresetsInternal(
-  config: Config,
+  config: NormalizedConfig,
   metadata: RuleMetadata,
   cwd?: string,
 ): ConfigResult {
@@ -182,7 +192,7 @@ function processPresetsInternal(
     // Process nested presets first (depth-first)
     if (preset.presets && preset.presets.length > 0) {
       // Create a temporary config with just the presets from this preset
-      const presetConfig: Config = {
+      const presetConfig: NormalizedConfig = {
         rules: {},
         presets: preset.presets,
         ides: [],
@@ -227,11 +237,11 @@ function processPresetsInternal(
  * Merge preset rules into the config without mutation
  */
 function mergePresetRules(
-  config: Config,
+  config: NormalizedConfig,
   presetRules: Rules,
   pathInfo: PresetPathInfo,
   metadata: RuleMetadata,
-): { updatedConfig: Config; updatedMetadata: RuleMetadata } {
+): { updatedConfig: NormalizedConfig; updatedMetadata: RuleMetadata } {
   const updatedRules = { ...config.rules };
   const updatedMetadata = {
     ruleSources: { ...metadata.ruleSources },
@@ -294,7 +304,7 @@ function mergePresetMcpServers(
  * Load the aicm config using cosmiconfigSync, supporting both aicm.json and package.json.
  * Returns the config object or null if not found.
  */
-export function loadAicmConfigCosmiconfig(searchFrom?: string): Config | null {
+export function loadAicmConfigCosmiconfig(searchFrom?: string): NormalizedConfig | null {
   const explorer = cosmiconfigSync("aicm", {
     searchPlaces: ["package.json", "aicm.json"],
   });
@@ -302,9 +312,13 @@ export function loadAicmConfigCosmiconfig(searchFrom?: string): Config | null {
   try {
     const result = explorer.search(searchFrom);
     if (!result || !result.config) return null;
-    const config = result.config as Config;
-    if (!config.rules) config.rules = {};
-    if (!config.ides) config.ides = ["cursor"];
+    const rawConfig = result.config as Config;
+    const normalizedRules = normalizeRules(rawConfig.rules);
+    const config: NormalizedConfig = {
+      ...rawConfig,
+      ides: rawConfig.ides || ["cursor"],
+      rules: normalizedRules,
+    };
     return config;
   } catch (error) {
     throw new Error(
@@ -316,7 +330,7 @@ export function loadAicmConfigCosmiconfig(searchFrom?: string): Config | null {
 /**
  * Get the configuration from aicm.json or package.json (using cosmiconfigSync) and merge with any presets
  */
-export function getConfig(cwd?: string): Config | null {
+export function getConfig(cwd?: string): NormalizedConfig | null {
   const workingDir = cwd || process.cwd();
   const config = loadAicmConfigCosmiconfig(workingDir);
   if (!config) {
@@ -337,7 +351,7 @@ export function getConfig(cwd?: string): Config | null {
  * Get the source preset path for a rule if it came from a preset
  */
 export function getRuleSource(
-  config: Config,
+  config: NormalizedConfig,
   ruleName: string,
 ): string | undefined {
   return currentMetadata?.ruleSources?.[ruleName];
@@ -347,7 +361,7 @@ export function getRuleSource(
  * Get the original preset path for a rule if it came from a preset
  */
 export function getOriginalPresetPath(
-  config: Config,
+  config: NormalizedConfig,
   ruleName: string,
 ): string | undefined {
   return currentMetadata?.originalPresetPaths?.[ruleName];
