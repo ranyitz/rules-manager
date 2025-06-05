@@ -320,6 +320,8 @@ Initializes a new configuration file in your current directory.
 npx aicm init
 ```
 
+Edit this file to add your rules, presets, or other settings.
+
 ### `install`
 
 Installs all rules and MCPs configured in your `aicm.json`.

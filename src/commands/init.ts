@@ -3,10 +3,7 @@ import path from "path";
 import chalk from "chalk";
 
 const defaultConfig = {
-  ides: ["cursor"],
   rules: {},
-  mcpServers: {},
-  installOnCI: false,
 };
 
 export function initCommand(): void {
