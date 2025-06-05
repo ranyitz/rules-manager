@@ -6,7 +6,7 @@ alwaysApply: true
 
 ## Development Standards
 
-- Use yarn for package management
+- Use pnpm for package management
 - Development workflow: e2e tests → implementation → verification
 - Document all features in README.md
 - Never modify CHANGELOG.md
@@ -14,5 +14,5 @@ alwaysApply: true
 ## Code Formatting
 
 - Use Prettier for code formatting with the configuration in [.prettierrc](mdc:.prettierrc)
-- Run `yarn format` to format all files
+- Run `pnpm format` to format all files
 - All code should be formatted for minimal diff previews
