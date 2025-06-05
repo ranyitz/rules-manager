@@ -320,14 +320,6 @@ Initializes a new configuration file in your current directory.
 npx aicm init
 ```
 
-This generates a minimal `aicm.json`:
-
-```json
-{
-  "rules": {}
-}
-```
-
 Edit this file to add your rules, presets, or other settings.
 
 ### `install`
