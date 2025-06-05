@@ -223,7 +223,15 @@ Example `aicm.json`:
 
   > **Note:** The 'ides' field is default to `["cursor"]` if not specified.
 
-- **rules**: Object containing rule configurations
+- **rules**: Object containing rule configurations.
+  If you want to install every rule from a single directory, you can also use a
+  string as a shortcut:
+
+  ```json
+  {
+    "rules": "./rules/*"
+  }
+  ```
 
   - **rule-name**: A unique identifier for the rule. Can include a directory path to install the rule to a specific directory.
   - **source-location**: Location of the rule file (path within an npm package or local path). Supports glob patterns for automatic file discovery.

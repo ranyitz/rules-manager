@@ -1,6 +1,6 @@
 import path from "path";
 import { setupFromFixture, setupTestDir, testDir } from "./helpers";
-import { install, Config } from "../../src/api";
+import { install, NormalizedConfig } from "../../src/api";
 import fs from "fs-extra";
 
 describe("aicm Node.js API", () => {
@@ -34,7 +34,7 @@ describe("aicm Node.js API", () => {
     const rulePath = path.join(testDir, "rules", "test-rule.mdc");
     expect(fs.existsSync(rulePath)).toBe(true);
 
-    const config: Config = {
+    const config: NormalizedConfig = {
       ides: ["cursor"],
       rules: {
         "test-rule": path.resolve(testDir, "rules", "test-rule.mdc"), // Use absolute path
@@ -96,7 +96,7 @@ describe("aicm Node.js API", () => {
   test("should handle config with no rules correctly", async () => {
     await setupTestDir();
 
-    const config: Config = {
+    const config: NormalizedConfig = {
       ides: ["cursor"],
       rules: {},
     };
@@ -117,7 +117,7 @@ describe("aicm Node.js API", () => {
     const subDir = path.join(testDir, "subdir");
     fs.mkdirSync(subDir, { recursive: true });
 
-    const customConfig: Config = {
+    const customConfig: NormalizedConfig = {
       ides: ["cursor"],
       rules: {
         "custom-dir-rule": path.resolve(testDir, "rules", "local-rule.mdc"), // Use absolute path

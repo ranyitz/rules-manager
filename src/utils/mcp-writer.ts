@@ -1,6 +1,6 @@
 import fs from "fs-extra";
 import path from "node:path";
-import { Config } from "../types";
+import { NormalizedConfig } from "../types";
 
 /**
  * Write MCP servers configuration to IDE targets
@@ -9,7 +9,7 @@ import { Config } from "../types";
  * @param cwd The current working directory
  */
 export function writeMcpServersToTargets(
-  mcpServers: Config["mcpServers"],
+  mcpServers: NormalizedConfig["mcpServers"],
   ides: string[],
   cwd: string,
 ): void {
@@ -30,7 +30,7 @@ export function writeMcpServersToTargets(
  * @param mcpPath The path to the mcp.json file
  */
 export function writeMcpServersToFile(
-  mcpServers: Config["mcpServers"],
+  mcpServers: NormalizedConfig["mcpServers"],
   mcpPath: string,
 ): void {
   if (!mcpServers) return;

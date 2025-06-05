@@ -17,6 +17,7 @@ export async function install(
 
 export {
   Config,
+  NormalizedConfig,
   Rule,
   Rules,
   RuleMetadata,
