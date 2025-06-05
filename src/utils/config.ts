@@ -304,7 +304,9 @@ function mergePresetMcpServers(
  * Load the aicm config using cosmiconfigSync, supporting both aicm.json and package.json.
  * Returns the config object or null if not found.
  */
-export function loadAicmConfigCosmiconfig(searchFrom?: string): NormalizedConfig | null {
+export function loadAicmConfigCosmiconfig(
+  searchFrom?: string,
+): NormalizedConfig | null {
   const explorer = cosmiconfigSync("aicm", {
     searchPlaces: ["package.json", "aicm.json"],
   });
