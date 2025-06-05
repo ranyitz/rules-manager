@@ -26,7 +26,8 @@
     "format:check": "prettier --check .",
     "lint": "eslint",
     "prepare": "husky install && npx ts-node src/index.ts install",
-    "version": "auto-changelog -p && git add CHANGELOG.md"
+    "version": "auto-changelog -p && git add CHANGELOG.md",
+    "release": "np"
   },
   "keywords": [
     "ai",
@@ -58,6 +59,7 @@
     "lint-staged": "^15.2.0",
     "mock-fs": "^5.2.0",
     "nock": "^13.3.8",
+    "np": "^10.2.0",
     "prettier": "^3.1.0",
     "rimraf": "^5.0.5",
     "ts-jest": "^29.1.1",
