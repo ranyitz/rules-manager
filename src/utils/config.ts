@@ -179,7 +179,7 @@ function processPresetsInternal(
 
     // Skip if we've already processed this preset (prevents circular references)
     if (processedPresets.has(pathInfo.fullPath)) {
-      console.warn(`Skipping already processed preset: ${presetPath}`);
+      // Skip duplicates to prevent circular references
       continue;
     }
 
