@@ -9,6 +9,7 @@ module.exports = {
   clearMocks: true,
   resetMocks: false,
   testTimeout: 30000,
+  modulePathIgnorePatterns: ["<rootDir>/tests/fixtures", "<rootDir>/tmp-test"],
   globalSetup: "<rootDir>/tests/e2e/global-setup.ts",
   setupFilesAfterEnv: ["./tests/setup.ts"],
 };
