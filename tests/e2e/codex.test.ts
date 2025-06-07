@@ -46,6 +46,8 @@ This rule is used to test appending markers to an existing file without markers.
 
     const existingContent =
       "# Existing Codex Rules\n\nThese are some existing rules.";
+    // AGENTS.md is created dynamically because Codex scans fixture paths
+    // and would treat a static fixture file as a real config.
     fs.writeFileSync(path.join(testDirPath, "AGENTS.md"), existingContent);
 
     const { stdout } = await runCommand(
