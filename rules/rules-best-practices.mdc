@@ -25,7 +25,7 @@ alwaysApply: boolean
 
 ## File References
 
-- Rules or Code: `[filename](mdc:rules/filename.mdc)`
+ - Rules or Code: @rules/filename.mdc
 
 ## Code Examples
 
