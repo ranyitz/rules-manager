@@ -161,9 +161,7 @@ To enable workspaces mode, set the `workspaces` property to `true` in your root 
 
 ```json
 {
-  "workspaces": true,
-  "ides": ["cursor"],
-  "rules": "./rules/*"
+  "workspaces": true
 }
 ```
 
