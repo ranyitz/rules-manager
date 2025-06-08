@@ -29,6 +29,9 @@
     "version": "auto-changelog -p && git add CHANGELOG.md",
     "release": "np"
   },
+  "np": {
+    "tests": false
+  },
   "keywords": [
     "ai",
     "ide",
