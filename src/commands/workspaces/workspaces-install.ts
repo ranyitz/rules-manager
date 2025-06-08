@@ -1,5 +1,5 @@
 import { PackageInfo, WorkspacesInstallResult } from "../../types";
-import { install, InstallOptions } from "../install";
+import { installPackage, InstallOptions } from "../install";
 
 /**
  * Install aicm configurations for all packages in a workspace
@@ -19,7 +19,7 @@ export async function installWorkspacesPackages(
     const packagePath = pkg.absolutePath;
 
     try {
-      const result = await install({
+      const result = await installPackage({
         ...options,
         cwd: packagePath,
       });

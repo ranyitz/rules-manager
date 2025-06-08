@@ -36,10 +36,6 @@ export interface InstallOptions {
    */
   installOnCI?: boolean;
   /**
-   * Enable workspaces mode
-   */
-  workspaces?: boolean;
-  /**
    * Show verbose output during installation
    */
   verbose?: boolean;
@@ -116,7 +112,18 @@ async function handleWorkspacesInstallation(
       console.log(chalk.blue("🔍 Discovering packages..."));
     }
 
-    const packages = await discoverPackagesWithAicm(cwd);
+    const allPackages = await discoverPackagesWithAicm(cwd);
+
+    const packages = allPackages.filter((pkg) => {
+      const isRoot = pkg.relativePath === ".";
+      if (!isRoot) return true;
+
+      // For root directories, only keep if it has rules or presets
+      const hasRules =
+        pkg.config.rules && Object.keys(pkg.config.rules).length > 0;
+      const hasPresets = pkg.config.presets && pkg.config.presets.length > 0;
+      return hasRules || hasPresets;
+    });
 
     if (packages.length === 0) {
       return {
@@ -184,10 +191,159 @@ async function handleWorkspacesInstallation(
       };
     }
 
+    console.log(
+      `Successfully installed ${result.totalRuleCount} rules across ${result.packages.length} packages`,
+    );
+
     return {
       success: true,
       installedRuleCount: result.totalRuleCount,
       packagesCount: result.packages.length,
+    };
+  });
+}
+
+/**
+ * Install rules for a single package (used within workspaces, cannot trigger workspaces mode)
+ * @param options Install options
+ * @returns Result of the install operation
+ */
+export async function installPackage(
+  options: InstallOptions = {},
+): Promise<InstallResult> {
+  const cwd = options.cwd || process.cwd();
+  const installOnCI = options.installOnCI === true; // Default to false if not specified
+
+  const inCI = isInCIEnvironment();
+  if (inCI && !installOnCI) {
+    console.log(chalk.yellow("Detected CI environment, skipping install."));
+
+    return {
+      success: true,
+      installedRuleCount: 0,
+      packagesCount: 0,
+    };
+  }
+
+  return withWorkingDirectory(cwd, async () => {
+    const config = options.config || getConfig();
+
+    const ruleCollection = initRuleCollection();
+
+    if (!config) {
+      return {
+        success: false,
+        error: "Configuration file not found",
+        installedRuleCount: 0,
+        packagesCount: 0,
+      };
+    }
+
+    // Check if rules are defined (either directly or through presets)
+    if (!config.rules || Object.keys(config.rules).length === 0) {
+      // If there are no presets defined either, show a message
+      if (!config.presets || config.presets.length === 0) {
+        return {
+          success: false,
+          error: "No rules defined in configuration",
+          installedRuleCount: 0,
+          packagesCount: 0,
+        };
+      }
+    }
+
+    let expandedRules: Record<string, string>;
+
+    try {
+      const expansion = await expandRulesGlobPatterns(config.rules, cwd);
+      expandedRules = expansion.expandedRules;
+
+      if (options.verbose) {
+        for (const [expandedKey, originalPattern] of Object.entries(
+          expansion.globSources,
+        )) {
+          console.log(
+            chalk.gray(`  Pattern "${originalPattern}" → ${expandedKey}`),
+          );
+        }
+      }
+    } catch (error) {
+      const errorMessage = `Error expanding glob patterns: ${error instanceof Error ? error.message : String(error)}`;
+
+      return {
+        success: false,
+        error: errorMessage,
+        errorStack: error instanceof Error ? error.stack : undefined,
+        installedRuleCount: 0,
+        packagesCount: 0,
+      };
+    }
+
+    let hasErrors = false;
+    const errorMessages: string[] = [];
+    let firstErrorStack: string | undefined;
+    let installedRuleCount = 0;
+
+    for (const [name, source] of Object.entries(expandedRules)) {
+      const ruleType = detectRuleType(source);
+      const ruleBasePath = getRuleSource(config, name);
+      const originalPresetPath = getOriginalPresetPath(config, name);
+
+      try {
+        let ruleContent;
+        switch (ruleType) {
+          case "npm":
+            ruleContent = collectNpmRule(name, source);
+            break;
+          case "local":
+            ruleContent = collectLocalRule(name, source, ruleBasePath);
+            break;
+          default:
+            errorMessages.push(`Unknown rule type: ${ruleType}`);
+            continue;
+        }
+
+        if (originalPresetPath) {
+          ruleContent.presetPath = originalPresetPath;
+        }
+
+        addRuleToCollection(ruleCollection, ruleContent, config.ides);
+        installedRuleCount++;
+      } catch (e) {
+        hasErrors = true;
+        const errorMessage = `Error processing rule ${name}: ${e instanceof Error ? e.message : String(e)}`;
+        errorMessages.push(errorMessage);
+
+        // Keep the first error stack trace
+        if (!firstErrorStack && e instanceof Error && e.stack) {
+          firstErrorStack = e.stack;
+        }
+      }
+    }
+
+    if (hasErrors) {
+      return {
+        success: false,
+        error: errorMessages.join("; "),
+        errorStack: firstErrorStack,
+        installedRuleCount,
+        packagesCount: 0,
+      };
+    }
+
+    writeRulesToTargets(ruleCollection);
+
+    if (config.mcpServers) {
+      const filteredMcpServers = Object.fromEntries(
+        Object.entries(config.mcpServers).filter(([, v]) => v !== false),
+      );
+      writeMcpServersToTargets(filteredMcpServers, config.ides, cwd);
+    }
+
+    return {
+      success: true,
+      installedRuleCount,
+      packagesCount: 1,
     };
   });
 }
@@ -215,15 +371,15 @@ export async function install(
   }
 
   return withWorkingDirectory(cwd, async () => {
-    if (options.workspaces) {
+    const config = options.config || getConfig();
+
+    if (config?.workspaces) {
       return await handleWorkspacesInstallation(
         cwd,
         installOnCI,
         options.verbose,
       );
     }
-
-    const config = options.config || getConfig();
 
     const ruleCollection = initRuleCollection();
 
@@ -347,10 +503,9 @@ export async function install(
 
 export async function installCommand(
   installOnCI?: boolean,
-  workspaces?: boolean,
   verbose?: boolean,
 ): Promise<void> {
-  const result = await install({ installOnCI, workspaces, verbose });
+  const result = await install({ installOnCI, verbose });
 
   if (!result.success) {
     const error = new Error(result.error);
@@ -360,10 +515,6 @@ export async function installCommand(
     throw error;
   } else {
     if (result.packagesCount > 1) {
-      console.log(
-        `Successfully installed ${result.installedRuleCount} rules across ${result.packagesCount} packages`,
-      );
-    } else if (workspaces) {
       console.log(
         `Successfully installed ${result.installedRuleCount} rules across ${result.packagesCount} packages`,
       );

@@ -29,6 +29,7 @@ export interface Config {
   rules?: Rules | string;
   presets?: string[];
   mcpServers?: MCPServers;
+  workspaces?: boolean;
 }
 
 export interface NormalizedConfig extends Omit<Config, "rules"> {

@@ -16,7 +16,6 @@ export async function runCli() {
       "--help": Boolean,
       "--version": Boolean,
       "--ci": Boolean,
-      "--workspaces": Boolean,
       "--verbose": Boolean,
       "-h": "--help",
       "-v": "--version",
@@ -47,11 +46,7 @@ export async function runCli() {
         initCommand();
         break;
       case "install":
-        await installCommand(
-          args["--ci"],
-          args["--workspaces"],
-          args["--verbose"],
-        );
+        await installCommand(args["--ci"], args["--verbose"]);
         break;
       case "list":
         listCommand();
@@ -82,13 +77,11 @@ ${chalk.bold("OPTIONS")}
   -h, --help          Show this help message
   -v, --version       Show version number
   --ci                Run in CI environments (default: \`false\`)
-  --workspaces        Install rules across all workspaces
   --verbose           Show detailed output and stack traces for debugging
 
 ${chalk.bold("EXAMPLES")}
   $ aicm init
   $ aicm install
-  $ aicm install --workspaces
   $ aicm list
 `);
 }
