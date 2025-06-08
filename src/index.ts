@@ -36,22 +36,35 @@ if (args["--version"]) {
 // Get the command (first non-flag argument)
 const command = args._.length > 0 ? args._[0] : null;
 
-// Execute the appropriate command
-switch (command) {
-  case "init":
-    initCommand();
-    break;
-  case "install":
-    installCommand(args["--ci"], args["--workspaces"], args["--verbose"]);
-    break;
-  case "list":
-    listCommand();
-    break;
-  default:
-    // Show help
-    showHelp();
-    break;
+async function runCli() {
+  try {
+    // Execute the appropriate command
+    switch (command) {
+      case "init":
+        initCommand();
+        break;
+      case "install":
+        await installCommand(
+          args["--ci"],
+          args["--workspaces"],
+          args["--verbose"],
+        );
+        break;
+      case "list":
+        listCommand();
+        break;
+      default:
+        // Show help
+        showHelp();
+        break;
+    }
+  } catch (error: unknown) {
+    logError(error, args["--verbose"]);
+    process.exit(1);
+  }
 }
+
+runCli();
 
 function showHelp() {
   console.log(`
@@ -70,7 +83,7 @@ ${chalk.bold("OPTIONS")}
   -v, --version       Show version number
   --ci                Run in CI environments (default: \`false\`)
   --workspaces        Install rules across all workspaces
-  --verbose           Show detailed output during installation
+  --verbose           Show detailed output and stack traces for debugging
 
 ${chalk.bold("EXAMPLES")}
   $ aicm init
@@ -78,4 +91,14 @@ ${chalk.bold("EXAMPLES")}
   $ aicm install --workspaces
   $ aicm list
 `);
+}
+
+function logError(error: unknown, verbose: boolean = false): void {
+  if (verbose && error instanceof Error && error.stack) {
+    console.error(chalk.red(error.stack));
+  } else {
+    console.error(
+      chalk.red(error instanceof Error ? error.message : String(error)),
+    );
+  }
 }

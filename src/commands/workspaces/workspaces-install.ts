@@ -30,6 +30,7 @@ export async function installWorkspacesPackages(
         path: pkg.relativePath,
         success: result.success,
         error: result.error,
+        errorStack: result.errorStack,
         installedRuleCount: result.installedRuleCount,
       });
     } catch (error) {
@@ -40,6 +41,7 @@ export async function installWorkspacesPackages(
         path: pkg.relativePath,
         success: false,
         error: errorMessage,
+        errorStack: error instanceof Error ? error.stack : undefined,
         installedRuleCount: 0,
       });
     }

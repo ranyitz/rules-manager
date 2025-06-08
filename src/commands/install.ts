@@ -58,6 +58,10 @@ export interface InstallResult {
    */
   error?: string;
   /**
+   * Error stack trace for debugging (when available)
+   */
+  errorStack?: string;
+  /**
    * Number of rules installed
    */
   installedRuleCount: number;
@@ -262,9 +266,12 @@ export async function install(
         }
       }
     } catch (error) {
+      const errorMessage = `Error expanding glob patterns: ${error instanceof Error ? error.message : String(error)}`;
+
       return {
         success: false,
-        error: `Error expanding glob patterns: ${error instanceof Error ? error.message : String(error)}`,
+        error: errorMessage,
+        errorStack: error instanceof Error ? error.stack : undefined,
         installedRuleCount: 0,
         packagesCount: 0,
       };
@@ -272,6 +279,7 @@ export async function install(
 
     let hasErrors = false;
     const errorMessages: string[] = [];
+    let firstErrorStack: string | undefined;
     let installedRuleCount = 0;
 
     for (const [name, source] of Object.entries(expandedRules)) {
@@ -303,6 +311,11 @@ export async function install(
         hasErrors = true;
         const errorMessage = `Error processing rule ${name}: ${e instanceof Error ? e.message : String(e)}`;
         errorMessages.push(errorMessage);
+
+        // Keep the first error stack trace
+        if (!firstErrorStack && e instanceof Error && e.stack) {
+          firstErrorStack = e.stack;
+        }
       }
     }
 
@@ -310,6 +323,7 @@ export async function install(
       return {
         success: false,
         error: errorMessages.join("; "),
+        errorStack: firstErrorStack,
         installedRuleCount,
         packagesCount: 0,
       };
@@ -337,29 +351,25 @@ export async function installCommand(
   workspaces?: boolean,
   verbose?: boolean,
 ): Promise<void> {
-  try {
-    const result = await install({ installOnCI, workspaces, verbose });
+  const result = await install({ installOnCI, workspaces, verbose });
 
-    if (!result.success) {
-      console.error(chalk.red(result.error));
-      process.exit(1);
-    } else {
-      if (result.packagesCount > 1) {
-        console.log(
-          `Successfully installed ${result.installedRuleCount} rules across ${result.packagesCount} packages`,
-        );
-      } else if (workspaces) {
-        console.log(
-          `Successfully installed ${result.installedRuleCount} rules across ${result.packagesCount} packages`,
-        );
-      } else {
-        console.log("Rules installation completed");
-      }
+  if (!result.success) {
+    const error = new Error(result.error);
+    if (result.errorStack) {
+      error.stack = result.errorStack;
     }
-  } catch (error: unknown) {
-    console.error(
-      chalk.red(error instanceof Error ? error.message : String(error)),
-    );
-    process.exit(1);
+    throw error;
+  } else {
+    if (result.packagesCount > 1) {
+      console.log(
+        `Successfully installed ${result.installedRuleCount} rules across ${result.packagesCount} packages`,
+      );
+    } else if (workspaces) {
+      console.log(
+        `Successfully installed ${result.installedRuleCount} rules across ${result.packagesCount} packages`,
+      );
+    } else {
+      console.log("Rules installation completed");
+    }
   }
 }

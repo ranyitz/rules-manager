@@ -334,7 +334,7 @@ Options:
 
 - `--ci`: run in CI environments (default: `false`)
 - `--workspaces`: enable workspaces mode to discover and install configurations across multiple packages
-- `--verbose`: show detailed output during installation
+- `--verbose`: show detailed output and stack traces for debugging
 
 ## Node.js API
 
@@ -380,7 +380,7 @@ Installs rules and MCP servers based on configuration.
 - `config`: Custom config object to use instead of loading from file
 - `installOnCI`: Run installation on CI environments (default: `false`)
 - `workspaces`: Enable workspaces mode (default: `false`)
-- `verbose`: Show verbose output during installation (default: `false`)
+- `verbose`: Show verbose output and stack traces for debugging (default: `false`)
 
 **Returns:**
 
