@@ -1,7 +1,8 @@
 import fs from "fs-extra";
 import path from "node:path";
 import { Config, NormalizedConfig, Rules } from "../types";
-import { cosmiconfigSync } from "cosmiconfig";
+import { cosmiconfig } from "cosmiconfig";
+import { expandRulesGlobPatterns } from "./glob-handler";
 
 // Metadata about rules and their sources
 export interface RuleMetadata {
@@ -142,7 +143,10 @@ const processedPresets = new Set<string>();
 /**
  * Process presets and return a new config with merged rules and metadata
  */
-function processPresets(config: NormalizedConfig, cwd?: string): ConfigResult {
+async function processPresets(
+  config: NormalizedConfig,
+  cwd?: string,
+): Promise<ConfigResult> {
   // Create a deep copy of the config to avoid mutations
   const newConfig: NormalizedConfig = JSON.parse(JSON.stringify(config));
   const metadata: RuleMetadata = {
@@ -153,17 +157,17 @@ function processPresets(config: NormalizedConfig, cwd?: string): ConfigResult {
   // Clear processed presets tracking set when starting from the top level
   processedPresets.clear();
 
-  return processPresetsInternal(newConfig, metadata, cwd);
+  return await processPresetsInternal(newConfig, metadata, cwd);
 }
 
 /**
  * Internal function to process presets recursively
  */
-function processPresetsInternal(
+async function processPresetsInternal(
   config: NormalizedConfig,
   metadata: RuleMetadata,
   cwd?: string,
-): ConfigResult {
+): Promise<ConfigResult> {
   if (!config.presets || !Array.isArray(config.presets)) {
     return { config, metadata };
   }
@@ -189,6 +193,11 @@ function processPresetsInternal(
     const preset = loadPreset(presetPath, cwd);
     if (!preset) continue;
 
+    // Expand glob patterns within the preset using its base directory
+    const presetDir = path.dirname(pathInfo.fullPath);
+    const expansion = await expandRulesGlobPatterns(preset.rules, presetDir);
+    preset.rules = expansion.expandedRules;
+
     // Process nested presets first (depth-first)
     if (preset.presets && preset.presets.length > 0) {
       // Create a temporary config with just the presets from this preset
@@ -199,7 +208,7 @@ function processPresetsInternal(
       };
 
       // Recursively process the nested presets
-      const { config: nestedConfig } = processPresetsInternal(
+      const { config: nestedConfig } = await processPresetsInternal(
         presetConfig,
         metadata,
         cwd,
@@ -301,18 +310,18 @@ function mergePresetMcpServers(
 }
 
 /**
- * Load the aicm config using cosmiconfigSync, supporting both aicm.json and package.json.
+ * Load the aicm config using cosmiconfig, supporting both aicm.json and package.json.
  * Returns the config object or null if not found.
  */
-export function loadAicmConfigCosmiconfig(
+export async function loadAicmConfigCosmiconfig(
   searchFrom?: string,
-): NormalizedConfig | null {
-  const explorer = cosmiconfigSync("aicm", {
+): Promise<NormalizedConfig | null> {
+  const explorer = cosmiconfig("aicm", {
     searchPlaces: ["package.json", "aicm.json"],
   });
 
   try {
-    const result = explorer.search(searchFrom);
+    const result = await explorer.search(searchFrom);
     if (!result || !result.config) return null;
     const rawConfig = result.config as Config;
     const normalizedRules = normalizeRules(rawConfig.rules);
@@ -332,15 +341,17 @@ export function loadAicmConfigCosmiconfig(
 /**
  * Get the configuration from aicm.json or package.json (using cosmiconfigSync) and merge with any presets
  */
-export function getConfig(cwd?: string): NormalizedConfig | null {
+export async function getConfig(
+  cwd?: string,
+): Promise<NormalizedConfig | null> {
   const workingDir = cwd || process.cwd();
-  const config = loadAicmConfigCosmiconfig(workingDir);
+  const config = await loadAicmConfigCosmiconfig(workingDir);
   if (!config) {
     throw new Error(
       `No config found in ${workingDir}, create one using "aicm init"`,
     );
   }
-  const { config: processedConfig, metadata } = processPresets(
+  const { config: processedConfig, metadata } = await processPresets(
     config,
     workingDir,
   );

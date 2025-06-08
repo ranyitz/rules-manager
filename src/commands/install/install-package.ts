@@ -76,7 +76,7 @@ export async function installPackage(
   const cwd = options.cwd || process.cwd();
 
   return withWorkingDirectory(cwd, async () => {
-    const config = options.config || getConfig();
+    const config = options.config || (await getConfig());
 
     const ruleCollection = initRuleCollection();
 

@@ -49,7 +49,7 @@ export async function runCli() {
         await installCommand(args["--ci"], args["--verbose"]);
         break;
       case "list":
-        listCommand();
+        await listCommand();
         break;
       default:
         showHelp();

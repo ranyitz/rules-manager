@@ -50,7 +50,7 @@ async function discoverPackagesWithAicm(
     // Normalize to forward slashes for cross-platform compatibility
     const normalizedRelativePath = relativePath.replace(/\\/g, "/");
 
-    const config = getConfig(packageDir);
+    const config = await getConfig(packageDir);
 
     if (config) {
       packages.push({
