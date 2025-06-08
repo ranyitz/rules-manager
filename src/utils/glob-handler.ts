@@ -43,10 +43,6 @@ export async function expandGlobPattern(
 }
 
 /**
- * Synchronous version of expandGlobPattern for use during config loading
- */
-
-/**
  * Generate a rule key from a file path and base key
  * @param filePath The discovered file path
  * @param baseKey The base key from the object notation

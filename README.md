@@ -91,8 +91,6 @@ In your project's `aicm.json`, reference the preset by its npm package or direct
 
 When you run `npx aicm install`, all rules from the preset will be installed to `.cursor/rules/aicm/` and all mcps from the preset will be installed to `.cursor/mcp.json`.
 
-Glob patterns inside presets are expanded relative to the preset's directory, so pattern paths do not depend on where the command is run from.
-
 ### Notes
 
 - Generated rules are always placed in a subdirectory for deterministic cleanup and easy gitignore.

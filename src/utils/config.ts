@@ -310,7 +310,7 @@ function mergePresetMcpServers(
 }
 
 /**
- * Load the aicm config using cosmiconfigSync, supporting both aicm.json and package.json.
+ * Load the aicm config using cosmiconfig, supporting both aicm.json and package.json.
  * Returns the config object or null if not found.
  */
 export async function loadAicmConfigCosmiconfig(
