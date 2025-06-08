@@ -203,7 +203,6 @@ export async function install(
   const cwd = options.cwd || process.cwd();
   const installOnCI = options.installOnCI === true; // Default to false if not specified
 
-  // Check CI environment early to avoid config loading failures
   const inCI = isInCIEnvironment();
   if (inCI && !installOnCI) {
     console.log(chalk.yellow("Detected CI environment, skipping install."));
