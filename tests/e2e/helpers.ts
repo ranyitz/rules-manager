@@ -93,7 +93,7 @@ export async function runCommand(
   options: { env?: Record<string, string> } = {},
 ): Promise<{ stdout: string; stderr: string; code: number }> {
   try {
-    const cliPath = path.join(projectRoot, "dist", "index.js");
+    const cliPath = path.join(projectRoot, "dist", "bin", "aicm.js");
     const command = `node ${cliPath} ${args}`;
 
     const { stdout, stderr } = await execPromise(command, {
@@ -116,7 +116,7 @@ export async function runCommand(
     // Command failed when we expected success - show debugging info
     console.error("\n=== COMMAND EXECUTION FAILED (Expected Success) ===");
     console.error(
-      `Command: node ${path.join(projectRoot, "dist", "index.js")} ${args}`,
+      `Command: node ${path.join(projectRoot, "dist", "bin", "aicm.js")} ${args}`,
     );
     console.error(`Working Directory: ${testDir}`);
     console.error(`Expected exit code: 0`);
@@ -142,7 +142,7 @@ export async function runFailedCommand(
   options: { env?: Record<string, string> } = {},
 ): Promise<{ stdout: string; stderr: string; code: number }> {
   try {
-    const cliPath = path.join(projectRoot, "dist", "index.js");
+    const cliPath = path.join(projectRoot, "dist", "bin", "aicm.js");
     const command = `node ${cliPath} ${args}`;
 
     const { stdout, stderr } = await execPromise(command, {
@@ -189,7 +189,7 @@ export async function runCommandRaw(
   options: { env?: Record<string, string> } = {},
 ): Promise<{ stdout: string; stderr: string; code: number }> {
   try {
-    const cliPath = path.join(projectRoot, "dist", "index.js");
+    const cliPath = path.join(projectRoot, "dist", "bin", "aicm.js");
     const command = `node ${cliPath} ${args}`;
 
     const { stdout, stderr } = await execPromise(command, {
