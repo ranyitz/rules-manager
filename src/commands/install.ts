@@ -9,9 +9,6 @@ import {
 } from "./install/install-package";
 import { installWorkspaces } from "./install/install-workspaces";
 
-// Re-export for backward compatibility
-export { InstallOptions, InstallResult, installPackage };
-
 /**
  * Checks if the current environment is a CI environment
  * This function respects any explicit settings in process.env.CI
