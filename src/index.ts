@@ -10,35 +10,31 @@ import { listCommand } from "./commands/list";
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const pkg = require("../package.json");
 
-// Parse arguments
-const args = arg(
-  {
-    "--help": Boolean,
-    "--version": Boolean,
-    "--ci": Boolean,
-    "--workspaces": Boolean,
-    "--verbose": Boolean,
-    "-h": "--help",
-    "-v": "--version",
-  },
-  {
-    permissive: true,
-    argv: process.argv.slice(2),
-  },
-);
-
-// Show version
-if (args["--version"]) {
-  console.log(pkg.version);
-  process.exit(0);
-}
-
-// Get the command (first non-flag argument)
-const command = args._.length > 0 ? args._[0] : null;
-
 async function runCli() {
+  const args = arg(
+    {
+      "--help": Boolean,
+      "--version": Boolean,
+      "--ci": Boolean,
+      "--workspaces": Boolean,
+      "--verbose": Boolean,
+      "-h": "--help",
+      "-v": "--version",
+    },
+    {
+      permissive: true,
+      argv: process.argv.slice(2),
+    },
+  );
+
+  // Show version
+  if (args["--version"]) {
+    console.log(pkg.version);
+    process.exit(0);
+  }
+  const command = args._.length > 0 ? args._[0] : null;
+
   try {
-    // Execute the appropriate command
     switch (command) {
       case "init":
         initCommand();
@@ -54,7 +50,6 @@ async function runCli() {
         listCommand();
         break;
       default:
-        // Show help
         showHelp();
         break;
     }
