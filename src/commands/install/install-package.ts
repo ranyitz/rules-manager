@@ -82,7 +82,10 @@ export async function installPackage(
     }
 
     // Check if rules are defined (either directly or through presets)
-    if (!config.rules || Object.keys(config.rules).length === 0) {
+    if (
+      !config.rulesWithPresets ||
+      Object.keys(config.rulesWithPresets).length === 0
+    ) {
       // If there are no presets defined either, show a message
       if (!config.presets || config.presets.length === 0) {
         return {
@@ -94,16 +97,20 @@ export async function installPackage(
       }
     }
 
-    const expandedRules = config.rules;
+    const expandedRules = config.rulesWithPresets;
 
     let hasErrors = false;
     const errorMessages: string[] = [];
     let firstErrorStack: string | undefined;
     let installedRuleCount = 0;
 
-    for (const [name, source] of Object.entries(expandedRules)) {
+    for (const [name, ruleInfo] of Object.entries(expandedRules)) {
       try {
-        const ruleContent = collectLocalRule(name, source);
+        const ruleContent = collectLocalRule(name, ruleInfo.path);
+        // Set the preset path if this rule came from a preset
+        if (ruleInfo.presetPath) {
+          ruleContent.presetPath = ruleInfo.presetPath;
+        }
         addRuleToCollection(ruleCollection, ruleContent, config.ides);
         installedRuleCount++;
       } catch (e) {

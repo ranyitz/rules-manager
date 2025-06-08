@@ -1,0 +1,10 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# React Best Practices
+
+This is a preset rule for React development.
+
+Sample rule content for React.

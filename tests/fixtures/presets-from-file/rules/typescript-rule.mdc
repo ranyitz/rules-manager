@@ -1,0 +1,10 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# TypeScript Best Practices
+
+This is a preset rule for TypeScript development.
+
+Sample rule content for TypeScript.

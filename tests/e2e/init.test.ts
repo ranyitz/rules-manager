@@ -17,7 +17,7 @@ describe("aicm init command with fixtures", () => {
     expect(fileExists("aicm.json")).toBe(true);
 
     const config = JSON.parse(readTestFile("aicm.json"));
-    expect(config).toEqual({ rules: {} });
+    expect(config).toEqual({ rulesDir: "./rules" });
   });
 
   test("should not overwrite existing config", async () => {

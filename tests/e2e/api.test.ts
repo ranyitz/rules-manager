@@ -39,6 +39,9 @@ describe("aicm Node.js API", () => {
       rules: {
         "test-rule": path.resolve(testDir, "rules", "test-rule.mdc"), // Use absolute path
       },
+      rulesWithPresets: {
+        "test-rule": { path: path.resolve(testDir, "rules", "test-rule.mdc") },
+      },
       presets: [],
       mcpServers: {
         "api-test-server": {
@@ -100,6 +103,7 @@ describe("aicm Node.js API", () => {
     const config: NormalizedConfig = {
       ides: ["cursor"],
       rules: {},
+      rulesWithPresets: {},
       presets: [],
     };
 
@@ -123,6 +127,11 @@ describe("aicm Node.js API", () => {
       ides: ["cursor"],
       rules: {
         "custom-dir-rule": path.resolve(testDir, "rules", "local-rule.mdc"), // Use absolute path
+      },
+      rulesWithPresets: {
+        "custom-dir-rule": {
+          path: path.resolve(testDir, "rules", "local-rule.mdc"),
+        },
       },
       presets: [],
     };

@@ -5,6 +5,15 @@ export interface Rules {
   [ruleName: string]: Rule;
 }
 
+export interface RuleWithPreset {
+  path: string;
+  presetPath?: string;
+}
+
+export interface RulesWithPresets {
+  [ruleName: string]: RuleWithPreset;
+}
+
 export type MCPServer =
   | {
       command: string;
@@ -36,6 +45,7 @@ export interface Config {
 export interface NormalizedConfig {
   ides: string[];
   rules: Rules;
+  rulesWithPresets: RulesWithPresets;
   presets: string[];
   mcpServers?: MCPServers;
   workspaces?: boolean;

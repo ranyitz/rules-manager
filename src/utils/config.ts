@@ -7,6 +7,7 @@ import {
   MCPServers,
   MCPServer,
   Rules,
+  RulesWithPresets,
 } from "../types";
 
 export const CONFIG_FILE = "aicm.json";
@@ -44,6 +45,9 @@ export async function loadConfig(
     : {};
 
   const rules: Rules = {};
+  const rulesWithPresets: RulesWithPresets = {};
+
+  // Load local rules
   const rulesDirAbs = path.resolve(workingDir, rulesDir);
   if (fs.existsSync(rulesDirAbs)) {
     const files = await fg("**/*.mdc", { cwd: rulesDirAbs });
@@ -53,21 +57,38 @@ export async function loadConfig(
         .replace(/\.mdc$/, "")
         .split(path.sep)
         .join("/");
-      rules[name] = path.join(rulesDirAbs, file);
+      const rulePath = path.join(rulesDirAbs, file);
+      rules[name] = rulePath;
+      rulesWithPresets[name] = { path: rulePath };
     }
   }
 
+  // Load preset rules
   for (const preset of presets) {
     let presetConfigPath: string;
-    try {
-      presetConfigPath = require.resolve(path.join(preset, CONFIG_FILE), {
-        paths: [workingDir],
-      });
-    } catch {
-      try {
-        presetConfigPath = require.resolve(preset, { paths: [workingDir] });
-      } catch {
+
+    // First try to resolve as a relative path
+    if (preset.startsWith("./") || preset.startsWith("../")) {
+      const relativePath = path.resolve(workingDir, preset);
+      if (fs.existsSync(relativePath)) {
+        presetConfigPath = relativePath;
+      } else {
+        console.warn(`Preset file not found: ${preset}`);
         continue;
+      }
+    } else {
+      // Try to resolve as a node module
+      try {
+        presetConfigPath = require.resolve(path.join(preset, CONFIG_FILE), {
+          paths: [workingDir],
+        });
+      } catch {
+        try {
+          presetConfigPath = require.resolve(preset, { paths: [workingDir] });
+        } catch {
+          console.warn(`Preset not found: ${preset}`);
+          continue;
+        }
       }
     }
 
@@ -83,8 +104,10 @@ export async function loadConfig(
           .replace(/\.mdc$/, "")
           .split(path.sep)
           .join("/");
+        const rulePath = path.join(presetRulesAbs, file);
         if (!(name in rules)) {
-          rules[name] = path.join(presetRulesAbs, file);
+          rules[name] = rulePath;
+          rulesWithPresets[name] = { path: rulePath, presetPath: preset };
         }
       }
     }
@@ -97,19 +120,24 @@ export async function loadConfig(
     }
   }
 
+  // Apply overrides
   for (const [ruleName, value] of Object.entries(overrides)) {
     if (value === false) {
       delete rules[ruleName];
+      delete rulesWithPresets[ruleName];
     } else {
-      rules[ruleName] = path.isAbsolute(value)
+      const rulePath = path.isAbsolute(value)
         ? value
         : path.resolve(workingDir, value);
+      rules[ruleName] = rulePath;
+      rulesWithPresets[ruleName] = { path: rulePath };
     }
   }
 
   return {
     ides: targets,
     rules,
+    rulesWithPresets,
     mcpServers,
     presets: [],
   };

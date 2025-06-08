@@ -86,7 +86,9 @@ describe("aicm install command with fixtures", () => {
     const installedContent = readTestFile(
       path.join(".cursor", "rules", "aicm", "dir", "general.mdc"),
     );
-    const sourceContent = readTestFile(path.join("rules", "general.mdc"));
+    const sourceContent = readTestFile(
+      path.join("rules", "dir", "general.mdc"),
+    );
     expect(installedContent).toBe(sourceContent);
 
     expect(fileExists(path.join(".cursor", "rules", "aicm", "dir"))).toBe(true);
