@@ -29,7 +29,6 @@ export interface Config {
   rules?: Rules | string;
   presets?: string[];
   mcpServers?: MCPServers;
-  installOnCI?: boolean;
 }
 
 export interface NormalizedConfig extends Omit<Config, "rules"> {

@@ -66,14 +66,6 @@ describe("aicm install CI behavior", () => {
       expect(fileExists(cursorRulePath)).toBe(true);
     });
 
-    test("should install when installOnCI is true in config", async () => {
-      await setupFromFixture("install-basic-ci");
-
-      const { stdout } = await runCommandWithCI("install");
-      expect(stdout).toContain("Rules installation completed");
-      expect(fileExists(cursorRulePath)).toBe(true);
-    });
-
     test("should proceed with install when NOT in CI (regardless of flags/config)", async () => {
       await setupFromFixture("install-basic");
       // Ensure we're NOT using CI=true for this test - we'll explicitly set it to false
@@ -91,16 +83,6 @@ describe("aicm install CI behavior", () => {
       expect(result.stdout).toContain("Rules installation completed");
       expect(fileExists(cursorRulePath)).toBe(true);
       fs.removeSync(path.join(testDir, ".cursor"));
-
-      // Scenario 3: With installOnCI:true in config (should still install)
-      const configPath = path.join(testDir, "aicm.json");
-      const config = fs.readJsonSync(configPath);
-      config.installOnCI = true;
-      fs.writeJsonSync(configPath, config);
-      result = await runCommandRaw("install", { env: { CI: "false" } });
-      expect(result.code).toBe(0);
-      expect(result.stdout).toContain("Rules installation completed");
-      expect(fileExists(cursorRulePath)).toBe(true);
     });
   });
 
@@ -121,16 +103,6 @@ describe("aicm install CI behavior", () => {
       const result = await runApiWithCI(() =>
         installApi({ cwd: testDir, installOnCI: true }),
       );
-
-      expect(result.success).toBe(true);
-      expect(result.installedRuleCount).toBeGreaterThan(0);
-      expect(fileExists(cursorRulePath)).toBe(true);
-    });
-
-    test("should install on CI when installOnCI is true in config", async () => {
-      await setupFromFixture("install-basic-ci");
-
-      const result = await runApiWithCI(() => installApi({ cwd: testDir }));
 
       expect(result.success).toBe(true);
       expect(result.installedRuleCount).toBeGreaterThan(0);

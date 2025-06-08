@@ -270,8 +270,6 @@ The key becomes the base namespace for discovered files:
 
   - Preset files should contain a `rules` and `mcpServers` objects with the same structure as the main configuration.
 
-- **installOnCI**: Boolean flag (default: `false`) that controls whether installation should proceed in CI environments. When set to `true`, rules will be installed even in CI environments.
-
 ### MCP Server Installation
 
 - **Cursor**: MCP server configs are written to `.cursor/mcp.json` (see Cursor docs for latest path).
