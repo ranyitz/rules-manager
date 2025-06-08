@@ -1,8 +1,8 @@
+import { install as installInternal } from "./commands/install";
 import {
   InstallOptions,
   InstallResult,
-  install as installInternal,
-} from "./commands/install";
+} from "./commands/install/install-package";
 
 /**
  * Install AICM rules based on configuration
