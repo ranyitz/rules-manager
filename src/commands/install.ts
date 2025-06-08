@@ -203,6 +203,17 @@ export async function install(
   const cwd = options.cwd || process.cwd();
   const installOnCI = options.installOnCI === true; // Default to false if not specified
 
+  const inCI = isInCIEnvironment();
+  if (inCI && !installOnCI) {
+    console.log(chalk.yellow("Detected CI environment, skipping install."));
+
+    return {
+      success: true,
+      installedRuleCount: 0,
+      packagesCount: 0,
+    };
+  }
+
   return withWorkingDirectory(cwd, async () => {
     if (options.workspaces) {
       return await handleWorkspacesInstallation(
@@ -220,18 +231,6 @@ export async function install(
       return {
         success: false,
         error: "Configuration file not found",
-        installedRuleCount: 0,
-        packagesCount: 0,
-      };
-    }
-
-    const inCI = isInCIEnvironment();
-
-    if (inCI && !installOnCI && !config.installOnCI) {
-      console.log(chalk.yellow("Detected CI environment, skipping install."));
-
-      return {
-        success: true,
         installedRuleCount: 0,
         packagesCount: 0,
       };
