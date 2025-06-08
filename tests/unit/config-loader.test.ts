@@ -1,5 +1,5 @@
 import { join } from "path";
-import { loadAicmConfigCosmiconfig } from "../../src/utils/config";
+import { loadConfig } from "../../src/utils/config";
 
 describe("config loader", () => {
   const originalCwd = process.cwd();
@@ -12,7 +12,7 @@ describe("config loader", () => {
   it("loads config from aicm.json", async () => {
     const fixtureDir = join(fixtureRoot, "windsurf-no-markers-updated");
     process.chdir(fixtureDir);
-    const config = await loadAicmConfigCosmiconfig();
+    const config = await loadConfig();
     expect(config).toBeTruthy();
     expect(config?.ides).toEqual(["windsurf"]);
     expect(config?.rules).toHaveProperty("no-marker-rule");
@@ -22,7 +22,7 @@ describe("config loader", () => {
     // Use a fixture that has package.json with aicm key
     const fixtureDir = join(fixtureRoot, "package-json-aicm");
     process.chdir(fixtureDir);
-    const config = await loadAicmConfigCosmiconfig();
+    const config = await loadConfig();
     expect(config).toBeTruthy();
     expect(config?.ides).toEqual(["windsurf"]);
     expect(config?.rules).toHaveProperty("pkg-rule");
@@ -32,7 +32,7 @@ describe("config loader", () => {
     // Use a fixture with no config files
     const fixtureDir = join(fixtureRoot, "no-config");
     process.chdir(fixtureDir);
-    const config = await loadAicmConfigCosmiconfig();
+    const config = await loadConfig();
     expect(config).toBeNull();
   });
 });

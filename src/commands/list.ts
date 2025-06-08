@@ -1,7 +1,6 @@
 import chalk from "chalk";
 import { getConfig } from "../utils/config";
 import { checkRuleStatus } from "../utils/rule-status";
-import { detectRuleType } from "../utils/rule-detector";
 
 export async function listCommand(): Promise<void> {
   const config = await getConfig();
@@ -23,7 +22,6 @@ export async function listCommand(): Promise<void> {
 
   for (const [ruleName, source] of Object.entries(config.rules)) {
     if (source === false) continue;
-    const ruleType = detectRuleType(source);
     const status = checkRuleStatus(ruleName, config.ides);
     const statusColor = status
       ? chalk.green("Installed")
@@ -31,7 +29,6 @@ export async function listCommand(): Promise<void> {
 
     console.log(`${chalk.bold(ruleName)}`);
     console.log(`  Source: ${source}`);
-    console.log(`  Type: ${ruleType} (auto-detected)`);
     console.log(`  Status: ${statusColor}`);
 
     console.log(chalk.dim("─".repeat(50)));

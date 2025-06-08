@@ -1,4 +1,4 @@
 {
   "workspaces": true,
-  "ides": ["cursor"]
+  "targets": ["cursor"]
 }

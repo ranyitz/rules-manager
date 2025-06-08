@@ -2,11 +2,9 @@
   "name": "package-json-aicm",
   "version": "1.0.0",
   "aicm": {
-    "ides": [
+    "targets": [
       "windsurf"
     ],
-    "rules": {
-      "pkg-rule": "./rules/pkg-rule.mdc"
-    }
+    "rulesDir": "./rules"
   }
 }

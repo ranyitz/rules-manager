@@ -1,4 +1,0 @@
-{
-  "ides": ["cursor"],
-  "presets": ["@company/glob-preset"]
-}

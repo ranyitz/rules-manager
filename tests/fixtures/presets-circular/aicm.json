@@ -1,7 +1,5 @@
 {
-  "ides": ["cursor"],
-  "rules": {
-    "topLevelRule": "rules/top-level-rule.js"
-  },
-  "presets": ["./circular-a.json"]
+  "targets": ["cursor"],
+  "presets": ["./circular-a.json"],
+  "rulesDir": "./rules"
 }

@@ -1,6 +1,4 @@
 {
-  "rules": {
-    "circularC-rule": "rules/circular-c-rule.js"
-  },
+  "rulesDir": "./rules",
   "presets": ["./circular-a.json"]
 }

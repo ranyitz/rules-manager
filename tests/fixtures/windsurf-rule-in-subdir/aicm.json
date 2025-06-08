@@ -1,6 +1,4 @@
 {
-  "ides": ["windsurf"],
-  "rules": {
-    "dir/general": "./rules/general.mdc"
-  }
+  "targets": ["windsurf"],
+  "rulesDir": "./rules"
 }

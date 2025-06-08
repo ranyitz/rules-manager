@@ -1,8 +1,6 @@
 ---
 description:
-
 globs:
 alwaysApply: false
 ---
-# Rule One
-Content from preset glob rule one.
+Custom override rule

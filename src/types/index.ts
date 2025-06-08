@@ -25,16 +25,20 @@ export interface MCPServers {
 }
 
 export interface Config {
-  ides?: string[];
-  rules?: Rules | string;
+  targets?: string[];
+  rulesDir?: string;
   presets?: string[];
+  overrides?: Record<string, string | false>;
   mcpServers?: MCPServers;
   workspaces?: boolean;
 }
 
-export interface NormalizedConfig extends Omit<Config, "rules"> {
+export interface NormalizedConfig {
   ides: string[];
   rules: Rules;
+  presets: string[];
+  mcpServers?: MCPServers;
+  workspaces?: boolean;
 }
 
 // Rule metadata and content models

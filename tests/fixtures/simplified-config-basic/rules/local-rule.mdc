@@ -1,8 +1,6 @@
 ---
 description:
-
 globs:
 alwaysApply: false
 ---
-# Rule Two
-Content from preset glob rule two.
+Local rule content

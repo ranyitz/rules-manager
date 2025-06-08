@@ -1,4 +1,4 @@
 {
-  "ides": ["cursor"],
+  "targets": ["cursor"],
   "presets": ["@aicm/test-preset", "@aicm/test-preset/subdir"]
 }

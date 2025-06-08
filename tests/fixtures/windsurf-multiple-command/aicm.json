@@ -1,8 +1,5 @@
 {
-  "ides": ["windsurf"],
-  "rules": {
-    "first-rule": "./rules/first-rule.mdc",
-    "second-rule": "./rules/second-rule.mdc"
-  },
-  "presets": []
+  "targets": ["windsurf"],
+  "presets": [],
+  "rulesDir": "./rules"
 }

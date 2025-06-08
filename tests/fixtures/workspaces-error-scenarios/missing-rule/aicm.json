@@ -1,6 +1,4 @@
 {
-  "ides": ["cursor"],
-  "rules": {
-    "missing-rule": "./rules/does-not-exist.md"
-  }
+  "targets": ["cursor"],
+  "rulesDir": "./rules"
 }

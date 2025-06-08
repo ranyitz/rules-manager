@@ -1,7 +1,5 @@
 {
-  "ides": ["cursor"],
+  "targets": ["cursor"],
   "presets": ["./company-preset.json"],
-  "rules": {
-    "local-rule": "./rules/local-rule.mdc"
-  }
+  "rulesDir": "./rules"
 }

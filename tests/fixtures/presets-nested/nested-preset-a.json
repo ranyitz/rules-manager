@@ -1,7 +1,4 @@
 {
-  "rules": {
-    "presetA-rule1": "rules/preset-a-rule1.js",
-    "presetA-rule2": "rules/preset-a-rule2.js"
-  },
+  "rulesDir": "./rules",
   "presets": ["./nested-preset-b.json"]
 }

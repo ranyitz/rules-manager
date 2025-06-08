@@ -1,6 +1,4 @@
 {
-  "ides": ["cursor"],
-  "rules": {
-    "worker-service-rule": "./rules/worker-service.md"
-  }
+  "targets": ["cursor"],
+  "rulesDir": "./rules"
 }

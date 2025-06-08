@@ -1,8 +1,4 @@
 {
-  "ides": ["cursor"],
-  "rules": {
-    "rule1": "./rules/rule1.mdc",
-    "rule2": "@company/ai-rules/rules/rule2.mdc",
-    "rule3": "./rules/rule3.mdc"
-  }
+  "targets": ["cursor"],
+  "rulesDir": "./rules"
 }

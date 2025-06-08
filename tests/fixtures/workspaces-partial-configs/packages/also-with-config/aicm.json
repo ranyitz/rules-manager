@@ -1,6 +1,4 @@
 {
-  "ides": ["cursor"],
-  "rules": {
-    "package-three-rule": "./rules/package-three.md"
-  }
+  "targets": ["cursor"],
+  "rulesDir": "./rules"
 }

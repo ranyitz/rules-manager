@@ -1,6 +1,4 @@
 {
-  "ides": ["windsurf"],
-  "rules": {
-    "no-marker-rule": "./rules/no-marker-rule.mdc"
-  }
+  "targets": ["windsurf"],
+  "rulesDir": "./rules"
 }

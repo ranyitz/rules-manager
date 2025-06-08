@@ -1,5 +1,5 @@
 {
-  "ides": ["cursor"],
-  "rules": { "local-rule": "./rules/local-rule.mdc" },
-  "installOnCI": true
+  "targets": ["cursor"],
+  "installOnCI": true,
+  "rulesDir": "./rules"
 }

@@ -1,10 +1,11 @@
 {
-  "ides": ["cursor"],
+  "targets": ["cursor"],
   "presets": ["./preset.json"],
-  "rules": {
+  "overrides": {
     "npm-rule": false
   },
   "mcpServers": {
     "preset-mcp": false
-  }
+  },
+  "rulesDir": "./rules"
 }

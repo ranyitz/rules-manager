@@ -1,6 +1,5 @@
 {
-  "rules": {
-    "circularA-rule": "rules/circular-a-rule.js"
-  },
-  "presets": ["./circular-b.json"]
+  "presets": ["./circular-b.json"],
+  "rulesDir": "./rules",
+  "targets": ["cursor"]
 }

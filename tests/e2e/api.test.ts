@@ -39,6 +39,7 @@ describe("aicm Node.js API", () => {
       rules: {
         "test-rule": path.resolve(testDir, "rules", "test-rule.mdc"), // Use absolute path
       },
+      presets: [],
       mcpServers: {
         "api-test-server": {
           url: "https://example.com/api-test",
@@ -99,6 +100,7 @@ describe("aicm Node.js API", () => {
     const config: NormalizedConfig = {
       ides: ["cursor"],
       rules: {},
+      presets: [],
     };
 
     const result = await install({
@@ -122,6 +124,7 @@ describe("aicm Node.js API", () => {
       rules: {
         "custom-dir-rule": path.resolve(testDir, "rules", "local-rule.mdc"), // Use absolute path
       },
+      presets: [],
     };
 
     const result = await install({

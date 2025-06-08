@@ -1,6 +1,4 @@
 {
-  "ides": ["cursor"],
-  "rules": {
-    "dir/general": "./rules/general.mdc"
-  }
+  "targets": ["cursor"],
+  "rulesDir": "./rules"
 }

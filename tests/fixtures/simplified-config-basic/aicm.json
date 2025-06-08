@@ -1,6 +1,9 @@
 {
   "rulesDir": "./rules",
-  "targets": ["cursor", "windsurf", "codex"],
+  "targets": ["cursor", "codex"],
+  "overrides": {
+    "override-rule": "./extra/custom.mdc"
+  },
   "mcpServers": {
     "context7": {
       "command": "npx",

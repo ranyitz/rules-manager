@@ -1,8 +1,6 @@
 {
-  "ides": ["cursor"],
-  "rules": {
-    "local-rule": "./rules/local-rule.mdc"
-  },
+  "targets": ["cursor"],
+  "rulesDir": "./rules",
   "mcpServers": {
     "local-mcp": {
       "command": "./scripts/start-mcp.sh",

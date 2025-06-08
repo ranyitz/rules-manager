@@ -1,21 +1,13 @@
-import chalk from "chalk";
-import {
-  getConfig,
-  getRuleSource,
-  getOriginalPresetPath,
-} from "../../utils/config";
-import { detectRuleType } from "../../utils/rule-detector";
+import { getConfig } from "../../utils/config";
 import { NormalizedConfig } from "../../types";
 import { withWorkingDirectory } from "../../utils/working-directory";
 import {
   collectLocalRule,
-  collectNpmRule,
   initRuleCollection,
   addRuleToCollection,
 } from "../../utils/rule-collector";
 import { writeRulesToTargets } from "../../utils/rule-writer";
 import { writeMcpServersToTargets } from "../../utils/mcp-writer";
-import { expandRulesGlobPatterns } from "../../utils/glob-handler";
 
 /**
  * Options for the install functions
@@ -102,32 +94,7 @@ export async function installPackage(
       }
     }
 
-    let expandedRules: Record<string, string>;
-
-    try {
-      const expansion = await expandRulesGlobPatterns(config.rules, cwd);
-      expandedRules = expansion.expandedRules;
-
-      if (options.verbose) {
-        for (const [expandedKey, originalPattern] of Object.entries(
-          expansion.globSources,
-        )) {
-          console.log(
-            chalk.gray(`  Pattern "${originalPattern}" → ${expandedKey}`),
-          );
-        }
-      }
-    } catch (error) {
-      const errorMessage = `Error expanding glob patterns: ${error instanceof Error ? error.message : String(error)}`;
-
-      return {
-        success: false,
-        error: errorMessage,
-        errorStack: error instanceof Error ? error.stack : undefined,
-        installedRuleCount: 0,
-        packagesCount: 0,
-      };
-    }
+    const expandedRules = config.rules;
 
     let hasErrors = false;
     const errorMessages: string[] = [];
@@ -135,36 +102,14 @@ export async function installPackage(
     let installedRuleCount = 0;
 
     for (const [name, source] of Object.entries(expandedRules)) {
-      const ruleType = detectRuleType(source);
-      const ruleBasePath = getRuleSource(config, name);
-      const originalPresetPath = getOriginalPresetPath(config, name);
-
       try {
-        let ruleContent;
-        switch (ruleType) {
-          case "npm":
-            ruleContent = collectNpmRule(name, source);
-            break;
-          case "local":
-            ruleContent = collectLocalRule(name, source, ruleBasePath);
-            break;
-          default:
-            errorMessages.push(`Unknown rule type: ${ruleType}`);
-            continue;
-        }
-
-        if (originalPresetPath) {
-          ruleContent.presetPath = originalPresetPath;
-        }
-
+        const ruleContent = collectLocalRule(name, source);
         addRuleToCollection(ruleCollection, ruleContent, config.ides);
         installedRuleCount++;
       } catch (e) {
         hasErrors = true;
         const errorMessage = `Error processing rule ${name}: ${e instanceof Error ? e.message : String(e)}`;
         errorMessages.push(errorMessage);
-
-        // Keep the first error stack trace
         if (!firstErrorStack && e instanceof Error && e.stack) {
           firstErrorStack = e.stack;
         }

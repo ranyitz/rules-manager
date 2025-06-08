@@ -1,4 +1,4 @@
 {
-  "ides": ["cursor"],
-  "rules": "./rules/*"
+  "targets": ["cursor"],
+  "rulesDir": "./rules"
 }

@@ -1,13 +1,13 @@
 {
-  "ides": ["cursor"],
-  "rules": {
-    "cancel-test-rule": "./rules/cancel-test-rule.mdc"
-  },
+  "targets": ["cursor"],
   "mcpServers": {
     "active-server": {
       "command": "./scripts/active-server.sh",
-      "env": { "ACTIVE_TOKEN": "active123" }
+      "env": {
+        "ACTIVE_TOKEN": "active123"
+      }
     },
     "canceled-server": false
-  }
+  },
+  "rulesDir": "./rules"
 }

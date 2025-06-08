@@ -1,6 +1,4 @@
 {
-  "ides": ["windsurf"],
-  "rules": {
-    "fresh-windsurf-rule": "./rules/fresh-windsurf-rule.md"
-  }
+  "targets": ["windsurf"],
+  "rulesDir": "./rules"
 }
