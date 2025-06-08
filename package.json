@@ -5,7 +5,7 @@
   "main": "dist/api.js",
   "types": "dist/api.d.ts",
   "bin": {
-    "aicm": "./dist/index.js"
+    "aicm": "./dist/bin/aicm.js"
   },
   "files": [
     "dist",
@@ -15,8 +15,8 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
-    "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts",
+    "start": "node dist/bin/aicm.js",
+    "dev": "ts-node src/bin/aicm.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:all": "npm run build && npm run test",
@@ -25,7 +25,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint",
-    "prepare": "husky install && npx ts-node src/index.ts install",
+    "prepare": "husky install && npx ts-node src/bin/aicm.ts install",
     "version": "auto-changelog -p && git add CHANGELOG.md",
     "release": "np"
   },
