@@ -45,7 +45,7 @@ export async function install(
   }
 
   return withWorkingDirectory(cwd, async () => {
-    const config = options.config || getConfig();
+    const config = options.config || (await getConfig());
 
     if (config?.workspaces) {
       return await installWorkspaces(cwd, installOnCI, options.verbose);

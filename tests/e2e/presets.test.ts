@@ -258,6 +258,40 @@ describe("Presets with fixtures", () => {
     expect(subdirRuleContent).toContain("Subdir Rule Content");
   });
 
+  test("should expand glob patterns relative to preset path", async () => {
+    await setupFromFixture("presets-glob");
+
+    await runCommand("install --ci");
+
+    const ruleOnePath = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "@company",
+      "glob-preset",
+      "glob-rule",
+      "one.mdc",
+    );
+    const ruleTwoPath = path.join(
+      ".cursor",
+      "rules",
+      "aicm",
+      "@company",
+      "glob-preset",
+      "glob-rule",
+      "two.mdc",
+    );
+
+    expect(fileExists(ruleOnePath)).toBe(true);
+    expect(fileExists(ruleTwoPath)).toBe(true);
+
+    const ruleOneContent = readTestFile(ruleOnePath);
+    expect(ruleOneContent).toContain("Rule One");
+
+    const ruleTwoContent = readTestFile(ruleTwoPath);
+    expect(ruleTwoContent).toContain("Rule Two");
+  });
+
   test("should recursively resolve nested presets", async () => {
     await setupFromFixture("presets-nested");
 
@@ -266,7 +300,7 @@ describe("Presets with fixtures", () => {
     try {
       process.chdir(testDir);
 
-      const config = getConfig();
+      const config = await getConfig();
 
       expect(config).not.toBeNull();
 
@@ -313,7 +347,7 @@ describe("Presets with fixtures", () => {
     try {
       process.chdir(testDir);
 
-      const config = getConfig();
+      const config = await getConfig();
 
       expect(config).not.toBeNull();
 

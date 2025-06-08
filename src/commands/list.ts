@@ -3,8 +3,8 @@ import { getConfig } from "../utils/config";
 import { checkRuleStatus } from "../utils/rule-status";
 import { detectRuleType } from "../utils/rule-detector";
 
-export function listCommand(): void {
-  const config = getConfig();
+export async function listCommand(): Promise<void> {
+  const config = await getConfig();
 
   if (!config) {
     console.log(chalk.red("Configuration file not found!"));
