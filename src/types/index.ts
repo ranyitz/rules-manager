@@ -74,6 +74,7 @@ export interface WorkspacesInstallResult {
     path: string;
     success: boolean;
     error?: string;
+    errorStack?: string;
     installedRuleCount: number;
   }>;
   totalRuleCount: number;
