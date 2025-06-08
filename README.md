@@ -157,10 +157,12 @@ To prevent [prompt-injection](https://en.wikipedia.org/wiki/Prompt_injection), u
 
 aicm supports workspaces by automatically discovering and installing configurations across multiple packages in your repository.
 
-To enable workspaces mode, use the `--workspaces` flag:
+To enable workspaces mode, set the `workspaces` property to `true` in your root `aicm.json`:
 
-```bash
-npx aicm install --workspaces
+```json
+{
+  "workspaces": true
+}
 ```
 
 This will:
@@ -175,6 +177,7 @@ Each directory containing an `aicm.json` file is treated as a separate package w
 For example, in a workspace structure like:
 
 ```
+├── aicm.json (with "workspaces": true)
 ├── packages/
 │   ├── frontend/
 │   │   └── aicm.json
@@ -185,7 +188,7 @@ For example, in a workspace structure like:
         └── aicm.json
 ```
 
-Running `npx aicm install --workspaces` will install rules for each package in their respective directories:
+Running `npx aicm install` will install rules for each package in their respective directories:
 
 - `packages/frontend/.cursor/rules/aicm/`
 - `packages/backend/.cursor/rules/aicm/`
@@ -331,7 +334,6 @@ npx aicm install
 Options:
 
 - `--ci`: run in CI environments (default: `false`)
-- `--workspaces`: enable workspaces mode to discover and install configurations across multiple packages
 - `--verbose`: show detailed output and stack traces for debugging
 
 ## Node.js API
@@ -377,7 +379,6 @@ Installs rules and MCP servers based on configuration.
 - `cwd`: Base directory to use instead of `process.cwd()`
 - `config`: Custom config object to use instead of loading from file
 - `installOnCI`: Run installation on CI environments (default: `false`)
-- `workspaces`: Enable workspaces mode (default: `false`)
 - `verbose`: Show verbose output and stack traces for debugging (default: `false`)
 
 **Returns:**

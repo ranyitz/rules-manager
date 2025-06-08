@@ -11,7 +11,7 @@ describe("aicm workspaces support", () => {
   test("should discover and install rules from multiple packages", async () => {
     await setupFromFixture("workspaces-npm-basic");
 
-    const { stdout } = await runCommand("install --workspaces --ci --verbose");
+    const { stdout } = await runCommand("install --ci --verbose");
     expect(stdout).toContain("🔍 Discovering packages...");
     expect(stdout).toContain("Found 2 packages with aicm configurations:");
     expect(stdout).toContain("- packages/backend");
@@ -79,15 +79,15 @@ describe("aicm workspaces support", () => {
   test("should show error when no packages found in workspaces", async () => {
     await setupFromFixture("workspaces-no-packages");
 
-    const { stderr } = await runFailedCommand("install --workspaces --ci");
+    const { stderr } = await runFailedCommand("install --ci");
 
     expect(stderr).toContain("No packages with aicm configurations found");
   });
 
-  test("should install normally when workspaces flag is used on single package", async () => {
-    await setupFromFixture("install-basic");
+  test("should install normally when workspaces is enabled on single package", async () => {
+    await setupFromFixture("workspaces-single-package");
 
-    const { stdout } = await runCommand("install --workspaces --ci --verbose");
+    const { stdout } = await runCommand("install --ci --verbose");
     expect(stdout).toContain("Found 1 packages with aicm configurations:");
     expect(stdout).toContain("- .");
     expect(stdout).toContain(
@@ -102,7 +102,7 @@ describe("aicm workspaces support", () => {
   test("should handle partial configurations (some packages with configs, some without)", async () => {
     await setupFromFixture("workspaces-partial-configs");
 
-    const { stdout } = await runCommand("install --workspaces --ci --verbose");
+    const { stdout } = await runCommand("install --ci --verbose");
     expect(stdout).toContain("🔍 Discovering packages...");
     expect(stdout).toContain("Found 2 packages with aicm configurations:");
     expect(stdout).toContain("- packages/with-config");
@@ -151,7 +151,7 @@ describe("aicm workspaces support", () => {
   test("should discover and install rules from deeply nested workspaces structure", async () => {
     await setupFromFixture("workspaces-npm-nested");
 
-    const { stdout } = await runCommand("install --workspaces --ci --verbose");
+    const { stdout } = await runCommand("install --ci --verbose");
     expect(stdout).toContain("🔍 Discovering packages...");
     expect(stdout).toContain("Found 3 packages with aicm configurations:");
     expect(stdout).toContain("- apps/web");
@@ -209,7 +209,7 @@ describe("aicm workspaces support", () => {
   test("should discover and install rules from Bazel workspaces", async () => {
     await setupFromFixture("workspaces-bazel-basic");
 
-    const { stdout } = await runCommand("install --workspaces --ci --verbose");
+    const { stdout } = await runCommand("install --ci --verbose");
     expect(stdout).toContain("🔍 Discovering packages...");
     expect(stdout).toContain("Found 2 packages with aicm configurations:");
     expect(stdout).toContain("- services/api");
@@ -252,7 +252,7 @@ describe("aicm workspaces support", () => {
   test("should discover and install rules from mixed workspaces + Bazel structure", async () => {
     await setupFromFixture("workspaces-mixed");
 
-    const { stdout } = await runCommand("install --workspaces --ci --verbose");
+    const { stdout } = await runCommand("install --ci --verbose");
     expect(stdout).toContain("🔍 Discovering packages...");
     expect(stdout).toContain("Found 2 packages with aicm configurations:");
     expect(stdout).toContain("- frontend");
@@ -287,9 +287,7 @@ describe("aicm workspaces support", () => {
   test("should handle error scenarios with invalid configurations", async () => {
     await setupFromFixture("workspaces-error-scenarios");
 
-    const { stdout } = await runFailedCommand(
-      "install --workspaces --ci --verbose",
-    );
+    const { stdout } = await runFailedCommand("install --ci --verbose");
     expect(stdout).toContain("🔍 Discovering packages...");
     expect(stdout).toContain("Found 2 packages with aicm configurations:");
     expect(stdout).toContain("- valid-package");
@@ -319,7 +317,7 @@ describe("aicm workspaces support", () => {
   test("should work quietly by default without verbose flag", async () => {
     await setupFromFixture("workspaces-npm-basic");
 
-    const { stdout } = await runCommand("install --workspaces --ci");
+    const { stdout } = await runCommand("install --ci");
     expect(stdout).not.toContain("🔍 Discovering packages...");
     expect(stdout).not.toContain("Found 2 packages with aicm configurations:");
     expect(stdout).not.toContain("📦 Installing configurations...");
