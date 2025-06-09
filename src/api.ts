@@ -12,7 +12,6 @@ export async function install(
   return installInternal(options);
 }
 
-// Re-export types for convenience
 export type { InstallOptions, InstallResult } from "./commands/install";
 export type {
   ResolvedConfig,
