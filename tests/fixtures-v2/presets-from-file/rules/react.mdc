@@ -1,9 +1,0 @@
----
-description:
-globs:
-alwaysApply: false
----
-# React Rule
-name: React Best Practices
-description: Rules for React development
-alwaysApply: false

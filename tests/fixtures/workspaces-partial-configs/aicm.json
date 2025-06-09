@@ -1,4 +1,5 @@
 {
   "workspaces": true,
-  "ides": ["cursor"]
+  "rulesDir": "./rules",
+  "targets": ["cursor"]
 }

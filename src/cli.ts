@@ -86,12 +86,13 @@ ${chalk.bold("EXAMPLES")}
 `);
 }
 
-function logError(error: unknown, verbose: boolean = false): void {
-  if (verbose && error instanceof Error && error.stack) {
-    console.error(chalk.red(error.stack));
+function logError(error: unknown, verbose?: boolean) {
+  if (error instanceof Error) {
+    console.error(chalk.red(`Error: ${error.message}`));
+    if (verbose && error.stack) {
+      console.error(chalk.gray(error.stack));
+    }
   } else {
-    console.error(
-      chalk.red(error instanceof Error ? error.message : String(error)),
-    );
+    console.error(chalk.red(`Error: ${String(error)}`));
   }
 }

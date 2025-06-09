@@ -1,5 +1,0 @@
-{
-  "workspaces": true,
-  "rulesDir": "./rules",
-  "targets": ["cursor"]
-}

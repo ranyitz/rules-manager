@@ -1,6 +1,4 @@
 {
-  "ides": ["cursor"],
-  "rules": {
-    "frontend-rule": "./rules/frontend.md"
-  }
+  "rulesDir": "./rules",
+  "targets": ["cursor"]
 }

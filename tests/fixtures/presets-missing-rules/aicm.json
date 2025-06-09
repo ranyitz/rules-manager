@@ -1,6 +1,5 @@
 {
-  "ides": ["cursor"],
-  "rules": {
-    "missing-rule": "./rules/does-not-exist.mdc"
-  }
+  "rulesDir": "./rules",
+  "targets": ["cursor"],
+  "presets": ["./broken-preset.json"]
 }

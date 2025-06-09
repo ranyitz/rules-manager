@@ -1,5 +1,0 @@
-{
-  "rulesDir": "./rules",
-  "targets": ["cursor"],
-  "presets": ["./company-preset-full.json"]
-}

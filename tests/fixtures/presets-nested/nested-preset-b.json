@@ -1,7 +1,0 @@
-{
-  "rules": {
-    "presetB-rule1": "rules/preset-b-rule1.js",
-    "presetB-rule2": "rules/preset-b-rule2.js"
-  },
-  "presets": ["./nested-preset-c.json"]
-}

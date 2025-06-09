@@ -1,10 +1,10 @@
 import chalk from "chalk";
-import { getConfig } from "../utils/config";
-import { checkRuleStatus } from "../utils/rule-status";
+import { loadConfig } from "../utils/config";
 import { detectRuleType } from "../utils/rule-detector";
+import { checkRuleStatus } from "../utils/rule-status";
 
 export async function listCommand(): Promise<void> {
-  const config = await getConfig();
+  const config = await loadConfig();
 
   if (!config) {
     console.log(chalk.red("Configuration file not found!"));
@@ -12,7 +12,7 @@ export async function listCommand(): Promise<void> {
     return;
   }
 
-  if (!config.rules || Object.keys(config.rules).length === 0) {
+  if (!config.rules || config.rules.length === 0) {
     console.log(chalk.yellow("No rules defined in configuration."));
     console.log(`Edit your ${chalk.blue("aicm.json")} file to add rules.`);
     return;
@@ -21,17 +21,21 @@ export async function listCommand(): Promise<void> {
   console.log(chalk.blue("Configured Rules:"));
   console.log(chalk.dim("─".repeat(50)));
 
-  for (const [ruleName, source] of Object.entries(config.rules)) {
-    if (source === false) continue;
-    const ruleType = detectRuleType(source);
-    const status = checkRuleStatus(ruleName, config.ides);
+  // Iterate over the resolved rules array
+  for (const rule of config.rules) {
+    const ruleType =
+      rule.source === "preset" ? "preset" : detectRuleType(rule.sourcePath);
+    const status = checkRuleStatus(rule.name, config.config.targets);
     const statusColor = status
       ? chalk.green("Installed")
       : chalk.yellow("Not installed");
 
-    console.log(`${chalk.bold(ruleName)}`);
-    console.log(`  Source: ${source}`);
+    console.log(`${chalk.bold(rule.name)}`);
+    console.log(`  Source: ${rule.sourcePath}`);
     console.log(`  Type: ${ruleType} (auto-detected)`);
+    if (rule.presetName) {
+      console.log(`  Preset: ${rule.presetName}`);
+    }
     console.log(`  Status: ${statusColor}`);
 
     console.log(chalk.dim("─".repeat(50)));

@@ -1,4 +1,9 @@
 ---
+description:
+globs:
+alwaysApply: false
+---
+---
 description: "Rule for testing appending markers"
 type: "always"
 ---

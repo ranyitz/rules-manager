@@ -1,294 +1,324 @@
 import fs from "fs-extra";
 import path from "node:path";
-import { Config, NormalizedConfig, Rules } from "../types";
-import { cosmiconfig } from "cosmiconfig";
-import { expandRulesGlobPatterns } from "./glob-handler";
+import { cosmiconfig, CosmiconfigResult } from "cosmiconfig";
+import fg from "fast-glob";
 
-// Metadata about rules and their sources
-export interface RuleMetadata {
-  ruleSources: Record<string, string>;
-  originalPresetPaths: Record<string, string>;
+export interface RawConfig {
+  rulesDir: string;
+  targets?: string[];
+  presets?: string[];
+  overrides?: Record<string, string | false>;
+  mcpServers?: MCPServers;
+  workspaces?: boolean;
 }
 
-// Return type for config operations that includes both config and metadata
-export interface ConfigResult {
-  config: NormalizedConfig;
-  metadata: RuleMetadata;
+export interface Config {
+  rulesDir: string;
+  targets: string[];
+  presets?: string[];
+  overrides?: Record<string, string | false>;
+  mcpServers?: MCPServers;
+  workspaces?: boolean;
 }
 
-const CONFIG_FILE = "aicm.json";
+export type MCPServer =
+  | {
+      command: string;
+      args?: string[];
+      env?: Record<string, string>;
+      url?: never;
+    }
+  | {
+      url: string;
+      env?: Record<string, string>;
+      command?: never;
+      args?: never;
+    }
+  | false;
 
-export function normalizeRules(rules: Rules | string | undefined): Rules {
-  if (!rules) return {};
-  if (typeof rules === "string") {
-    return { "/": rules };
+export interface MCPServers {
+  [serverName: string]: MCPServer;
+}
+
+export interface RuleFile {
+  name: string;
+  content: string;
+  sourcePath: string;
+  source: "local" | "preset";
+  presetName?: string;
+}
+
+export interface RuleCollection {
+  [target: string]: RuleFile[];
+}
+
+export interface ResolvedConfig {
+  config: Config;
+  rules: RuleFile[];
+  mcpServers: MCPServers;
+}
+
+export const SUPPORTED_TARGETS = ["cursor", "windsurf", "codex"] as const;
+export type SupportedTarget = (typeof SUPPORTED_TARGETS)[number];
+
+export function applyDefaults(config: RawConfig): Config {
+  return {
+    rulesDir: config.rulesDir,
+    targets: config.targets || ["cursor"],
+    presets: config.presets || [],
+    overrides: config.overrides || {},
+    mcpServers: config.mcpServers || {},
+    workspaces: config.workspaces || false,
+  };
+}
+
+export function validateConfig(
+  config: unknown,
+  configFilePath: string,
+  cwd: string,
+): asserts config is Config {
+  if (typeof config !== "object" || config === null) {
+    throw new Error(`Config is not an object at ${configFilePath}`);
   }
+
+  if (!("rulesDir" in config)) {
+    throw new Error(`rulesDir is not specified in config at ${configFilePath}`);
+  }
+
+  if (typeof config.rulesDir !== "string") {
+    throw new Error(`rulesDir is not a string in config at ${configFilePath}`);
+  }
+
+  const rulesPath = path.resolve(cwd, config.rulesDir);
+
+  if (!fs.existsSync(rulesPath)) {
+    throw new Error(`Rules directory does not exist: ${rulesPath}`);
+  }
+
+  if (!fs.statSync(rulesPath).isDirectory()) {
+    throw new Error(`Rules path is not a directory: ${rulesPath}`);
+  }
+
+  if ("targets" in config) {
+    if (!Array.isArray(config.targets)) {
+      throw new Error(
+        `targets must be an array in config at ${configFilePath}`,
+      );
+    }
+
+    if (config.targets.length === 0) {
+      throw new Error(
+        `targets must not be empty in config at ${configFilePath}`,
+      );
+    }
+
+    for (const target of config.targets) {
+      if (!SUPPORTED_TARGETS.includes(target as SupportedTarget)) {
+        throw new Error(
+          `Unsupported target: ${target}. Supported targets: ${SUPPORTED_TARGETS.join(", ")}`,
+        );
+      }
+    }
+  }
+
+  // Validate override rule names will be checked after rule resolution
+}
+
+export async function loadRulesFromDirectory(
+  rulesDir: string,
+  source: "local" | "preset",
+  presetName?: string,
+): Promise<RuleFile[]> {
+  const rules: RuleFile[] = [];
+
+  if (!fs.existsSync(rulesDir)) {
+    return rules;
+  }
+
+  const pattern = path.join(rulesDir, "**/*.mdc").replace(/\\/g, "/");
+  const filePaths = await fg(pattern, {
+    onlyFiles: true,
+    absolute: true,
+  });
+
+  for (const filePath of filePaths) {
+    const content = await fs.readFile(filePath, "utf8");
+
+    // Preserve directory structure by using relative path from rulesDir
+    const relativePath = path.relative(rulesDir, filePath);
+    const ruleName = relativePath.replace(/\.mdc$/, "").replace(/\\/g, "/");
+
+    rules.push({
+      name: ruleName,
+      content,
+      sourcePath: filePath,
+      source,
+      presetName,
+    });
+  }
+
   return rules;
 }
 
-export interface PresetPathInfo {
-  fullPath: string;
-  originalPath: string;
-}
-
-export function getFullPresetPath(
+export function resolvePresetPath(
   presetPath: string,
-  cwd?: string,
-): PresetPathInfo | null {
-  const workingDir = cwd || process.cwd();
+  cwd: string,
+): string | null {
+  // Support specifying aicm.json directory and load the config from it
+  if (!presetPath.endsWith(".json")) {
+    presetPath = path.join(presetPath, "aicm.json");
+  }
 
-  // If it's a local file with .json extension, check relative to the working directory
-  if (presetPath.endsWith(".json")) {
-    const absolutePath = path.isAbsolute(presetPath)
-      ? presetPath
-      : path.resolve(workingDir, presetPath);
-    if (fs.pathExistsSync(absolutePath)) {
-      return { fullPath: absolutePath, originalPath: presetPath };
-    }
+  // Support local or absolute paths
+  const absolutePath = path.isAbsolute(presetPath)
+    ? presetPath
+    : path.resolve(cwd, presetPath);
+
+  if (fs.existsSync(absolutePath)) {
+    return absolutePath;
   }
 
   try {
-    let absolutePresetPath;
-
-    // Handle npm package with explicit JSON path
-    if (presetPath.endsWith(".json")) {
-      absolutePresetPath = require.resolve(presetPath, {
-        paths: [__dirname, workingDir],
-      });
-    }
-    // Handle npm package without explicit JSON path (add aicm.json)
-    else {
-      // For npm packages, ensure we properly handle scoped packages (@org/pkg)
-      const presetPathWithConfig = path.join(presetPath, "aicm.json");
-      try {
-        absolutePresetPath = require.resolve(presetPathWithConfig, {
-          paths: [__dirname, workingDir],
-        });
-      } catch {
-        // If direct resolution fails, try as a package name
-        absolutePresetPath = require.resolve(presetPath, {
-          paths: [__dirname, workingDir],
-        });
-        // If we found the package but not the config file, look for aicm.json
-        if (fs.existsSync(absolutePresetPath)) {
-          const packageDir = path.dirname(absolutePresetPath);
-          const configPath = path.join(packageDir, "aicm.json");
-          if (fs.existsSync(configPath)) {
-            absolutePresetPath = configPath;
-          }
-        }
-      }
-    }
-
-    return fs.existsSync(absolutePresetPath)
-      ? { fullPath: absolutePresetPath, originalPath: presetPath }
-      : null;
+    // Support npm packages
+    const resolvedPath = require.resolve(presetPath, {
+      paths: [cwd, __dirname],
+    });
+    return fs.existsSync(resolvedPath) ? resolvedPath : null;
   } catch {
     return null;
   }
 }
 
-/**
- * Load a preset file and return its contents
- */
-export function loadPreset(
+export async function loadPreset(
   presetPath: string,
-  cwd?: string,
-): {
-  rules: Rules;
-  mcpServers?: import("../types").MCPServers;
-  presets?: string[];
-} | null {
-  const pathInfo = getFullPresetPath(presetPath, cwd);
+  cwd: string,
+): Promise<{
+  config: Config;
+  rulesDir: string;
+}> {
+  const resolvedPresetPath = resolvePresetPath(presetPath, cwd);
 
-  if (!pathInfo) {
+  if (!resolvedPresetPath) {
     throw new Error(
-      `Error loading preset: "${presetPath}". Make sure the package is installed in your project.`,
+      `Preset not found: "${presetPath}". Make sure the package is installed or the path is correct.`,
     );
   }
 
-  const presetContent = fs.readFileSync(pathInfo.fullPath, "utf8");
-  let preset;
+  let presetConfig: Config;
 
   try {
-    preset = JSON.parse(presetContent);
-  } catch (error: unknown) {
-    const parseError = error as SyntaxError;
+    const content = await fs.readFile(resolvedPresetPath, "utf8");
+    presetConfig = JSON.parse(content);
+  } catch (error) {
     throw new Error(
-      `Error loading preset: Invalid JSON in ${presetPath}: ${parseError.message}`,
+      `Failed to load preset "${presetPath}": ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 
-  if (!preset.rules) {
-    throw new Error(
-      `Error loading preset: Invalid format in ${presetPath} - missing or invalid 'rules' object`,
-    );
-  }
-
-  const normalizedRules = normalizeRules(preset.rules);
+  // Resolve preset's rules directory relative to the preset file
+  const presetDir = path.dirname(resolvedPresetPath);
+  const presetRulesDir = path.resolve(presetDir, presetConfig.rulesDir);
 
   return {
-    rules: normalizedRules,
-    mcpServers: preset.mcpServers,
-    presets: preset.presets,
+    config: presetConfig,
+    rulesDir: presetRulesDir,
   };
 }
 
-// Global metadata storage
-let currentMetadata: RuleMetadata | null = null;
+export async function loadAllRules(
+  config: Config,
+  cwd: string,
+): Promise<{
+  rules: RuleFile[];
+  mcpServers: MCPServers;
+}> {
+  const allRules: RuleFile[] = [];
+  let mergedMcpServers: MCPServers = { ...config.mcpServers };
 
-// Track processed presets to avoid circular references
-const processedPresets = new Set<string>();
+  // Load local rules
+  const localRulesPath = path.resolve(cwd, config.rulesDir);
+  const localRules = await loadRulesFromDirectory(localRulesPath, "local");
+  allRules.push(...localRules);
 
-/**
- * Process presets and return a new config with merged rules and metadata
- */
-async function processPresets(
-  config: NormalizedConfig,
-  cwd?: string,
-): Promise<ConfigResult> {
-  // Create a deep copy of the config to avoid mutations
-  const newConfig: NormalizedConfig = JSON.parse(JSON.stringify(config));
-  const metadata: RuleMetadata = {
-    ruleSources: {},
-    originalPresetPaths: {},
-  };
+  if (config.presets) {
+    for (const presetPath of config.presets) {
+      const preset = await loadPreset(presetPath, cwd);
+      const presetRules = await loadRulesFromDirectory(
+        preset.rulesDir,
+        "preset",
+        presetPath,
+      );
 
-  // Clear processed presets tracking set when starting from the top level
-  processedPresets.clear();
+      allRules.push(...presetRules);
 
-  return await processPresetsInternal(newConfig, metadata, cwd);
-}
-
-/**
- * Internal function to process presets recursively
- */
-async function processPresetsInternal(
-  config: NormalizedConfig,
-  metadata: RuleMetadata,
-  cwd?: string,
-): Promise<ConfigResult> {
-  if (!config.presets || !Array.isArray(config.presets)) {
-    return { config, metadata };
+      // Merge MCP servers from preset
+      if (preset.config.mcpServers) {
+        mergedMcpServers = mergePresetMcpServers(
+          mergedMcpServers,
+          preset.config.mcpServers,
+        );
+      }
+    }
   }
 
-  for (const presetPath of config.presets) {
-    const pathInfo = getFullPresetPath(presetPath, cwd);
+  return {
+    rules: allRules,
+    mcpServers: mergedMcpServers,
+  };
+}
 
-    if (!pathInfo) {
+export function applyOverrides(
+  rules: RuleFile[],
+  overrides: Record<string, string | false>,
+  cwd: string,
+): RuleFile[] {
+  // Validate that all override rule names exist in the resolved rules
+  for (const ruleName of Object.keys(overrides)) {
+    // TODO: support better error messages with edit distance, helping the user in case of a typo
+    // TODO: or shows a list of potential rules to override
+    if (!rules.some((rule) => rule.name === ruleName)) {
       throw new Error(
-        `Error loading preset: "${presetPath}". Make sure the package is installed in your project.`,
-      );
-    }
-
-    // Skip if we've already processed this preset (prevents circular references)
-    if (processedPresets.has(pathInfo.fullPath)) {
-      // Skip duplicates to prevent circular references
-      continue;
-    }
-
-    // Mark this preset as processed
-    processedPresets.add(pathInfo.fullPath);
-
-    const preset = loadPreset(presetPath, cwd);
-    if (!preset) continue;
-
-    // Expand glob patterns within the preset using its base directory
-    const presetDir = path.dirname(pathInfo.fullPath);
-    const expansion = await expandRulesGlobPatterns(preset.rules, presetDir);
-    preset.rules = expansion.expandedRules;
-
-    // Process nested presets first (depth-first)
-    if (preset.presets && preset.presets.length > 0) {
-      // Create a temporary config with just the presets from this preset
-      const presetConfig: NormalizedConfig = {
-        rules: {},
-        presets: preset.presets,
-        ides: [],
-      };
-
-      // Recursively process the nested presets
-      const { config: nestedConfig } = await processPresetsInternal(
-        presetConfig,
-        metadata,
-        cwd,
-      );
-
-      Object.assign(preset.rules, nestedConfig.rules);
-    }
-
-    const { updatedConfig, updatedMetadata } = mergePresetRules(
-      config,
-      preset.rules,
-      pathInfo,
-      metadata,
-    );
-
-    Object.assign(config.rules, updatedConfig.rules);
-    Object.assign(metadata.ruleSources, updatedMetadata.ruleSources);
-    Object.assign(
-      metadata.originalPresetPaths,
-      updatedMetadata.originalPresetPaths,
-    );
-
-    if (preset.mcpServers) {
-      config.mcpServers = mergePresetMcpServers(
-        config.mcpServers || {},
-        preset.mcpServers,
+        `Override rule "${ruleName}" does not exist in resolved rules`,
       );
     }
   }
 
-  return { config, metadata };
-}
+  const ruleMap = new Map<string, RuleFile>();
 
-/**
- * Merge preset rules into the config without mutation
- */
-function mergePresetRules(
-  config: NormalizedConfig,
-  presetRules: Rules,
-  pathInfo: PresetPathInfo,
-  metadata: RuleMetadata,
-): { updatedConfig: NormalizedConfig; updatedMetadata: RuleMetadata } {
-  const updatedRules = { ...config.rules };
-  const updatedMetadata = {
-    ruleSources: { ...metadata.ruleSources },
-    originalPresetPaths: { ...metadata.originalPresetPaths },
-  };
+  for (const rule of rules) {
+    ruleMap.set(rule.name, rule);
+  }
 
-  for (const [ruleName, rulePath] of Object.entries(presetRules)) {
-    // Cancel if set to false in config
-    if (
-      Object.prototype.hasOwnProperty.call(config.rules, ruleName) &&
-      config.rules[ruleName] === false
-    ) {
-      delete updatedRules[ruleName];
-      delete updatedMetadata.ruleSources[ruleName];
-      delete updatedMetadata.originalPresetPaths[ruleName];
-      continue;
-    }
-    // Only add if not already defined in config (override handled by config)
-    if (!Object.prototype.hasOwnProperty.call(config.rules, ruleName)) {
-      updatedRules[ruleName] = rulePath;
-      updatedMetadata.ruleSources[ruleName] = pathInfo.fullPath;
-      updatedMetadata.originalPresetPaths[ruleName] = pathInfo.originalPath;
+  for (const [ruleName, override] of Object.entries(overrides)) {
+    if (override === false) {
+      ruleMap.delete(ruleName);
+    } else if (typeof override === "string") {
+      const overridePath = path.resolve(cwd, override);
+      if (!fs.existsSync(overridePath)) {
+        throw new Error(`Override rule file not found: ${override} in ${cwd}`);
+      }
+
+      const content = fs.readFileSync(overridePath, "utf8");
+      ruleMap.set(ruleName, {
+        name: ruleName,
+        content,
+        sourcePath: overridePath,
+        source: "local",
+      });
     }
   }
 
-  return {
-    updatedConfig: { ...config, rules: updatedRules },
-    updatedMetadata,
-  };
+  return Array.from(ruleMap.values());
 }
 
 /**
- * Merge preset mcpServers without mutation
+ * Merge preset MCP servers with local config MCP servers
+ * Local config takes precedence over preset config
  */
 function mergePresetMcpServers(
-  configMcpServers: import("../types").MCPServers,
-  presetMcpServers: import("../types").MCPServers,
-): import("../types").MCPServers {
+  configMcpServers: MCPServers,
+  presetMcpServers: MCPServers,
+): MCPServers {
   const newMcpServers = { ...configMcpServers };
 
   for (const [serverName, serverConfig] of Object.entries(presetMcpServers)) {
@@ -309,89 +339,58 @@ function mergePresetMcpServers(
   return newMcpServers;
 }
 
-/**
- * Load the aicm config using cosmiconfig, supporting both aicm.json and package.json.
- * Returns the config object or null if not found.
- */
-export async function loadAicmConfigCosmiconfig(
+export async function loadConfigFile(
   searchFrom?: string,
-): Promise<NormalizedConfig | null> {
+): Promise<CosmiconfigResult> {
   const explorer = cosmiconfig("aicm", {
-    searchPlaces: ["package.json", "aicm.json"],
+    searchPlaces: ["aicm.json", "package.json"],
   });
 
   try {
     const result = await explorer.search(searchFrom);
-    if (!result || !result.config) return null;
-    const rawConfig = result.config as Config;
-    const normalizedRules = normalizeRules(rawConfig.rules);
-    const config: NormalizedConfig = {
-      ...rawConfig,
-      ides: rawConfig.ides || ["cursor"],
-      rules: normalizedRules,
-    };
-    return config;
+    return result;
   } catch (error) {
     throw new Error(
-      `Error loading aicm config: ${error instanceof Error ? error.message : String(error)}`,
+      `Failed to load configuration: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 }
 
-/**
- * Get the configuration from aicm.json or package.json (using cosmiconfigSync) and merge with any presets
- */
-export async function getConfig(
-  cwd?: string,
-): Promise<NormalizedConfig | null> {
+export async function loadConfig(cwd?: string): Promise<ResolvedConfig | null> {
   const workingDir = cwd || process.cwd();
-  const config = await loadAicmConfigCosmiconfig(workingDir);
-  if (!config) {
-    throw new Error(
-      `No config found in ${workingDir}, create one using "aicm init"`,
-    );
+
+  const configResult = await loadConfigFile(workingDir);
+  if (!configResult?.config) {
+    return null;
   }
-  const { config: processedConfig, metadata } = await processPresets(
+
+  validateConfig(configResult.config, configResult.filepath, workingDir);
+
+  const config = applyDefaults(configResult.config);
+
+  const { rules, mcpServers } = await loadAllRules(config, workingDir);
+
+  let rulesWithOverrides = rules;
+
+  if (config.overrides) {
+    rulesWithOverrides = applyOverrides(rules, config.overrides, workingDir);
+  }
+
+  return {
     config,
-    workingDir,
-  );
-  // Store metadata for later access
-  currentMetadata = metadata;
-  return processedConfig;
+    rules: rulesWithOverrides,
+    mcpServers,
+  };
 }
 
-/**
- * Get the source preset path for a rule if it came from a preset
- */
-export function getRuleSource(
-  config: NormalizedConfig,
-  ruleName: string,
-): string | undefined {
-  return currentMetadata?.ruleSources?.[ruleName];
-}
-
-/**
- * Get the original preset path for a rule if it came from a preset
- */
-export function getOriginalPresetPath(
-  config: NormalizedConfig,
-  ruleName: string,
-): string | undefined {
-  return currentMetadata?.originalPresetPaths?.[ruleName];
-}
-
-/**
- * Save the configuration to the aicm.json file
- */
 export function saveConfig(config: Config, cwd?: string): boolean {
   const workingDir = cwd || process.cwd();
-  const configPath = path.join(workingDir, CONFIG_FILE);
+  const configPath = path.join(workingDir, "aicm.json");
 
   try {
-    fs.writeJsonSync(configPath, config, { spaces: 2 });
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
     return true;
-  } catch (error) {
-    console.error("Error writing configuration file:", error);
+  } catch {
     return false;
   }
 }

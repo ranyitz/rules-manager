@@ -5,4 +5,4 @@ alwaysApply: false
 ---
 # Local Rule
 
-This is a local rule for testing purposes.
+This is a local rule for the single package workspace.

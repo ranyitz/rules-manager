@@ -1,8 +1,0 @@
-{
-  "targets": ["cursor"],
-  "rules": {
-    "rule1": "./rules/rule1.mdc",
-    "rule2": "./rules/rule2.mdc",
-    "rule3": "./rules/rule3.mdc"
-  }
-}

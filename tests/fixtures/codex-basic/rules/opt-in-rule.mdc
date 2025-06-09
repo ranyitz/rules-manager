@@ -1,9 +1,13 @@
 ---
+description:
+globs:
 alwaysApply: false
 ---
+---
+description: "Opt-in rule for Codex"
+type: "opt-in"
+---
 
-## E2E Testing Best Practices
-
-- Store initial test state in fixtures
-- Reference documentation: tests/E2E_TESTS.md
-- Include .gitkeep file in empty fixture directories
+- Follow semantic versioning for releases
+- Use conventional commits for commit messages
+- Run tests before pushing changes

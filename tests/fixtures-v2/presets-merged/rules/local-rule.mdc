@@ -1,9 +1,0 @@
----
-description:
-globs:
-alwaysApply: false
----
-# Local Rule
-name: Local Rule
-description: Local rule from main config
-alwaysApply: false

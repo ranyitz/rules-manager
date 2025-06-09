@@ -1,7 +1,6 @@
 # node_modules
 node_modules
 !tests/fixtures/*/node_modules/
-!tests/fixtures-v2/*/node_modules/
 
 # Build output
 dist/
@@ -14,22 +13,18 @@ dist/
 # cursor
 .cursor
 !tests/fixtures/*/.cursor/
-!tests/fixtures-v2/*/.cursor/
 
 # windsurf
 .windsurfrules
 !tests/fixtures/*/.windsurfrules
-!tests/fixtures-v2/*/.windsurfrules
 
 # codex
 AGENTS.md
 !tests/fixtures/*/AGENTS.md
-!tests/fixtures-v2/*/AGENTS.md
 
 # aicm
 .aicm
 !tests/fixtures/*/.aicm
-!tests/fixtures-v2/*/.aicm
 
 # Logs
 logs/
@@ -43,6 +38,5 @@ yarn-error.log*
 
 # Temporary test directory
 tmp-test/
-tmp-test-v2/
 
 PRD

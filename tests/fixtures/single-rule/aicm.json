@@ -1,0 +1,11 @@
+{
+  "rulesDir": "./rules",
+  "targets": ["cursor"],
+  "mcpServers": {
+    "test-mcp": {
+      "command": "./scripts/test-mcp.sh",
+      "args": ["--test"],
+      "env": { "TEST_TOKEN": "test123" }
+    }
+  }
+}
