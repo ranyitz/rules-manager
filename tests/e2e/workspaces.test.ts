@@ -409,3 +409,153 @@ test("explicit workspaces: false overrides auto-detection from package.json", as
   );
   expect(mainRule).toContain("Main Rule (Explicit False)");
 });
+
+test("automatically detect workspaces when no root config file exists", async () => {
+  await setupFromFixture("workspaces-no-config");
+
+  const { stdout, code } = await runCommand("install --ci --verbose");
+
+  expect(code).toBe(0);
+  expect(stdout).toContain("🔍 Discovering packages...");
+  expect(stdout).toContain("Found 2 packages with aicm configurations:");
+  expect(stdout).toContain("- packages/backend");
+  expect(stdout).toContain("- packages/frontend");
+  expect(stdout).toContain("📦 Installing configurations...");
+  expect(stdout).toContain("✅ packages/backend (1 rules)");
+  expect(stdout).toContain("✅ packages/frontend (1 rules)");
+  expect(stdout).toContain("Successfully installed 2 rules across 2 packages");
+
+  // Check that rules were installed in both packages
+  expect(
+    fileExists(
+      path.join(
+        "packages",
+        "frontend",
+        ".cursor",
+        "rules",
+        "aicm",
+        "frontend-rule.mdc",
+      ),
+    ),
+  ).toBe(true);
+
+  expect(
+    fileExists(
+      path.join(
+        "packages",
+        "backend",
+        ".cursor",
+        "rules",
+        "aicm",
+        "backend-rule.mdc",
+      ),
+    ),
+  ).toBe(true);
+
+  // Verify rule content
+  const frontendRule = readTestFile(
+    path.join(
+      "packages",
+      "frontend",
+      ".cursor",
+      "rules",
+      "aicm",
+      "frontend-rule.mdc",
+    ),
+  );
+  expect(frontendRule).toContain("Frontend Development Rules (No Config)");
+
+  const backendRule = readTestFile(
+    path.join(
+      "packages",
+      "backend",
+      ".cursor",
+      "rules",
+      "aicm",
+      "backend-rule.mdc",
+    ),
+  );
+  expect(backendRule).toContain("Backend Development Rules (No Config)");
+
+  // Verify that no root config file exists
+  expect(fileExists("aicm.json")).toBe(false);
+});
+
+test("allow empty root config in workspace mode", async () => {
+  await setupFromFixture("workspaces-empty-root-config");
+
+  const { stdout, code } = await runCommand("install --ci --verbose");
+
+  expect(code).toBe(0);
+  expect(stdout).toContain("🔍 Discovering packages...");
+  expect(stdout).toContain("Found 2 packages with aicm configurations:");
+  expect(stdout).toContain("- packages/backend");
+  expect(stdout).toContain("- packages/frontend");
+  expect(stdout).toContain("📦 Installing configurations...");
+  expect(stdout).toContain("✅ packages/backend (1 rules)");
+  expect(stdout).toContain("✅ packages/frontend (1 rules)");
+  expect(stdout).toContain("Successfully installed 2 rules across 2 packages");
+
+  // Check that rules were installed in both packages
+  expect(
+    fileExists(
+      path.join(
+        "packages",
+        "frontend",
+        ".cursor",
+        "rules",
+        "aicm",
+        "frontend-rule.mdc",
+      ),
+    ),
+  ).toBe(true);
+
+  expect(
+    fileExists(
+      path.join(
+        "packages",
+        "backend",
+        ".cursor",
+        "rules",
+        "aicm",
+        "backend-rule.mdc",
+      ),
+    ),
+  ).toBe(true);
+
+  // Verify rule content
+  const frontendRule = readTestFile(
+    path.join(
+      "packages",
+      "frontend",
+      ".cursor",
+      "rules",
+      "aicm",
+      "frontend-rule.mdc",
+    ),
+  );
+  expect(frontendRule).toContain(
+    "Frontend Development Rules (Empty Root Config)",
+  );
+
+  const backendRule = readTestFile(
+    path.join(
+      "packages",
+      "backend",
+      ".cursor",
+      "rules",
+      "aicm",
+      "backend-rule.mdc",
+    ),
+  );
+  expect(backendRule).toContain(
+    "Backend Development Rules (Empty Root Config)",
+  );
+
+  // Verify that root config file exists but has no rulesDir or presets
+  expect(fileExists("aicm.json")).toBe(true);
+  const rootConfig = JSON.parse(readTestFile("aicm.json"));
+  expect(rootConfig.rulesDir).toBeUndefined();
+  expect(rootConfig.presets).toBeUndefined();
+  expect(rootConfig.workspaces).toBe(true);
+});

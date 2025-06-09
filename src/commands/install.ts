@@ -8,6 +8,7 @@ import {
   RuleFile,
   MCPServers,
   SupportedTarget,
+  detectWorkspacesFromPackageJson,
 } from "../utils/config";
 import { withWorkingDirectory } from "../utils/working-directory";
 import { isCIEnvironment } from "../utils/is-ci";
@@ -679,7 +680,11 @@ export async function install(
       resolvedConfig = await loadConfig(cwd);
     }
 
-    if (resolvedConfig?.config.workspaces) {
+    const shouldUseWorkspaces =
+      resolvedConfig?.config.workspaces ||
+      (!resolvedConfig && detectWorkspacesFromPackageJson(cwd));
+
+    if (shouldUseWorkspaces) {
       return await installWorkspaces(cwd, installOnCI, options.verbose);
     }
 

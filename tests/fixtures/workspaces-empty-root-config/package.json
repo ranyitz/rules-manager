@@ -1,0 +1,6 @@
+{
+  "name": "workspaces-empty-root-config-test",
+  "workspaces": [
+    "packages/*"
+  ]
+}

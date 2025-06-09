@@ -1,0 +1,8 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Backend Development Rules (No Config)
+
+This rule is for the backend package in a workspace with no root config file.

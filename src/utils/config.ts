@@ -61,7 +61,7 @@ export interface ResolvedConfig {
 export const SUPPORTED_TARGETS = ["cursor", "windsurf", "codex"] as const;
 export type SupportedTarget = (typeof SUPPORTED_TARGETS)[number];
 
-function detectWorkspacesFromPackageJson(cwd: string): boolean {
+export function detectWorkspacesFromPackageJson(cwd: string): boolean {
   try {
     const packageJsonPath = path.join(cwd, "package.json");
     if (!fs.existsSync(packageJsonPath)) {
@@ -98,6 +98,7 @@ export function validateConfig(
   config: unknown,
   configFilePath: string,
   cwd: string,
+  isWorkspaceMode: boolean = false,
 ): asserts config is Config {
   if (typeof config !== "object" || config === null) {
     throw new Error(`Config is not an object at ${configFilePath}`);
@@ -111,7 +112,9 @@ export function validateConfig(
     Array.isArray(config.presets) &&
     config.presets.length > 0;
 
-  if (!hasRulesDir && !hasPresets) {
+  // In workspace mode, root config doesn't need rulesDir or presets
+  // since packages will have their own configurations
+  if (!isWorkspaceMode && !hasRulesDir && !hasPresets) {
     throw new Error(
       `Either rulesDir or presets must be specified in config at ${configFilePath}`,
     );
@@ -398,24 +401,38 @@ export async function loadConfig(cwd?: string): Promise<ResolvedConfig | null> {
   const workingDir = cwd || process.cwd();
 
   const configResult = await loadConfigFile(workingDir);
+
   if (!configResult?.config) {
     return null;
   }
 
-  validateConfig(configResult.config, configResult.filepath, workingDir);
+  const configWithDefaults = applyDefaults(configResult.config, workingDir);
+  const isWorkspaceMode = configWithDefaults.workspaces;
 
-  const config = applyDefaults(configResult.config, workingDir);
+  validateConfig(
+    configResult.config,
+    configResult.filepath,
+    workingDir,
+    isWorkspaceMode,
+  );
 
-  const { rules, mcpServers } = await loadAllRules(config, workingDir);
+  const { rules, mcpServers } = await loadAllRules(
+    configWithDefaults,
+    workingDir,
+  );
 
   let rulesWithOverrides = rules;
 
-  if (config.overrides) {
-    rulesWithOverrides = applyOverrides(rules, config.overrides, workingDir);
+  if (configWithDefaults.overrides) {
+    rulesWithOverrides = applyOverrides(
+      rules,
+      configWithDefaults.overrides,
+      workingDir,
+    );
   }
 
   return {
-    config,
+    config: configWithDefaults,
     rules: rulesWithOverrides,
     mcpServers,
   };
