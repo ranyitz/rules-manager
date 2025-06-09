@@ -10,17 +10,15 @@ To use a fixture in your test, use the `setupFromFixture` function from the help
 ```typescript
 import { setupFromFixture, runCommand } from "./helpers";
 
-describe("my test", () => {
-  test("should do something", async () => {
-    // Setup the test directory using a fixture
-    await setupFromFixture("fixture-name");
+test("basic command execution", async () => {
+  // Setup the test directory using a fixture
+  await setupFromFixture("fixture-name");
 
-    // Run your test...
-    const { stdout, stderr, code } = await runCommand("some-command");
+  // Run your test...
+  const { stdout, stderr, code } = await runCommand("some-command");
 
-    // Assert results...
-    expect(code).toBe(0);
-  });
+  // Assert results...
+  expect(code).toBe(0);
 });
 ```
 
@@ -55,9 +53,15 @@ tests/fixtures/e2e/list-with-multiple-rules/
    - Each fixture should be self-contained and independent
 
 3. **Using Fixtures in Tests**
+
    - Use `setupFromFixture(fixtureName)` to initialize test state
    - Verify fixture content exists before running tests
    - For empty starting states, use the `init-empty` fixture
+
+4. **Test Structure**
+   - Use `test("minimal explanation")` format directly without `describe` blocks
+   - Avoid "should" prefix in test names - keep descriptions concise and direct
+   - Each test should be self-contained and independent
 
 ## Anti-patterns to Avoid
 
@@ -93,7 +97,7 @@ Modifying files after fixture setup should be limited to specific test requireme
 
 ```typescript
 // Only modify files when testing file modification functionality
-test("should handle configuration updates", async () => {
+test("configuration updates", async () => {
   await setupFromFixture("config-basic");
 
   // Modifying only when testing specific behavior
@@ -113,7 +117,7 @@ test("should handle configuration updates", async () => {
 
 ```typescript
 // GOOD PRACTICE
-test("should test specific functionality", async () => {
+test("install command with CI flag", async () => {
   // Start with a complete fixture containing all needed files
   await setupFromFixture("my-complete-fixture");
 

@@ -1,8 +1,0 @@
----
-description:
-globs:
-alwaysApply: false
----
-# Test Rule V2
-
-This is a test rule for the v2 configuration format using rulesDir.

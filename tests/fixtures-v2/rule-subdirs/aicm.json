@@ -1,0 +1,11 @@
+{
+  "rulesDir": "./rules",
+  "targets": ["cursor"],
+  "mcpServers": {
+    "subdir-mcp": {
+      "command": "./scripts/subdir-mcp.sh",
+      "args": ["--subdir"],
+      "env": { "SUBDIR_TOKEN": "subdir123" }
+    }
+  }
+}

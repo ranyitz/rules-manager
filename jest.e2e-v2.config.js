@@ -5,6 +5,7 @@ module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
   testMatch: ["**/tests/e2e-v2/**/*.test.ts"],
+  globalSetup: "<rootDir>/tests/e2e-v2/global-setup.ts",
   setupFilesAfterEnv: ["<rootDir>/tests/e2e-v2/setup.ts"],
   testTimeout: 30000,
   collectCoverageFrom: ["src/**/*.ts", "!src/**/*.d.ts", "!src/**/*.test.ts"],

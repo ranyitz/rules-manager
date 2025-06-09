@@ -2,8 +2,8 @@
   "rulesDir": "./rules",
   "targets": ["cursor"],
   "mcpServers": {
-    "test-mcp-v2": {
-      "command": "./scripts/test-mcp-v2.sh",
+    "test-mcp": {
+      "command": "./scripts/test-mcp.sh",
       "args": ["--test"],
       "env": { "TEST_TOKEN": "test123" }
     }

@@ -143,7 +143,10 @@ export async function loadRulesFromDirectory(
 
   for (const filePath of filePaths) {
     const content = await fs.readFile(filePath, "utf8");
-    const ruleName = path.basename(filePath, ".mdc");
+
+    // Preserve directory structure by using relative path from rulesDir
+    const relativePath = path.relative(rulesDir, filePath);
+    const ruleName = relativePath.replace(/\.mdc$/, "").replace(/\\/g, "/");
 
     rules.push({
       name: ruleName,

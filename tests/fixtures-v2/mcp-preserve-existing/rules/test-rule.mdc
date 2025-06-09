@@ -1,0 +1,12 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Test Rule
+
+This is a test rule for MCP preservation testing.
+
+## Content
+
+This rule should be installed while preserving existing MCP servers.

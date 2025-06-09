@@ -30,9 +30,9 @@ The v2 implementation introduces a new configuration format and installation log
 
 ### Test Fixtures
 
-- `tests/fixtures/install-v2-basic/` - Basic v2 configuration fixture
+- `tests/fixtures-v2/single-rule/` - Basic v2 configuration fixture
   - `aicm.json` - V2 config with `rulesDir`, `targets`, `mcpServers`
-  - `rules/test-rule-v2.mdc` - Sample rule file
+  - `rules/test-rule.mdc` - Sample rule file
 
 ## Key Differences from V1
 

@@ -1,0 +1,10 @@
+{
+  "rulesDir": "./rules",
+  "targets": ["cursor"],
+  "mcpServers": {
+    "active-server": {
+      "command": "./scripts/active-server.sh",
+      "env": { "ACTIVE_TOKEN": "active123" }
+    }
+  }
+}

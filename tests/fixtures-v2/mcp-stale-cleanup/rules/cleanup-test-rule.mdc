@@ -1,0 +1,12 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Cleanup Test Rule
+
+This is a test rule for MCP stale cleanup testing.
+
+## Content
+
+This rule should be installed while cleaning up stale AICM servers.

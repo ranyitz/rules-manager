@@ -1,0 +1,12 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# No MCP Rule
+
+This is a rule for testing installation without MCP servers.
+
+## Content
+
+This rule should be installed without creating any MCP configuration.

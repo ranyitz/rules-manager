@@ -1,0 +1,11 @@
+{
+  "rulesDir": "./rules",
+  "targets": ["cursor"],
+  "mcpServers": {
+    "cleanup-mcp": {
+      "command": "./scripts/cleanup-mcp.sh",
+      "args": ["--cleanup"],
+      "env": { "CLEANUP_TOKEN": "cleanup123" }
+    }
+  }
+}

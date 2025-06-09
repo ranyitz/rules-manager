@@ -35,5 +35,6 @@ yarn-error.log*
 
 # Temporary test directory
 tmp-test/
+tmp-test-v2/
 
 PRD
