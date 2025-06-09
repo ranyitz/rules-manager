@@ -1,0 +1,8 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Build Tools Rule
+
+This rule is for the build tools package in the nested workspaces structure.

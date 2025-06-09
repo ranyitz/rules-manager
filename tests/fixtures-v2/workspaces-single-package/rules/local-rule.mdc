@@ -1,0 +1,8 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Local Rule
+
+This is a local rule for the single package workspace.

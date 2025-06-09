@@ -1,0 +1,6 @@
+{
+  "name": "workspaces-partial-configs-test",
+  "workspaces": [
+    "packages/*"
+  ]
+}

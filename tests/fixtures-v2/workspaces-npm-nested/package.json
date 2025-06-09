@@ -1,0 +1,8 @@
+{
+  "name": "workspaces-npm-nested-test",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "tools/*"
+  ]
+}
