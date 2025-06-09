@@ -1,7 +1,0 @@
-{
-  "ides": ["cursor"],
-  "rules": {
-    "topLevelRule": "rules/top-level-rule.js"
-  },
-  "presets": ["./nested-preset-a.json"]
-}

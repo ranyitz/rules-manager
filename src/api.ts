@@ -1,8 +1,5 @@
 import { install as installInternal } from "./commands/install";
-import {
-  InstallOptions,
-  InstallResult,
-} from "./commands/install/install-package";
+import { InstallOptions, InstallResult } from "./commands/install";
 
 /**
  * Install AICM rules based on configuration
@@ -15,12 +12,10 @@ export async function install(
   return installInternal(options);
 }
 
-export {
+export type { InstallOptions, InstallResult } from "./commands/install";
+export type {
+  ResolvedConfig,
   Config,
-  NormalizedConfig,
-  Rule,
-  Rules,
-  RuleMetadata,
-  RuleContent,
-  RuleCollection,
-} from "./types";
+  RuleFile,
+  MCPServers,
+} from "./utils/config";

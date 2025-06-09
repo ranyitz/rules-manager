@@ -19,7 +19,7 @@ interface ExecError extends Error {
 export const projectRoot = path.resolve(__dirname, "../../");
 
 /**
- * Temporary test directory
+ * Temporary test directory for tests
  */
 export const testRootDir = path.join(projectRoot, "tmp-test");
 
@@ -29,7 +29,7 @@ export const testRootDir = path.join(projectRoot, "tmp-test");
 export let testDir = testRootDir;
 
 /**
- * E2E test fixtures directory
+ * E2E test fixtures directory for
  */
 export const e2eFixturesDir = path.join(projectRoot, "tests/fixtures");
 
@@ -91,14 +91,17 @@ export async function setupTestDir(): Promise<string> {
  */
 export async function runCommand(
   args: string = "",
+  testDirOverride?: string,
   options: { env?: Record<string, string> } = {},
 ): Promise<{ stdout: string; stderr: string; code: number }> {
+  const workingDir = testDirOverride || testDir;
+
   try {
     const cliPath = path.join(projectRoot, "dist", "bin", "aicm.js");
     const command = `node ${cliPath} ${args}`;
 
     const { stdout, stderr } = await execPromise(command, {
-      cwd: testDir,
+      cwd: workingDir,
       env: options.env ? { ...process.env, ...options.env } : process.env,
     });
 
@@ -119,7 +122,7 @@ export async function runCommand(
       chalk.red(
         `\n=== COMMAND EXECUTION FAILED (Expected Success) ===\n` +
           `Command: node ${path.join(projectRoot, "dist", "bin", "aicm.js")} ${args}\n` +
-          `Working Directory: ${testDir}\n` +
+          `Working Directory: ${workingDir}\n` +
           `Expected exit code: 0\n` +
           `Actual exit code: ${result.code}\n` +
           `\n--- STDOUT ---\n` +
@@ -142,14 +145,17 @@ export async function runCommand(
  */
 export async function runFailedCommand(
   args: string = "",
+  testDirOverride?: string,
   options: { env?: Record<string, string> } = {},
 ): Promise<{ stdout: string; stderr: string; code: number }> {
+  const workingDir = testDirOverride || testDir;
+
   try {
     const cliPath = path.join(projectRoot, "dist", "bin", "aicm.js");
     const command = `node ${cliPath} ${args}`;
 
     const { stdout, stderr } = await execPromise(command, {
-      cwd: testDir,
+      cwd: workingDir,
       env: options.env ? { ...process.env, ...options.env } : process.env,
     });
 
@@ -158,7 +164,7 @@ export async function runFailedCommand(
     // Command succeeded when we expected failure - show debugging info
     console.error("\n=== COMMAND EXECUTION SUCCEEDED (Expected Failure) ===");
     console.error(`Command: ${command}`);
-    console.error(`Working Directory: ${testDir}`);
+    console.error(`Working Directory: ${workingDir}`);
     console.error(`Expected exit code: 1`);
     console.error(`Actual exit code: ${result.code}`);
     console.error("\n--- STDOUT ---");
@@ -189,14 +195,17 @@ export async function runFailedCommand(
  */
 export async function runCommandRaw(
   args: string = "",
+  testDirOverride?: string,
   options: { env?: Record<string, string> } = {},
 ): Promise<{ stdout: string; stderr: string; code: number }> {
+  const workingDir = testDirOverride || testDir;
+
   try {
     const cliPath = path.join(projectRoot, "dist", "bin", "aicm.js");
     const command = `node ${cliPath} ${args}`;
 
     const { stdout, stderr } = await execPromise(command, {
-      cwd: testDir,
+      cwd: workingDir,
       env: options.env ? { ...process.env, ...options.env } : process.env,
     });
 
@@ -215,23 +224,49 @@ export async function runCommandRaw(
 /**
  * Check if a file exists in the test directory
  */
-export function fileExists(filePath: string): boolean {
-  return fs.existsSync(path.join(testDir, filePath));
+export function fileExists(
+  filePath: string,
+  testDirOverride?: string,
+): boolean {
+  const workingDir = testDirOverride || testDir;
+  return fs.existsSync(path.join(workingDir, filePath));
 }
 
 /**
  * Read a file from the test directory
  */
-export function readTestFile(filePath: string): string {
-  const fullPath = path.join(testDir, filePath);
+export function readTestFile(
+  filePath: string,
+  testDirOverride?: string,
+): string {
+  const workingDir = testDirOverride || testDir;
+  const fullPath = path.join(workingDir, filePath);
   return fs.readFileSync(fullPath, "utf8");
+}
+
+/**
+ * Write a file to the test directory
+ */
+export function writeTestFile(
+  filePath: string,
+  content: string,
+  testDirOverride?: string,
+): void {
+  const workingDir = testDirOverride || testDir;
+  const fullPath = path.join(workingDir, filePath);
+  fs.ensureDirSync(path.dirname(fullPath));
+  fs.writeFileSync(fullPath, content);
 }
 
 /**
  * Get the structure of files in the test directory
  */
-export function getDirectoryStructure(dir: string = ""): string[] {
-  const targetDir = path.join(testDir, dir);
+export function getDirectoryStructure(
+  dir: string = "",
+  testDirOverride?: string,
+): string[] {
+  const workingDir = testDirOverride || testDir;
+  const targetDir = path.join(workingDir, dir);
 
   if (!fs.existsSync(targetDir)) {
     return [];
@@ -242,13 +277,13 @@ export function getDirectoryStructure(dir: string = ""): string[] {
 
   for (const item of items) {
     const itemPath = path.join(targetDir, item);
-    const relativePath = path.relative(testDir, itemPath);
+    const relativePath = path.relative(workingDir, itemPath);
 
     if (fs.statSync(itemPath).isDirectory()) {
       result.push(`${relativePath}/`);
 
       // Get nested items
-      const nestedItems = getDirectoryStructure(relativePath);
+      const nestedItems = getDirectoryStructure(relativePath, testDirOverride);
       result.push(...nestedItems);
     } else {
       result.push(relativePath);
@@ -285,10 +320,13 @@ export async function setupFromFixture(fixtureName: string): Promise<string> {
  */
 export async function runNpmInstall(
   packageName: string,
+  testDirOverride?: string,
 ): Promise<{ stdout: string; stderr: string; code: number }> {
+  const workingDir = testDirOverride || testDir;
+
   try {
     const command = `npm install --no-save ${packageName}`;
-    const { stdout, stderr } = await execPromise(command, { cwd: testDir });
+    const { stdout, stderr } = await execPromise(command, { cwd: workingDir });
     return { stdout, stderr, code: 0 };
   } catch (error: unknown) {
     const execError = error as ExecError;

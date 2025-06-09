@@ -1,0 +1,8 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Frontend Development Rules (Auto-detected)
+
+This rule is for the frontend package in the auto-detected workspaces structure.

@@ -1,6 +1,0 @@
-{
-  "rules": {
-    "presetC-rule1": "rules/preset-c-rule1.js",
-    "presetC-rule2": "rules/preset-c-rule2.js"
-  }
-}

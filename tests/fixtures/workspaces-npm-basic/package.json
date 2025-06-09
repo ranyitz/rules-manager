@@ -1,6 +1,5 @@
 {
-  "name": "workspaces-npm-basic",
-  "private": true,
+  "name": "workspaces-test",
   "workspaces": [
     "packages/*"
   ]

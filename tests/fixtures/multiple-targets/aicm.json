@@ -1,0 +1,11 @@
+{
+  "rulesDir": "./rules",
+  "targets": ["cursor", "windsurf"],
+  "mcpServers": {
+    "multi-target-mcp": {
+      "command": "./scripts/multi-target-mcp.sh",
+      "args": ["--multi"],
+      "env": { "MULTI_TOKEN": "multi123" }
+    }
+  }
+}

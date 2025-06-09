@@ -1,8 +1,12 @@
 ---
-alwaysApply: true
+description:
+globs:
+alwaysApply: false
 ---
-
-## Development Standards
+---
+description: "Always applied rule for Codex"
+type: "always"
+---
 
 - Use yarn for package management
 - Development workflow: e2e tests → implementation → verification

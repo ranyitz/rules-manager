@@ -1,0 +1,7 @@
+{
+  "rulesDir": "./rules",
+  "targets": ["cursor"],
+  "rules": {
+    "missing-rule": "./rules/does-not-exist.mdc"
+  }
+}

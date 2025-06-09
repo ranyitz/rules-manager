@@ -8,117 +8,105 @@ A CLI tool for managing Agentic IDE configurations across projects
 
 ## Why
 
-With the rise of Agentic IDEs, we have an opportunity to enforce best practices through rules. However, these rules are typically isolated within individual projects.
-**aicm** is a CLI tool for distributing Agentic IDE configurations, rules, and MCPs across projects. It leverages node package managers, copy configurations from node_modules to the correct locations in your file system.
+Agentic IDEs like Cursor enable AI-driven development through custom rules and configurations. However, sharing these configurations across projects and teams is challenging.
+
+**aicm** solves this by distributing AI rules and MCP servers through npm packages, automatically installing them to the correct IDE locations.
 
 ## Getting Started
 
-Since aicm is not a package manager, begin by creating an npm package that contains your rules and MCP configurations.
+The easiest way to get started with aicm is by using **presets** - npm packages containing rules and MCP configurations that you can install in any project.
 
-Consider the following npm package structure:
+### Using a preset
+
+1. **Install a preset npm package**:
+
+```bash
+npm install --save-dev @yourteam/ai-preset
+```
+
+2. **Create an `aicm.json` file** in your project:
+
+```json
+{ "presets": ["@yourteam/ai-preset"] }
+```
+
+3. **Install the rules and MCPs**:
+
+```bash
+npx -y aicm install
+```
+
+4. **Add a prepare script** to your `package.json` for automatic installation:
+
+```json
+{
+  "scripts": {
+    "prepare": "npx aicm install"
+  }
+}
+```
+
+The rules are now installed in `.cursor/rules/aicm/` and any MCP servers are configured in `.cursor/mcp.json`.
+
+### Creating a Preset
+
+To create a reusable preset for your team:
+
+1. **Create an npm package** with the following structure:
 
 ```
 @myteam/ai-tools
 ├── package.json
+├── aicm.json
 └── rules/
     ├── typescript.mdc
     └── react.mdc
 ```
 
-1. **Point to the path within the npm package**
-
-In your project's `aicm.json`, reference the package and the specific rule:
+2. **Configure the preset's `aicm.json`**:
 
 ```json
 {
-  "rules": {
-    "typescript": "@myteam/ai-tools/rules/typescript.mdc",
-    "react": "@myteam/ai-tools/rules/react.mdc"
-  },
+  "rulesDir": "./rules",
   "mcpServers": {
-    "my-mcp": {
-      "url": "https://example.com/sse"
-    }
+    "my-mcp": { "url": "https://example.com/sse" }
   }
 }
 ```
 
-2. **Add a prepare script** to your `package.json`:
+3. **Publish the package** and reference it in your projects:
+
+```json
+{ "presets": ["@myteam/ai-tools"] }
+```
+
+> **Note:** This is syntactic sugar for `@myteam/ai-tools/aicm.json`. Both forms are equivalent.
+
+### Using Local Rules
+
+For project-specific rules, you can specify `rulesDir` in your `aicm.json` config. This approach allows you to write rules once and automatically generate them for all configured targets:
 
 ```json
 {
-  "scripts": {
-    "prepare": "npx -y aicm install"
-  }
+  "rulesDir": "./rules"
 }
 ```
-
-Now, when you run `npm install`, the rules will be added to `.cursor/rules/aicm/` and the mcps to `.cursor/mcp.json`.
-
-### Using Presets
-
-Presets allow you to bundle multiple rules & mcps into a single configuration that can be shared across projects.
-
-1. **Create a preset package or directory**
-
-Create an npm package with your rule definitions in an `aicm.json` file:
-
-> `@myteam/ai-tools/aicm.json`
-
-```json
-{
-  "rules": {
-    "typescript": "./rules/typescript.mdc",
-    "react": "./rules/react.mdc"
-  },
-  "mcpServers": {
-    "my-mcp": {
-      "url": "https://example.com/sse"
-    }
-  }
-}
-```
-
-2. **Reference the preset in your project**
-
-In your project's `aicm.json`, reference the preset by its npm package or directory name:
-
-```json
-{
-  "presets": ["@myteam/ai-tools"]
-}
-```
-
-When you run `npx aicm install`, all rules from the preset will be installed to `.cursor/rules/aicm/` and all mcps from the preset will be installed to `.cursor/mcp.json`.
 
 ### Notes
 
 - Generated rules are always placed in a subdirectory for deterministic cleanup and easy gitignore.
-- Users may add `.cursor/rules/aicm/` and `.aicm/` (for Windsurf/Codex) to their `.gitignore` if they do not want to track generated rules.
+- Users may add `.cursor/rules/aicm/` and `.aicm/` (for Windsurf/Codex) to `.gitignore` if they do not want to track generated rules.
 
-### Overriding and Disabling Rules and MCP Servers from Presets
+### Overrides
 
-When you use a preset, you can override or disable any rule or mcpServer from the preset in your own `aicm.json` configuration:
-
-- **Override**: To override a rule or mcpServer, specify the same key in your config with a new value. The value in your config will take precedence over the preset.
-- **Disable**: To disable a rule or mcpServer from a preset, set its value to `false` in your config.
-
-**Example:**
+You can disable or replace specific rules provided by presets using the `overrides` field:
 
 ```json
 {
-  "ides": ["cursor"],
-  "presets": ["@company/ai-rules/aicm.json"],
-  "rules": {
+  "presets": ["@company/ai-rules"],
+  "overrides": {
     "rule-from-preset-a": "./rules/override-rule.mdc",
     "rule-from-preset-b": false
-  },
-  "mcpServers": {
-    "mcp-from-preset-a": {
-      "command": "./scripts/override-mcp.sh",
-      "env": { "MCP_TOKEN": "override" }
-    },
-    "mcp-from-preset-b": false
   }
 }
 ```
@@ -127,27 +115,27 @@ When you use a preset, you can override or disable any rule or mcpServer from th
 
 We'll install [an npm package](https://github.com/ranyitz/pirate-coding) containing a simple preset to demonstrate how aicm works.
 
-1. Install an npm package containing a preset
+1. **Install the demo preset package**:
 
 ```bash
 npm install --save-dev pirate-coding
 ```
 
-2. Create an `aicm.json` file in your project
+2. **Create an `aicm.json` file** in your project:
 
 ```bash
 echo '{ "presets": ["pirate-coding"] }' > aicm.json
 ```
 
-3. Install all rules & mcps from your configuration
+3. **Install all rules & MCPs from your configuration**:
 
 ```bash
-npx -y aicm install
+npx aicm install
 ```
 
 This command installs all configured rules and MCPs to their IDE-specific locations.
 
-After installation, open Cursor and ask it to do something. Your AI assistant will respond with pirate-themed coding advice. You can also ask it about the aicm library which uses https://gitmcp.io/ to give you advise based on the latest documentation.
+After installation, open Cursor and ask it to do something. Your AI assistant will respond with pirate-themed coding advice. You can also ask it about the aicm library which uses https://gitmcp.io/ to give you advice based on the latest documentation.
 
 ## Security Note
 
@@ -157,7 +145,7 @@ To prevent [prompt-injection](https://en.wikipedia.org/wiki/Prompt_injection), u
 
 aicm supports workspaces by automatically discovering and installing configurations across multiple packages in your repository.
 
-To enable workspaces mode, set the `workspaces` property to `true` in your root `aicm.json`:
+You can enable workspaces mode by setting the `workspaces` property to `true` in your root `aicm.json`:
 
 ```json
 {
@@ -165,7 +153,9 @@ To enable workspaces mode, set the `workspaces` property to `true` in your root 
 }
 ```
 
-This will:
+aicm automatically detects workspaces if your `package.json` contains a `workspaces` configuration:
+
+### How It Works
 
 1. **Discover packages**: Automatically find all directories containing `aicm.json` files in your repository
 2. **Install per package**: Install rules and MCPs for each package individually in their respective directories
@@ -196,113 +186,34 @@ Running `npx aicm install` will install rules for each package in their respecti
 
 ## Configuration
 
-To configure aicm, use either:
-
-- a root-level `aicm.json` file, **or**
-- an `aicm` key in your project's `package.json`.
-
-Example `aicm.json`:
+Create an `aicm.json` file in your project root, or an `aicm` key in your project's `package.json`.
 
 ```json
 {
-  "ides": ["cursor"],
-  "presets": ["@my-team/ai-tools/my-aicm.json"],
-  "rules": {
-    "team-rules/team-standards": "@my-team/ai-tools/rules/team-standards.mdc"
-  },
-  "mcpServers": {
-    "remote-mcp": {
-      "url": "https://example.com/sse"
-    }
-  }
+  "rulesDir": "./rules",
+  "targets": ["cursor"],
+  "presets": [],
+  "overrides": {},
+  "mcpServers": {}
 }
 ```
 
-- **ides**: Array of IDE names where rules should be installed. Currently supported values:
-
-  - `"cursor"`: For the Cursor IDE
-  - `"windsurf"`: For the Windsurf IDE
-  - `"codex"`: For the Codex Agent
-
-  > **Note:** The 'ides' field is default to `["cursor"]` if not specified.
-
-- **rules**: Object containing rule configurations.
-  If you want to install every rule from a single directory, you can also use a
-  string as a shortcut:
-
-  ```json
-  {
-    "rules": "./rules/*"
-  }
-  ```
-
-  - **rule-name**: A unique identifier for the rule. Can include a directory path to install the rule to a specific directory.
-  - **source-location**: Location of the rule file (path within an npm package or local path). Supports glob patterns for automatic file discovery.
-
-#### Glob Pattern Support
-
-Rules support glob patterns for automatic discovery of multiple `.mdc` files. This is particularly useful when you have multiple related rules organized in directories.
-
-```json
-{
-  "rules": {
-    "typescript": "./rules/typescript/*.mdc",
-    "tests": "./rules/testing/**/*.mdc"
-  }
-}
-```
-
-The key becomes the base namespace for discovered files:
-
-- `./rules/typescript/strict.mdc` → installed as `typescript/strict`
-- `./rules/typescript/interfaces.mdc` → installed as `typescript/interfaces`
-- `./rules/testing/unit/setup.mdc` → installed as `tests/unit/setup`
-
-**Installation Behavior:**
-
-- Glob patterns are expanded during installation
-- Only `.mdc` files are included
-- Files are sorted alphabetically for consistent behavior
-
-- **mcpServers**: Object containing MCP server configurations. Each key is a unique server name, and the value is an object with either:
-
-  - **command**: The command or script to run (with optional **args** and **env**), or
-  - **url**: The URL to fetch the MCP config from (with optional **env**)
-
-- **presets**: Array of preset configurations to include. Each preset is a path to a JSON file (npm package or local path) that contains additional rules and mcpServers.
-
-  - Preset files should contain a `rules` and `mcpServers` objects with the same structure as the main configuration.
+- **rulesDir**: Directory containing all rule files.
+- **targets**: IDEs/Agent targets where rules should be installed. Defaults to `["cursor"]`.
+- **presets**: List of preset packages or paths to include.
+- **overrides**: Map of rule names to `false` (disable) or a replacement file path.
+- **mcpServers**: MCP server configurations.
+- **workspaces**: Set to `true` to enable workspace mode. If not specified, aicm will automatically detect workspaces from your `package.json`.
 
 ### MCP Server Installation
 
-- **Cursor**: MCP server configs are written to `.cursor/mcp.json` (see Cursor docs for latest path).
-- **Windsurf**: Windsurf does not support project mcpServers. MCP server configuration is not installed for Windsurf projects.
+- **Cursor**: MCP server configs are written to `.cursor/mcp.json`.
 
-### Rule Source Types
-
-The type of rule is automatically detected based on the source format:
-
-#### NPM Source
-
-Rules provided by NPM packages. The package must be installed either globally or in your project's `node_modules`. Sources that start with `@` or don't contain start with path separators are detected as NPM packages.
-
-```json
-"react-best-practices": "@my-team/ai-tools/aicm-react"
-```
-
-#### Local Source
-
-Rules stored locally in your project or filesystem. Any path containing slashes or backslashes is detected as a local file path.
-
-```json
-"personal-rules": "./rules/custom.mdc"
-```
-
-## Supported IDEs
+## Supported Targets
 
 - **Cursor**: Rules are installed as individual `.mdc` files in the Cursor rules directory (`.cursor/rules/aicm/`), mcp servers are installed to `.cursor/mcp.json`
 - **Windsurf**: Rules are installed in the `.aicm` directory which should be added to your `.gitignore` file. Our approach for Windsurf is to create links from the `.windsurfrules` file to the respective rules in the `.aicm` directory. There is no support for local mcp servers at the moment.
-- **Codex**: Rules are installed in the `.aicm` directory and referenced from `AGENTS.md` using the same markers as Windsurf.
+- **Codex**: Rules are installed in the `.aicm` directory and referenced from `AGENTS.md`.
 
 ## Commands
 
@@ -356,7 +267,7 @@ const customConfig = {
   ides: ["cursor"],
   rules: {
     typescript: "./rules/typescript.mdc",
-    react: "@org/rules/react.mdc",
+    react: "./rules/react.mdc",
   },
 };
 

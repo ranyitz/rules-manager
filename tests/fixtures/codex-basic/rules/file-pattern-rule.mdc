@@ -1,8 +1,13 @@
 ---
-globs: "*.ts"
+description:
+globs:
+alwaysApply: false
 ---
-
-## TypeScript Best Practices
+---
+description: "File pattern rule for TypeScript files"
+type: "file-pattern"
+patterns: ["*.ts"]
+---
 
 - Use strict type checking
 - Prefer interfaces over types for public APIs

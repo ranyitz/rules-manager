@@ -1,7 +1,5 @@
 {
-  "rules": {
-    "preset-rule": "./rules/preset-rule.mdc"
-  },
+  "rulesDir": "./preset-rules",
   "mcpServers": {
     "preset-mcp": {
       "command": "./scripts/preset-mcp.sh",

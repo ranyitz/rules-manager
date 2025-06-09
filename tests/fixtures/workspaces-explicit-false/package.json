@@ -1,0 +1,6 @@
+{
+  "name": "workspaces-explicit-false-test",
+  "workspaces": [
+    "packages/*"
+  ]
+}

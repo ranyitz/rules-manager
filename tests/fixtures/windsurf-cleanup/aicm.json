@@ -1,0 +1,11 @@
+{
+  "rulesDir": "./rules",
+  "targets": ["windsurf"],
+  "mcpServers": {
+    "windsurf-cleanup-mcp": {
+      "command": "./scripts/windsurf-cleanup-mcp.sh",
+      "args": ["--windsurf-cleanup"],
+      "env": { "WINDSURF_TOKEN": "windsurf123" }
+    }
+  }
+}

@@ -1,8 +1,0 @@
----
-description:
-globs:
-alwaysApply: false
----
-# Explicit Rule
-
-This rule is defined explicitly in the configuration and not discovered through glob patterns.

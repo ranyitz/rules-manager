@@ -1,8 +1,14 @@
 ---
+description:
+globs:
+alwaysApply: false
+---
+---
+description: "Development Standards"
 alwaysApply: true
 ---
 
-## Development Standards
+# Development Standards
 
 - Use yarn for package management
 - Development workflow: e2e tests → implementation → verification

@@ -1,0 +1,8 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Simple Rule
+
+This is a simple rule without MCP configuration.

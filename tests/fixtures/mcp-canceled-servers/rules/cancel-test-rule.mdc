@@ -1,0 +1,12 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Cancel Test Rule
+
+This is a test rule for MCP canceled servers testing.
+
+## Content
+
+This rule should be installed while handling canceled MCP servers.

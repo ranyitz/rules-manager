@@ -1,0 +1,12 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Fresh Windsurf Rule
+
+This is fresh Windsurf content.
+
+## Content
+
+This rule should replace the old content in the .aicm directory.

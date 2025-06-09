@@ -17,12 +17,15 @@ dist/
 # windsurf
 .windsurfrules
 !tests/fixtures/*/.windsurfrules
+
+# codex
 AGENTS.md
 !tests/fixtures/*/AGENTS.md
 
 # aicm
 .aicm
 !tests/fixtures/*/.aicm
+
 # Logs
 logs/
 *.log

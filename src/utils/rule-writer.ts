@@ -1,6 +1,5 @@
 import fs from "fs-extra";
 import path from "node:path";
-import { getIdePaths } from "./rule-status";
 import { RuleCollection, RuleContent } from "../types";
 import { writeRulesFile, generateRulesFileContent } from "./rules-file-writer";
 
@@ -9,20 +8,18 @@ import { writeRulesFile, generateRulesFileContent } from "./rules-file-writer";
  * @param collection The collection of rules to write
  */
 export function writeRulesToTargets(collection: RuleCollection): void {
-  const idePaths = getIdePaths();
-
   // Write Cursor rules
   if (collection.cursor.length > 0) {
-    writeCursorRules(collection.cursor, idePaths.cursor);
+    writeCursorRules(collection.cursor, ".cursor/rules/aicm");
   }
 
   // Write Windsurf rules
   if (collection.windsurf.length > 0) {
-    writeRulesForFile(collection.windsurf, idePaths.windsurf, ".windsurfrules");
+    writeRulesForFile(collection.windsurf, ".aicm", ".windsurfrules");
   }
 
   if (collection.codex.length > 0) {
-    writeRulesForFile(collection.codex, idePaths.codex, "AGENTS.md");
+    writeRulesForFile(collection.codex, ".aicm", "AGENTS.md");
   }
 }
 

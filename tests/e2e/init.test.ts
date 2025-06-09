@@ -1,36 +1,40 @@
+import path from "path";
+import fs from "fs-extra";
 import {
   setupFromFixture,
   runCommand,
   fileExists,
   readTestFile,
+  testDir,
 } from "./helpers";
-import fs from "fs-extra";
-import path from "path";
-import { testDir } from "./helpers";
 
-describe("aicm init command with fixtures", () => {
-  test("should create default config file", async () => {
-    await setupFromFixture("init-empty");
+test("should create default config file", async () => {
+  await setupFromFixture("no-config");
 
-    await runCommand("init");
+  const { stdout, code } = await runCommand("init");
 
-    expect(fileExists("aicm.json")).toBe(true);
+  expect(code).toBe(0);
+  expect(stdout).toContain("Configuration file location:");
 
-    const config = JSON.parse(readTestFile("aicm.json"));
-    expect(config).toEqual({ rules: {} });
-  });
+  expect(fileExists("aicm.json")).toBe(true);
 
-  test("should not overwrite existing config", async () => {
-    await setupFromFixture("init-empty");
+  const config = JSON.parse(readTestFile("aicm.json"));
+  expect(config).toEqual({ rules: {} });
+});
 
-    const customConfig = { ides: ["custom"], rules: {} };
-    fs.writeJsonSync(path.join(testDir, "aicm.json"), customConfig);
+test("should not overwrite existing config", async () => {
+  await setupFromFixture("no-config");
 
-    await runCommand("init");
+  const customConfig = { ides: ["custom"], rules: {} };
+  fs.writeJsonSync(path.join(testDir, "aicm.json"), customConfig);
 
-    expect(fileExists("aicm.json")).toBe(true);
+  const { stdout, code } = await runCommand("init");
 
-    const config = JSON.parse(readTestFile("aicm.json"));
-    expect(config).toEqual(customConfig);
-  });
+  expect(code).toBe(0);
+  expect(stdout).toContain("Configuration file already exists!");
+
+  expect(fileExists("aicm.json")).toBe(true);
+
+  const config = JSON.parse(readTestFile("aicm.json"));
+  expect(config).toEqual(customConfig);
 });

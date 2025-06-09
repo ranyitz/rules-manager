@@ -1,0 +1,16 @@
+{
+  "rulesDir": "./rules",
+  "targets": ["cursor"],
+  "mcpServers": {
+    "existing-aicm-server": {
+      "command": "./scripts/updated-existing-server.sh",
+      "args": ["--updated"],
+      "env": { "UPDATED_TOKEN": "updated456" }
+    },
+    "new-aicm-server": {
+      "command": "./scripts/new-aicm-server.sh",
+      "args": ["--new"],
+      "env": { "NEW_TOKEN": "new123" }
+    }
+  }
+}

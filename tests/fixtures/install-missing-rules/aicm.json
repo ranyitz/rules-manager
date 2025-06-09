@@ -1,6 +1,0 @@
-{
-  "ides": ["cursor"],
-  "rules": {
-    "missing-rule": "./rules/does-not-exist.mdc"
-  }
-}

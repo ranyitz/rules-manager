@@ -1,0 +1,8 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Main Rule (Explicit False)
+
+This rule should be installed in the root directory, not as a workspace.

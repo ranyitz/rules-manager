@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "user-server": {
+      "command": "./user-scripts/user-server.sh",
+      "env": { "USER_TOKEN": "user789" }
+    },
+    "existing-aicm-server": {
+      "command": "./scripts/old-existing-server.sh",
+      "args": ["--old"],
+      "env": { "OLD_TOKEN": "old456" },
+      "aicm": true
+    },
+    "stale-aicm-server": {
+      "command": "./scripts/stale-server.sh",
+      "env": { "STALE_TOKEN": "stale789" },
+      "aicm": true
+    }
+  },
+  "userSettings": {
+    "preference": "keep-this"
+  }
+}

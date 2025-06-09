@@ -1,20 +1,41 @@
 # Test Fixtures
 
-This directory contains all test fixtures for the aicm project, organized by test type.
+This directory contains test fixtures specifically for AICM tests. These fixtures are separate from the v1 fixtures to avoid interference between test suites.
 
-## Directory Structure
+## Available Fixtures
 
-- `e2e/` - Fixtures for end-to-end tests
-- `unit/` - Fixtures for unit tests
+### `install-basic`
 
-## E2E Fixtures
+Basic configuration with:
 
-The e2e fixtures directory contains subdirectories representing initial states for e2e tests.
-Each subdirectory is a complete environment with the necessary files for testing specific functionality.
+- Single rule in `./rules/test-rule.mdc`
+- MCP server configuration
+- Cursor target
 
-For more details on E2E fixtures, see [E2E_TESTS.md](../E2E_TESTS.md).
+### `no-config`
 
-## Unit Fixtures
+Empty directory with no configuration file for testing error scenarios.
 
-The unit fixtures directory contains individual files used by unit tests.
-These are typically smaller and focused on specific components being tested.
+### `install-multiple-rules`
+
+Configuration with multiple rules:
+
+- `./rules/rule1.mdc`
+- `./rules/rule2.mdc`
+- `./rules/subdir/rule3.mdc`
+
+### `install-multiple-targets`
+
+Configuration targeting both Cursor and Windsurf IDEs.
+
+### `install-no-mcp`
+
+Configuration without MCP servers, only rules.
+
+### `install-empty-rules`
+
+Configuration with empty rules directory for testing edge cases.
+
+## Usage
+
+These fixtures are used by the test suite in `tests/e2e/` and are automatically loaded by the `setupFromFixture()` helper function.

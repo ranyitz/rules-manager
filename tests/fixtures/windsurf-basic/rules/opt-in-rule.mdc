@@ -1,8 +1,14 @@
 ---
+description:
+globs:
+alwaysApply: false
+---
+---
+description: "E2E Testing Best Practices"
 alwaysApply: false
 ---
 
-## E2E Testing Best Practices
+# E2E Testing Best Practices
 
 - Store initial test state in fixtures
 - Reference documentation: tests/E2E_TESTS.md

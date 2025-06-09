@@ -1,0 +1,12 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Nested Rule
+
+This is a nested rule in a subdirectory.
+
+## Nested Rule Content
+
+This rule should be installed while preserving the directory structure.

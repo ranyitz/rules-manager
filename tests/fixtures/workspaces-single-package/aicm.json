@@ -1,7 +1,5 @@
 {
   "workspaces": true,
-  "ides": ["cursor"],
-  "rules": {
-    "local-rule": "./rules/local-rule.mdc"
-  }
+  "rulesDir": "./rules",
+  "targets": ["cursor"]
 }

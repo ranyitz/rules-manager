@@ -1,0 +1,8 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# UI Components Rule
+
+This rule is for the UI components package in the nested workspaces structure.

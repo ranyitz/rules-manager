@@ -1,6 +1,6 @@
 {
-  "ides": ["cursor", "windsurf", "codex"],
-  "rules": "./rules/*",
+  "targets": ["cursor", "codex"],
+  "rulesDir": "rules",
   "mcpServers": {
     "context7": {
       "command": "npx",

@@ -1,6 +1,7 @@
 ---
-description: "Rule for testing appending markers"
-type: "always"
+description:
+globs:
+alwaysApply: false
 ---
 
 # No Marker Rule

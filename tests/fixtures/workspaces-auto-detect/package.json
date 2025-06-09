@@ -1,0 +1,6 @@
+{
+  "name": "workspaces-auto-detect-test",
+  "workspaces": [
+    "packages/*"
+  ]
+}

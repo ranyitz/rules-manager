@@ -1,10 +1,8 @@
 import chalk from "chalk";
-import { getConfig } from "../utils/config";
-import { checkRuleStatus } from "../utils/rule-status";
-import { detectRuleType } from "../utils/rule-detector";
+import { loadConfig } from "../utils/config";
 
 export async function listCommand(): Promise<void> {
-  const config = await getConfig();
+  const config = await loadConfig();
 
   if (!config) {
     console.log(chalk.red("Configuration file not found!"));
@@ -12,7 +10,7 @@ export async function listCommand(): Promise<void> {
     return;
   }
 
-  if (!config.rules || Object.keys(config.rules).length === 0) {
+  if (!config.rules || config.rules.length === 0) {
     console.log(chalk.yellow("No rules defined in configuration."));
     console.log(`Edit your ${chalk.blue("aicm.json")} file to add rules.`);
     return;
@@ -21,19 +19,11 @@ export async function listCommand(): Promise<void> {
   console.log(chalk.blue("Configured Rules:"));
   console.log(chalk.dim("─".repeat(50)));
 
-  for (const [ruleName, source] of Object.entries(config.rules)) {
-    if (source === false) continue;
-    const ruleType = detectRuleType(source);
-    const status = checkRuleStatus(ruleName, config.ides);
-    const statusColor = status
-      ? chalk.green("Installed")
-      : chalk.yellow("Not installed");
-
-    console.log(`${chalk.bold(ruleName)}`);
-    console.log(`  Source: ${source}`);
-    console.log(`  Type: ${ruleType} (auto-detected)`);
-    console.log(`  Status: ${statusColor}`);
-
-    console.log(chalk.dim("─".repeat(50)));
+  for (const rule of config.rules) {
+    console.log(
+      `${chalk.bold(rule.name)} - ${rule.sourcePath} ${
+        rule.presetName ? `[${rule.presetName}]` : ""
+      }`,
+    );
   }
 }

@@ -1,8 +1,4 @@
 {
-  "ides": ["cursor", "windsurf"],
-  "rules": {
-    "existing-rule": "./rules/existing-rule.mdc",
-    "new-rule": "./rules/new-rule.mdc"
-  },
-  "presets": []
+  "rulesDir": "./rules",
+  "targets": ["cursor", "windsurf"]
 }
