@@ -1,0 +1,8 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Frontend Development Rules (Empty Root Config)
+
+This rule is for the frontend package in a workspace with an empty root config file.
