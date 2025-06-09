@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "user-server": {
+      "command": "./user-scripts/user-server.sh",
+      "env": { "USER_TOKEN": "user123" }
+    },
+    "canceled-server": {
+      "command": "./scripts/canceled-server.sh",
+      "env": { "CANCELED_TOKEN": "canceled456" },
+      "aicm": true
+    }
+  },
+  "userConfig": {
+    "setting": "preserve-this"
+  }
+}

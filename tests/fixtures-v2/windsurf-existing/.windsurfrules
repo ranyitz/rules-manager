@@ -1,0 +1,13 @@
+Manually written rules
+
+<rules>
+Some custom rules content here
+</rules>
+
+<!-- AICM:BEGIN -->
+<!-- WARNING: Everything between these markers will be overwritten during installation -->
+
+The following rules apply to all files in the project:
+- .aicm/existing-rule.md
+
+<!-- AICM:END -->

@@ -13,12 +13,17 @@ dist/
 # cursor
 .cursor
 !tests/fixtures/*/.cursor/
+!tests/fixtures-v2/*/.cursor/
 
 # windsurf
 .windsurfrules
 !tests/fixtures/*/.windsurfrules
+!tests/fixtures-v2/*/.windsurfrules
+
+# codex
 AGENTS.md
 !tests/fixtures/*/AGENTS.md
+!tests/fixtures-v2/*/AGENTS.md
 
 # aicm
 .aicm

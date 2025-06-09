@@ -1,0 +1,13 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+---
+description: "Rule for testing appending markers"
+type: "always"
+---
+
+# No Marker Rule
+
+This rule is used to test appending markers to an existing file without markers.

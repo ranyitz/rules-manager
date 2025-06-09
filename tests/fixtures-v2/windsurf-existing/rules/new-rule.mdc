@@ -1,0 +1,13 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+---
+description: "New Rule"
+alwaysApply: false
+---
+
+# New Rule
+
+- This is a new rule that should be added to the .windsurfrules file

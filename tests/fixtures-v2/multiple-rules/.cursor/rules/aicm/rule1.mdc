@@ -1,0 +1,8 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Rule 1
+
+This is the first test rule for v2 configuration.
