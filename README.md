@@ -145,7 +145,7 @@ To prevent [prompt-injection](https://en.wikipedia.org/wiki/Prompt_injection), u
 
 aicm supports workspaces by automatically discovering and installing configurations across multiple packages in your repository.
 
-To enable workspaces mode, set the `workspaces` property to `true` in your root `aicm.json`:
+You can enable workspaces mode by setting the `workspaces` property to `true` in your root `aicm.json`:
 
 ```json
 {
@@ -153,7 +153,9 @@ To enable workspaces mode, set the `workspaces` property to `true` in your root 
 }
 ```
 
-This will:
+aicm automatically detects workspaces if your `package.json` contains a `workspaces` configuration:
+
+### How It Works
 
 1. **Discover packages**: Automatically find all directories containing `aicm.json` files in your repository
 2. **Install per package**: Install rules and MCPs for each package individually in their respective directories
@@ -201,7 +203,7 @@ Create an `aicm.json` file in your project root, or an `aicm` key in your projec
 - **presets**: List of preset packages or paths to include.
 - **overrides**: Map of rule names to `false` (disable) or a replacement file path.
 - **mcpServers**: MCP server configurations.
-- **workspaces**: Set to `true` to enable workspace mode.
+- **workspaces**: Set to `true` to enable workspace mode. If not specified, aicm will automatically detect workspaces from your `package.json`.
 
 ### MCP Server Installation
 

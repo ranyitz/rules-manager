@@ -61,14 +61,36 @@ export interface ResolvedConfig {
 export const SUPPORTED_TARGETS = ["cursor", "windsurf", "codex"] as const;
 export type SupportedTarget = (typeof SUPPORTED_TARGETS)[number];
 
-export function applyDefaults(config: RawConfig): Config {
+function detectWorkspacesFromPackageJson(cwd: string): boolean {
+  try {
+    const packageJsonPath = path.join(cwd, "package.json");
+    if (!fs.existsSync(packageJsonPath)) {
+      return false;
+    }
+
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+    return Boolean(packageJson.workspaces);
+  } catch {
+    return false;
+  }
+}
+
+export function applyDefaults(config: RawConfig, cwd?: string): Config {
+  const workingDir = cwd || process.cwd();
+
+  // Auto-detect workspaces if not explicitly set
+  const workspaces =
+    config.workspaces !== undefined
+      ? config.workspaces
+      : detectWorkspacesFromPackageJson(workingDir);
+
   return {
     rulesDir: config.rulesDir,
     targets: config.targets || ["cursor"],
     presets: config.presets || [],
     overrides: config.overrides || {},
     mcpServers: config.mcpServers || {},
-    workspaces: config.workspaces || false,
+    workspaces,
   };
 }
 
@@ -382,7 +404,7 @@ export async function loadConfig(cwd?: string): Promise<ResolvedConfig | null> {
 
   validateConfig(configResult.config, configResult.filepath, workingDir);
 
-  const config = applyDefaults(configResult.config);
+  const config = applyDefaults(configResult.config, workingDir);
 
   const { rules, mcpServers } = await loadAllRules(config, workingDir);
 

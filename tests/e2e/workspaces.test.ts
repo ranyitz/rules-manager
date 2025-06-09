@@ -315,3 +315,97 @@ test("work quietly by default without verbose flag", async () => {
   expect(stdout).not.toContain("✅ packages/backend (1 rules)");
   expect(stdout).toContain("Successfully installed 2 rules across 2 packages");
 });
+
+test("automatically detect workspaces from package.json", async () => {
+  await setupFromFixture("workspaces-auto-detect");
+
+  const { stdout, code } = await runCommand("install --ci --verbose");
+
+  expect(code).toBe(0);
+  expect(stdout).toContain("🔍 Discovering packages...");
+  expect(stdout).toContain("Found 2 packages with aicm configurations:");
+  expect(stdout).toContain("- packages/backend");
+  expect(stdout).toContain("- packages/frontend");
+  expect(stdout).toContain("📦 Installing configurations...");
+  expect(stdout).toContain("✅ packages/backend (1 rules)");
+  expect(stdout).toContain("✅ packages/frontend (1 rules)");
+  expect(stdout).toContain("Successfully installed 2 rules across 2 packages");
+
+  // Check that rules were installed in both packages
+  expect(
+    fileExists(
+      path.join(
+        "packages",
+        "frontend",
+        ".cursor",
+        "rules",
+        "aicm",
+        "frontend-rule.mdc",
+      ),
+    ),
+  ).toBe(true);
+
+  expect(
+    fileExists(
+      path.join(
+        "packages",
+        "backend",
+        ".cursor",
+        "rules",
+        "aicm",
+        "backend-rule.mdc",
+      ),
+    ),
+  ).toBe(true);
+
+  // Verify rule content
+  const frontendRule = readTestFile(
+    path.join(
+      "packages",
+      "frontend",
+      ".cursor",
+      "rules",
+      "aicm",
+      "frontend-rule.mdc",
+    ),
+  );
+  expect(frontendRule).toContain("Frontend Development Rules (Auto-detected)");
+
+  const backendRule = readTestFile(
+    path.join(
+      "packages",
+      "backend",
+      ".cursor",
+      "rules",
+      "aicm",
+      "backend-rule.mdc",
+    ),
+  );
+  expect(backendRule).toContain("Backend Development Rules (Auto-detected)");
+});
+
+test("explicit workspaces: false overrides auto-detection from package.json", async () => {
+  await setupFromFixture("workspaces-explicit-false");
+
+  const { stdout, code } = await runCommand("install --ci --verbose");
+
+  expect(code).toBe(0);
+  expect(stdout).not.toContain("🔍 Discovering packages...");
+  expect(stdout).not.toContain("Found");
+  expect(stdout).not.toContain("📦 Installing configurations...");
+  expect(stdout).toContain("Rules installation completed");
+
+  // Check that rule was installed in root directory, not as workspace
+  expect(
+    fileExists(path.join(".cursor", "rules", "aicm", "main-rule.mdc")),
+  ).toBe(true);
+
+  // Check that no workspace packages were processed
+  expect(fileExists(path.join("packages", "frontend", ".cursor"))).toBe(false);
+
+  // Verify rule content
+  const mainRule = readTestFile(
+    path.join(".cursor", "rules", "aicm", "main-rule.mdc"),
+  );
+  expect(mainRule).toContain("Main Rule (Explicit False)");
+});
