@@ -1,6 +1,7 @@
 # node_modules
 node_modules
 !tests/fixtures/*/node_modules/
+!tests/fixtures-v2/*/node_modules/
 
 # Build output
 dist/
@@ -28,6 +29,8 @@ AGENTS.md
 # aicm
 .aicm
 !tests/fixtures/*/.aicm
+!tests/fixtures-v2/*/.aicm
+
 # Logs
 logs/
 *.log
