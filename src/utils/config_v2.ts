@@ -253,7 +253,10 @@ export async function loadAllRules(
 
       // Merge MCP servers from preset
       if (preset.config.mcpServers) {
-        mergedMcpServers = { ...mergedMcpServers, ...preset.config.mcpServers };
+        mergedMcpServers = mergePresetMcpServers(
+          mergedMcpServers,
+          preset.config.mcpServers,
+        );
       }
     }
   }
@@ -306,6 +309,34 @@ export function applyOverrides(
   }
 
   return Array.from(ruleMap.values());
+}
+
+/**
+ * Merge preset MCP servers with local config MCP servers
+ * Local config takes precedence over preset config
+ */
+function mergePresetMcpServers(
+  configMcpServers: MCPServers,
+  presetMcpServers: MCPServers,
+): MCPServers {
+  const newMcpServers = { ...configMcpServers };
+
+  for (const [serverName, serverConfig] of Object.entries(presetMcpServers)) {
+    // Cancel if set to false in config
+    if (
+      Object.prototype.hasOwnProperty.call(newMcpServers, serverName) &&
+      newMcpServers[serverName] === false
+    ) {
+      delete newMcpServers[serverName];
+      continue;
+    }
+    // Only add if not already defined in config (override handled by config)
+    if (!Object.prototype.hasOwnProperty.call(newMcpServers, serverName)) {
+      newMcpServers[serverName] = serverConfig;
+    }
+  }
+
+  return newMcpServers;
 }
 
 export async function loadConfigFile(

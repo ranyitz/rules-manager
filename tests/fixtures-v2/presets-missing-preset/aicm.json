@@ -1,0 +1,5 @@
+{
+  "rulesDir": "./rules",
+  "targets": ["cursor"],
+  "presets": ["./missing-preset.json"]
+}

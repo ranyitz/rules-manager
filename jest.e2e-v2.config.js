@@ -9,6 +9,10 @@ module.exports = {
   setupFilesAfterEnv: ["<rootDir>/tests/e2e-v2/setup.ts"],
   testTimeout: 30000,
   collectCoverageFrom: ["src/**/*.ts", "!src/**/*.d.ts", "!src/**/*.test.ts"],
+  modulePathIgnorePatterns: [
+    "<rootDir>/tests/fixtures-v2",
+    "<rootDir>/tmp-test-v2",
+  ],
   coverageDirectory: "coverage-e2e-v2",
   coverageReporters: ["text", "lcov", "html"],
 };
