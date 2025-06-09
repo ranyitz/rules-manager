@@ -12,7 +12,7 @@ test("should install rules to .aicm directory and update .windsurfrules", async 
   const { stdout, code } = await runCommand("install --ci");
 
   expect(code).toBe(0);
-  expect(stdout).toContain("Rules installation completed");
+  expect(stdout).toContain("Successfully installed 3 rules");
 
   expect(fileExists(path.join(".aicm", "always-rule.md"))).toBe(true);
   expect(fileExists(path.join(".aicm", "opt-in-rule.md"))).toBe(true);
@@ -49,7 +49,7 @@ test("should update existing .windsurfrules file", async () => {
   const { stdout, code } = await runCommand("install --ci");
 
   expect(code).toBe(0);
-  expect(stdout).toContain("Rules installation completed");
+  expect(stdout).toContain("Successfully installed 1 rule");
 
   const windsurfRulesContent = readTestFile(".windsurfrules");
 
@@ -78,12 +78,10 @@ test("should clean stale windsurf rules", async () => {
   const { stdout, code } = await runCommand("install --ci");
 
   expect(code).toBe(0);
-  expect(stdout).toContain("Rules installation completed");
+  expect(stdout).toContain("Successfully installed 1 rule");
 
-  // Stale rule should be removed
   expect(fileExists(path.join(".aicm", "stale-windsurf-rule.md"))).toBe(false);
 
-  // Fresh rule should be updated
   expect(fileExists(path.join(".aicm", "fresh-windsurf-rule.md"))).toBe(true);
   const freshRuleContent = readTestFile(
     path.join(".aicm", "fresh-windsurf-rule.md"),

@@ -14,7 +14,7 @@ describe("codex integration", () => {
     const { stdout, code } = await runCommand("install --ci");
 
     expect(code).toBe(0);
-    expect(stdout).toContain("Rules installation completed");
+    expect(stdout).toContain("Successfully installed 3 rules");
 
     // Check that rules were installed
     expect(fileExists(path.join(".aicm", "always-rule.md"))).toBe(true);
@@ -42,7 +42,7 @@ describe("codex integration", () => {
     const { stdout, code } = await runCommand("install --ci");
 
     expect(code).toBe(0);
-    expect(stdout).toContain("Rules installation completed");
+    expect(stdout).toContain("Successfully installed 1 rule");
 
     // Check that rule was installed
     expect(fileExists(path.join(".aicm", "no-marker-rule.md"))).toBe(true);

@@ -13,7 +13,7 @@ test("install rules from a preset file", async () => {
   const { stdout, code } = await runCommand("install --ci");
 
   expect(code).toBe(0);
-  expect(stdout).toContain("Rules installation completed");
+  expect(stdout).toContain("Successfully installed 2 rules");
 
   // Check that rules from preset were installed with preset namespace
   expect(
@@ -68,7 +68,7 @@ test("merge rules from presets with main configuration", async () => {
   const { stdout, code } = await runCommand("install --ci");
 
   expect(code).toBe(0);
-  expect(stdout).toContain("Rules installation completed");
+  expect(stdout).toContain("Successfully installed 2 rules");
 
   // Check that preset rule was installed with preset namespace
   expect(
@@ -122,7 +122,7 @@ test("handle npm package presets", async () => {
   const { stdout, code } = await runCommand("install --ci");
 
   expect(code).toBe(0);
-  expect(stdout).toContain("Rules installation completed");
+  expect(stdout).toContain("Successfully installed 1 rule");
 
   // Check that npm package rule was installed with npm package namespace
   expect(
@@ -166,7 +166,7 @@ test("override a rule and mcpServer from a preset", async () => {
   const { stdout, code } = await runCommand("install --ci");
 
   expect(code).toBe(0);
-  expect(stdout).toContain("Rules installation completed");
+  expect(stdout).toContain("Successfully installed 2 rules");
 
   // Check that override rule was installed (not the original npm rule)
   expect(
@@ -194,7 +194,7 @@ test("install rules from preset only (no rulesDir)", async () => {
   const { stdout, code } = await runCommand("install --ci");
 
   expect(code).toBe(0);
-  expect(stdout).toContain("Rules installation completed");
+  expect(stdout).toContain("Successfully installed 1 rule");
 
   // Check that rules from preset were installed with preset namespace
   expect(

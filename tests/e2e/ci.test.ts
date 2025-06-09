@@ -35,7 +35,7 @@ describe("CI", () => {
     });
 
     expect(code).toBe(0);
-    expect(stdout).toContain("Rules installation completed");
+    expect(stdout).toContain("Successfully installed 1 rule");
     expect(fileExists(cursorRulePath)).toBe(true);
 
     // Verify rule content
@@ -64,7 +64,7 @@ describe("CI", () => {
     });
 
     expect(code).toBe(0);
-    expect(stdout).toContain("Rules installation completed");
+    expect(stdout).toContain("Successfully installed 1 rule");
     expect(fileExists(cursorRulePath)).toBe(true);
 
     // Verify rule content
@@ -80,7 +80,7 @@ describe("CI", () => {
     });
 
     expect(code).toBe(0);
-    expect(stdout).toContain("Rules installation completed");
+    expect(stdout).toContain("Successfully installed 1 rule");
     expect(fileExists(cursorRulePath)).toBe(true);
 
     // Verify rule content

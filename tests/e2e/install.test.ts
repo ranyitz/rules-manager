@@ -13,7 +13,7 @@ test("single rule", async () => {
   const { stdout, code } = await runCommand("install --ci");
 
   expect(code).toBe(0);
-  expect(stdout).toContain("Rules installation completed");
+  expect(stdout).toContain("Successfully installed 1 rule");
 
   // Check that rule was installed
   expect(
@@ -72,7 +72,7 @@ test("handle missing rule files", async () => {
   const { stdout, code } = await runCommand("install --ci");
 
   expect(code).toBe(0);
-  expect(stdout).toContain("Rules installation completed");
+  expect(stdout).toContain("Successfully installed 2 rules");
 
   // Check that existing rule was installed
   expect(
@@ -89,7 +89,7 @@ test("multiple rules from rulesDir", async () => {
   const { stdout, code } = await runCommand("install --ci");
 
   expect(code).toBe(0);
-  expect(stdout).toContain("Rules installation completed");
+  expect(stdout).toContain("Successfully installed 3 rules");
 
   // Check that all rules were installed
   expect(fileExists(path.join(".cursor", "rules", "aicm", "rule1.mdc"))).toBe(
@@ -120,7 +120,7 @@ test("multiple targets", async () => {
   const { stdout, code } = await runCommand("install --ci");
 
   expect(code).toBe(0);
-  expect(stdout).toContain("Rules installation completed");
+  expect(stdout).toContain("Successfully installed 2 rules");
 
   // Check Cursor installation
   expect(
@@ -147,7 +147,7 @@ test("clean stale Cursor rules", async () => {
   const { stdout, code } = await runCommand("install --ci");
 
   expect(code).toBe(0);
-  expect(stdout).toContain("Rules installation completed");
+  expect(stdout).toContain("Successfully installed 1 rule");
 
   // Stale rule should be removed, new rule should exist
   expect(fileExists(staleRulePath)).toBe(false);
@@ -170,7 +170,7 @@ test("clean stale Windsurf rules", async () => {
   const { stdout, code } = await runCommand("install --ci");
 
   expect(code).toBe(0);
-  expect(stdout).toContain("Rules installation completed");
+  expect(stdout).toContain("Successfully installed 1 rule");
 
   // Stale rule should be removed
   expect(fileExists(path.join(".aicm", "stale-windsurf-rule.md"))).toBe(false);
@@ -373,7 +373,7 @@ test("rulesDir with subdirectories", async () => {
   const { stdout, code } = await runCommand("install --ci");
 
   expect(code).toBe(0);
-  expect(stdout).toContain("Rules installation completed");
+  expect(stdout).toContain("Successfully installed 1 rule");
 
   // Check that rule was installed in subdirectory
   expect(
@@ -399,7 +399,7 @@ test("no mcp servers", async () => {
   const { stdout, code } = await runCommand("install --ci");
 
   expect(code).toBe(0);
-  expect(stdout).toContain("Rules installation completed");
+  expect(stdout).toContain("Successfully installed 2 rules");
 
   // Check that rule was installed
   expect(
