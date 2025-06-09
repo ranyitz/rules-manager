@@ -647,10 +647,6 @@ async function installWorkspaces(
       };
     }
 
-    console.log(
-      `Successfully installed ${result.totalRuleCount} rules across ${result.packages.length} packages`,
-    );
-
     return {
       success: true,
       installedRuleCount: result.totalRuleCount,
@@ -718,20 +714,22 @@ export async function installCommand(
   if (!result.success) {
     throw result.error ?? new Error("Installation failed with unknown error");
   } else {
+    const rulesInstalledMessage = `${result.installedRuleCount} rule${result.installedRuleCount === 1 ? "" : "s"}`;
+
     if (dryRun) {
       if (result.packagesCount > 1) {
         console.log(
-          `Dry run: ${result.installedRuleCount} rules across ${result.packagesCount} packages validated`,
+          `Dry run: validated ${rulesInstalledMessage} across ${result.packagesCount} packages`,
         );
       } else {
-        console.log("Dry run: configuration validated");
+        console.log(`Dry run: validated ${rulesInstalledMessage}`);
       }
     } else if (result.packagesCount > 1) {
       console.log(
-        `Successfully installed ${result.installedRuleCount} rules across ${result.packagesCount} packages`,
+        `Successfully installed ${rulesInstalledMessage} across ${result.packagesCount} packages`,
       );
     } else {
-      console.log("Rules installation completed");
+      console.log(`Successfully installed ${rulesInstalledMessage}`);
     }
   }
 }

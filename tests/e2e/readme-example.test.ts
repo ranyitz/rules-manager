@@ -6,7 +6,7 @@ test("should install rules from preset as shown in the README", async () => {
 
   const { stdout } = await runCommand("install --ci");
 
-  expect(stdout).toContain("Rules installation completed");
+  expect(stdout).toContain("Successfully installed 1 rule");
 
   expect(
     fileExists(

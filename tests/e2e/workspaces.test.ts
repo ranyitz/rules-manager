@@ -92,7 +92,7 @@ test("install normally when workspaces is enabled on single package", async () =
   expect(code).toBe(0);
   expect(stdout).toContain("Found 1 packages with aicm configurations:");
   expect(stdout).toContain("- .");
-  expect(stdout).toContain("Successfully installed 1 rules across 1 packages");
+  expect(stdout).toContain("Successfully installed 1 rule");
 
   expect(
     fileExists(path.join(".cursor", "rules", "aicm", "local-rule.mdc")),
@@ -393,7 +393,7 @@ test("explicit workspaces: false overrides auto-detection from package.json", as
   expect(stdout).not.toContain("🔍 Discovering packages...");
   expect(stdout).not.toContain("Found");
   expect(stdout).not.toContain("📦 Installing configurations...");
-  expect(stdout).toContain("Rules installation completed");
+  expect(stdout).toContain("Successfully installed 1 rule");
 
   // Check that rule was installed in root directory, not as workspace
   expect(
