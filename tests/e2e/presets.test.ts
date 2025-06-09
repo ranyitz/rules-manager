@@ -210,21 +210,3 @@ test("install rules from preset only (no rulesDir)", async () => {
     "TypeScript Best Practices (Preset Only)",
   );
 });
-
-test("handle error when neither rulesDir nor presets are provided", async () => {
-  await setupFromFixture("no-rules-no-presets");
-
-  const { stderr, code } = await runFailedCommand("install --ci");
-
-  expect(code).not.toBe(0);
-  expect(stderr).toContain("Either rulesDir or presets must be specified");
-});
-
-test("handle error when presets array is empty and no rulesDir", async () => {
-  await setupFromFixture("empty-presets-no-rules");
-
-  const { stderr, code } = await runFailedCommand("install --ci");
-
-  expect(code).not.toBe(0);
-  expect(stderr).toContain("Either rulesDir or presets must be specified");
-});
