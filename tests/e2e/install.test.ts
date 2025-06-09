@@ -410,3 +410,19 @@ test("no mcp servers", async () => {
   const mcpPath = path.join(".cursor", "mcp.json");
   expect(fileExists(mcpPath)).toBe(false);
 });
+
+test("dry run does not write files", async () => {
+  await setupFromFixture("single-rule");
+
+  const { stdout, code } = await runCommand("install --ci --dry-run");
+
+  expect(code).toBe(0);
+  expect(stdout).toContain("Dry run");
+
+  expect(
+    fileExists(path.join(".cursor", "rules", "aicm", "test-rule.mdc")),
+  ).toBe(false);
+
+  const mcpPath = path.join(".cursor", "mcp.json");
+  expect(fileExists(mcpPath)).toBe(false);
+});

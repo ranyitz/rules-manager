@@ -55,3 +55,26 @@ test("handle missing config", async () => {
   expect(result.installedRuleCount).toBe(0);
   expect(result.packagesCount).toBe(0);
 });
+
+test("dry run API", async () => {
+  const testDir = await setupFromFixture("single-rule");
+
+  const result = await install({
+    cwd: testDir,
+    installOnCI: true,
+    dryRun: true,
+  });
+
+  expect(result.success).toBe(true);
+  expect(result.installedRuleCount).toBe(1);
+  expect(result.packagesCount).toBe(1);
+
+  const ruleFile = path.join(
+    testDir,
+    ".cursor",
+    "rules",
+    "aicm",
+    "test-rule.mdc",
+  );
+  expect(fs.existsSync(ruleFile)).toBe(false);
+});
