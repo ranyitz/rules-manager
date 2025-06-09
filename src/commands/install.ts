@@ -148,7 +148,7 @@ function generateRulesFileContent(
     content += optInRules.join("\n") + "\n\n";
   }
 
-  content += "<!-- AICM:END -->\n";
+  content += "<!-- AICM:END -->";
 
   return content;
 }
@@ -187,7 +187,7 @@ function writeRulesFile(rulesContent: string, rulesFilePath: string): void {
     }
   } else {
     // Create new file with markers and content
-    fileContent = rulesContent;
+    fileContent = rulesContent + "\n";
   }
 
   fs.writeFileSync(rulesFilePath, fileContent);
