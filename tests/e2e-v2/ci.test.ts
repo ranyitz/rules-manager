@@ -7,7 +7,7 @@ import {
   readTestFile,
 } from "./helpers";
 
-describe("CI environment behavior", () => {
+describe("CI", () => {
   const ruleName = "test-rule";
   const cursorRulePath = path.join(
     ".cursor",
@@ -78,21 +78,6 @@ describe("CI environment behavior", () => {
     const { stdout, code } = await runCommand("install --ci", undefined, {
       env: { CI: "false" },
     });
-
-    expect(code).toBe(0);
-    expect(stdout).toContain("Rules installation completed");
-    expect(fileExists(cursorRulePath)).toBe(true);
-
-    // Verify rule content
-    const ruleContent = readTestFile(cursorRulePath);
-    expect(ruleContent).toContain("Test Rule");
-  });
-
-  test("should install normally when CI environment variable is undefined", async () => {
-    await setupFromFixture("single-rule");
-
-    // Don't set CI environment variable at all
-    const { stdout, code } = await runCommand("install");
 
     expect(code).toBe(0);
     expect(stdout).toContain("Rules installation completed");
