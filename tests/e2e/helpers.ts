@@ -3,6 +3,7 @@ import path from "path";
 import { exec } from "child_process";
 import { promisify } from "util";
 import { rimraf } from "rimraf";
+import chalk from "chalk";
 
 const execPromise = promisify(exec);
 
@@ -114,18 +115,20 @@ export async function runCommand(
     };
 
     // Command failed when we expected success - show debugging info
-    console.error("\n=== COMMAND EXECUTION FAILED (Expected Success) ===");
-    console.error(
-      `Command: node ${path.join(projectRoot, "dist", "bin", "aicm.js")} ${args}`,
+    process.stderr.write(
+      chalk.red(
+        `\n=== COMMAND EXECUTION FAILED (Expected Success) ===\n` +
+          `Command: node ${path.join(projectRoot, "dist", "bin", "aicm.js")} ${args}\n` +
+          `Working Directory: ${testDir}\n` +
+          `Expected exit code: 0\n` +
+          `Actual exit code: ${result.code}\n` +
+          `\n--- STDOUT ---\n` +
+          `${result.stdout || "(empty)"}\n` +
+          `\n--- STDERR ---\n` +
+          `${result.stderr || "(empty)"}\n` +
+          `=== END COMMAND FAILURE ===\n`,
+      ),
     );
-    console.error(`Working Directory: ${testDir}`);
-    console.error(`Expected exit code: 0`);
-    console.error(`Actual exit code: ${result.code}`);
-    console.error("\n--- STDOUT ---");
-    console.error(result.stdout || "(empty)");
-    console.error("\n--- STDERR ---");
-    console.error(result.stderr || "(empty)");
-    console.error("=== END COMMAND FAILURE ===\n");
 
     throw new Error(
       `Command "${args}" failed with exit code ${result.code}, expected success (0)`,
