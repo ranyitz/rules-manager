@@ -4,7 +4,7 @@ import { cosmiconfig, CosmiconfigResult } from "cosmiconfig";
 import fg from "fast-glob";
 
 export interface RawConfig {
-  rulesDir: string;
+  rulesDir?: string;
   targets?: string[];
   presets?: string[];
   overrides?: Record<string, string | false>;
@@ -13,7 +13,7 @@ export interface RawConfig {
 }
 
 export interface Config {
-  rulesDir: string;
+  rulesDir?: string;
   targets: string[];
   presets?: string[];
   overrides?: Record<string, string | false>;
@@ -81,22 +81,31 @@ export function validateConfig(
     throw new Error(`Config is not an object at ${configFilePath}`);
   }
 
-  if (!("rulesDir" in config)) {
-    throw new Error(`rulesDir is not specified in config at ${configFilePath}`);
+  // Validate that either rulesDir or presets is provided
+  const hasRulesDir =
+    "rulesDir" in config && typeof config.rulesDir === "string";
+  const hasPresets =
+    "presets" in config &&
+    Array.isArray(config.presets) &&
+    config.presets.length > 0;
+
+  if (!hasRulesDir && !hasPresets) {
+    throw new Error(
+      `Either rulesDir or presets must be specified in config at ${configFilePath}`,
+    );
   }
 
-  if (typeof config.rulesDir !== "string") {
-    throw new Error(`rulesDir is not a string in config at ${configFilePath}`);
-  }
+  // Validate rulesDir if provided
+  if (hasRulesDir) {
+    const rulesPath = path.resolve(cwd, config.rulesDir as string);
 
-  const rulesPath = path.resolve(cwd, config.rulesDir);
+    if (!fs.existsSync(rulesPath)) {
+      throw new Error(`Rules directory does not exist: ${rulesPath}`);
+    }
 
-  if (!fs.existsSync(rulesPath)) {
-    throw new Error(`Rules directory does not exist: ${rulesPath}`);
-  }
-
-  if (!fs.statSync(rulesPath).isDirectory()) {
-    throw new Error(`Rules path is not a directory: ${rulesPath}`);
+    if (!fs.statSync(rulesPath).isDirectory()) {
+      throw new Error(`Rules path is not a directory: ${rulesPath}`);
+    }
   }
 
   if ("targets" in config) {
@@ -215,6 +224,11 @@ export async function loadPreset(
     );
   }
 
+  // Validate that preset has rulesDir
+  if (!presetConfig.rulesDir) {
+    throw new Error(`Preset "${presetPath}" must have a rulesDir specified`);
+  }
+
   // Resolve preset's rules directory relative to the preset file
   const presetDir = path.dirname(resolvedPresetPath);
   const presetRulesDir = path.resolve(presetDir, presetConfig.rulesDir);
@@ -235,10 +249,12 @@ export async function loadAllRules(
   const allRules: RuleFile[] = [];
   let mergedMcpServers: MCPServers = { ...config.mcpServers };
 
-  // Load local rules
-  const localRulesPath = path.resolve(cwd, config.rulesDir);
-  const localRules = await loadRulesFromDirectory(localRulesPath, "local");
-  allRules.push(...localRules);
+  // Load local rules only if rulesDir is provided
+  if (config.rulesDir) {
+    const localRulesPath = path.resolve(cwd, config.rulesDir);
+    const localRules = await loadRulesFromDirectory(localRulesPath, "local");
+    allRules.push(...localRules);
+  }
 
   if (config.presets) {
     for (const presetPath of config.presets) {
