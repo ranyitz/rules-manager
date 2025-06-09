@@ -84,15 +84,28 @@ export function detectWorkspacesFromPackageJson(cwd: string): boolean {
   }
 }
 
-export function applyDefaults(config: RawConfig, cwd?: string): Config {
-  const workingDir = cwd || process.cwd();
+export function resolveWorkspaces(
+  config: unknown,
+  configFilePath: string,
+  cwd: string,
+): boolean {
+  const hasConfigWorkspaces =
+    typeof config === "object" && config !== null && "workspaces" in config;
 
-  // Auto-detect workspaces if not explicitly set
-  const workspaces =
-    config.workspaces !== undefined
-      ? config.workspaces
-      : detectWorkspacesFromPackageJson(workingDir);
+  if (hasConfigWorkspaces) {
+    if (typeof config.workspaces === "boolean") {
+      return config.workspaces;
+    }
 
+    throw new Error(
+      `workspaces must be a boolean in config at ${configFilePath}`,
+    );
+  }
+
+  return detectWorkspacesFromPackageJson(cwd);
+}
+
+export function applyDefaults(config: RawConfig, workspaces: boolean): Config {
   return {
     rulesDir: config.rulesDir,
     targets: config.targets || ["cursor"],
@@ -428,11 +441,16 @@ export async function loadConfig(cwd?: string): Promise<ResolvedConfig | null> {
     return null;
   }
 
-  const rawConfig = configResult.config as RawConfig;
-  const configWithDefaults = applyDefaults(rawConfig, workingDir);
-  const isWorkspaceMode = configWithDefaults.workspaces;
+  const config = configResult.config;
+  const isWorkspaces = resolveWorkspaces(
+    config,
+    configResult.filepath,
+    workingDir,
+  );
 
-  validateConfig(rawConfig, configResult.filepath, workingDir, isWorkspaceMode);
+  validateConfig(config, configResult.filepath, workingDir, isWorkspaces);
+
+  const configWithDefaults = applyDefaults(config, isWorkspaces);
 
   const { rules, mcpServers } = await loadAllRules(
     configWithDefaults,
