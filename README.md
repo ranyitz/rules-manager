@@ -1,16 +1,25 @@
 # 🗂️ aicm
 
-> Agentic IDE Configuration Manager
+> AI Configuration Manager
 
-A CLI tool for managing Agentic IDE configurations across projects
+A CLI tool for managing Agentic configurations across projects
 
 ![aicm](https://github.com/user-attachments/assets/ca38f2d6-ece6-43ad-a127-6f4fce8b2a5a)
 
 ## Why
 
-Agentic IDEs like Cursor enable AI-driven development through custom rules and configurations. However, sharing these configurations across projects and teams is challenging.
+Modern AI-powered IDEs like Cursor and Agents like Codex enable developers to write custom instructions to maintain context across coding sessions. They also support MCPs for enhanced functionality. However, sharing these configurations across multiple projects is a challenge.
 
-**aicm** solves this by distributing AI rules and MCP servers through npm packages, automatically installing them to the correct IDE locations.
+**aicm** solves this by enabling you to create reusable presets that bundle rules and MCP configurations together. With multi-target support, you can write your rules once and deploy them consistently across different AI tools and IDEs.
+
+## How it works
+
+aicm accepts Cursor's `.mdc` format as it provides the most comprehensive feature set. For other AI tools and IDEs, aicm automatically generates compatible formats:
+
+- **Cursor**: Native `.mdc` files with full feature support
+- **Windsurf/Codex**: Generates `.windsurfrules`/`AGENTS.md` files with natural language adaptations
+
+This approach ensures you write your rules once in the richest format available, while maintaining compatibility across different AI development environments.
 
 ## Getting Started
 
@@ -21,27 +30,21 @@ The easiest way to get started with aicm is by using **presets** - npm packages 
 1. **Install a preset npm package**:
 
 ```bash
-npm install --save-dev @yourteam/ai-preset
+npm install --save-dev @team/ai-preset
 ```
 
-2. **Create an `aicm.json` file** in your project:
+2. **Create an `aicm.json` file** in your project root:
 
 ```json
-{ "presets": ["@yourteam/ai-preset"] }
+{ "presets": ["@team/ai-preset"] }
 ```
 
-3. **Install the rules and MCPs**:
-
-```bash
-npx -y aicm install
-```
-
-4. **Add a prepare script** to your `package.json` for automatic installation:
+3. **Add a prepare script** to your `package.json` to install all preset rules and MCPs:
 
 ```json
 {
   "scripts": {
-    "prepare": "npx aicm install"
+    "prepare": "npx aicm  -y install"
   }
 }
 ```
@@ -50,12 +53,10 @@ The rules are now installed in `.cursor/rules/aicm/` and any MCP servers are con
 
 ### Creating a Preset
 
-To create a reusable preset for your team:
-
 1. **Create an npm package** with the following structure:
 
 ```
-@myteam/ai-tools
+@team/ai-preset
 ├── package.json
 ├── aicm.json
 └── rules/
@@ -67,28 +68,28 @@ To create a reusable preset for your team:
 
 ```json
 {
-  "rulesDir": "./rules",
+  "rulesDir": "rules",
   "mcpServers": {
     "my-mcp": { "url": "https://example.com/sse" }
   }
 }
 ```
 
-3. **Publish the package** and reference it in your projects:
+3. **Publish the package** and use it in your project's `aicm.json`:
 
 ```json
-{ "presets": ["@myteam/ai-tools"] }
+{ "presets": ["@team/ai-preset"] }
 ```
 
-> **Note:** This is syntactic sugar for `@myteam/ai-tools/aicm.json`. Both forms are equivalent.
+> **Note:** This is syntactic sugar for `@team/ai-preset/aicm.json`.
 
 ### Using Local Rules
 
-For project-specific rules, you can specify `rulesDir` in your `aicm.json` config. This approach allows you to write rules once and automatically generate them for all configured targets:
+For project-specific rules, you can specify `rulesDir` in your `aicm.json` config. This approach allows you to write rules once and automatically generate them for all configured targets.
 
 ```json
 {
-  "rulesDir": "./rules"
+  "rulesDir": "path/to/rules/dir"
 }
 ```
 
@@ -264,11 +265,9 @@ install().then((result) => {
 
 // Install with custom options
 const customConfig = {
-  ides: ["cursor"],
-  rules: {
-    typescript: "./rules/typescript.mdc",
-    react: "./rules/react.mdc",
-  },
+  targets: ["cursor"],
+  rulesDir: "rules",
+  presets: ["@team/ai-preset"],
 };
 
 install({
@@ -297,12 +296,12 @@ Installs rules and MCP servers based on configuration.
 A Promise that resolves to an object with:
 
 - `success`: Whether the operation was successful
-- `error`: Error message if the operation failed
+- `error`: Error object if the operation failed
 - `installedRuleCount`: Number of rules installed
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please feel free to open an issue or submit a Pull Request.
 
 ## Development
 
@@ -310,13 +309,13 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ```bash
 # Run all tests
-npm test
+pnpm test
 
 # Run only unit tests
-npm run test:unit
+pnpm run test:unit
 
 # Run only E2E tests
-npm run test:e2e
+pnpm run test:e2e
 ```
 
 ### Publishing
