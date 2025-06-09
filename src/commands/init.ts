@@ -3,7 +3,7 @@ import path from "path";
 import chalk from "chalk";
 
 const defaultConfig = {
-  rules: {},
+  rulesDir: "rules",
 };
 
 export function initCommand(): void {

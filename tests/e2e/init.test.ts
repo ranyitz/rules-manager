@@ -19,13 +19,13 @@ test("should create default config file", async () => {
   expect(fileExists("aicm.json")).toBe(true);
 
   const config = JSON.parse(readTestFile("aicm.json"));
-  expect(config).toEqual({ rules: {} });
+  expect(config).toEqual({ rulesDir: "rules" });
 });
 
 test("should not overwrite existing config", async () => {
   await setupFromFixture("no-config");
 
-  const customConfig = { ides: ["custom"], rules: {} };
+  const customConfig = { ides: ["custom"], rulesDir: "custom-rules" };
   fs.writeJsonSync(path.join(testDir, "aicm.json"), customConfig);
 
   const { stdout, code } = await runCommand("init");
