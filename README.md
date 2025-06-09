@@ -308,14 +308,7 @@ Contributions are welcome! Please feel free to open an issue or submit a Pull Re
 ### Testing
 
 ```bash
-# Run all tests
 pnpm test
-
-# Run only unit tests
-pnpm run test:unit
-
-# Run only E2E tests
-pnpm run test:e2e
 ```
 
 ### Publishing

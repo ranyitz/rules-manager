@@ -25,7 +25,7 @@ test("should create default config file", async () => {
 test("should not overwrite existing config", async () => {
   await setupFromFixture("no-config");
 
-  const customConfig = { ides: ["custom"], rulesDir: "custom-rules" };
+  const customConfig = { rulesDir: "custom-rules" };
   fs.writeJsonSync(path.join(testDir, "aicm.json"), customConfig);
 
   const { stdout, code } = await runCommand("init");

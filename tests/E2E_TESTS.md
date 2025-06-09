@@ -75,7 +75,7 @@ test("wrong way to test", async () => {
   await setupTestDir(expect.getState().currentTestName);
 
   // Anti-pattern: Creating files on-the-fly
-  fs.writeJsonSync("aicm.json", { ides: ["cursor"], presets: ["@my-preset"] });
+  fs.writeJsonSync("aicm.json", { presets: ["@my-preset"] });
   fs.ensureDirSync("node_modules/@my-preset");
   fs.writeFileSync("node_modules/@my-preset/rule.mdc", "Content");
 
