@@ -1,0 +1,11 @@
+{
+  "rulesDir": "./rules",
+  "targets": ["cursor", "windsurf"],
+  "mcpServers": {
+    "test-mcp-v2": {
+      "command": "./scripts/test-mcp-v2.sh",
+      "args": ["--test"],
+      "env": { "TEST_TOKEN": "test123" }
+    }
+  }
+}
