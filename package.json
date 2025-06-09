@@ -21,7 +21,7 @@
     "test:watch": "jest --watch",
     "test:all": "npm run build && npm run test",
     "test:unit": "jest --config jest.unit.config.js",
-    "test:e2e": "pnpm run build &&jest tests/e2e",
+    "test:e2e": "pnpm run build && jest tests/e2e",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint",
