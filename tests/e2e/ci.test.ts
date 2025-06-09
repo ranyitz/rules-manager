@@ -1,3 +1,6 @@
+// NOTE: This test has been migrated to the v2 e2e suite (tests/e2e-v2/ci.test.ts)
+// This v1 version will be removed once the full migration is complete
+
 import path from "path";
 import fs from "fs-extra";
 import {
