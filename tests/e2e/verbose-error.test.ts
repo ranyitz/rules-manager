@@ -6,7 +6,7 @@ test("should show stack trace with --verbose flag on error", async () => {
   const { stderr } = await runFailedCommand("install --ci --verbose");
 
   // Should contain the error message
-  expect(stderr).toContain("No rules defined in configuration");
+  expect(stderr).toMatch(/Invalid configuration/);
 
   // With verbose flag, should contain stack trace indicators
   // This tests that errorStack is properly populated and displayed
@@ -19,7 +19,7 @@ test("should NOT show stack trace without --verbose flag on error", async () => 
   const { stderr } = await runFailedCommand("install --ci");
 
   // Should contain the error message
-  expect(stderr).toContain("No rules defined in configuration");
+  expect(stderr).toMatch(/Invalid configuration/);
 
   // Without verbose flag, should NOT contain stack trace indicators
   // This ensures errorStack is not displayed when verbose is false

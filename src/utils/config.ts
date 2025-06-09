@@ -58,6 +58,15 @@ export interface ResolvedConfig {
   mcpServers: MCPServers;
 }
 
+export const ALLOWED_CONFIG_KEYS = [
+  "rulesDir",
+  "targets",
+  "presets",
+  "overrides",
+  "mcpServers",
+  "workspaces",
+] as const;
+
 export const SUPPORTED_TARGETS = ["cursor", "windsurf", "codex"] as const;
 export type SupportedTarget = (typeof SUPPORTED_TARGETS)[number];
 
@@ -75,15 +84,28 @@ export function detectWorkspacesFromPackageJson(cwd: string): boolean {
   }
 }
 
-export function applyDefaults(config: RawConfig, cwd?: string): Config {
-  const workingDir = cwd || process.cwd();
+export function resolveWorkspaces(
+  config: unknown,
+  configFilePath: string,
+  cwd: string,
+): boolean {
+  const hasConfigWorkspaces =
+    typeof config === "object" && config !== null && "workspaces" in config;
 
-  // Auto-detect workspaces if not explicitly set
-  const workspaces =
-    config.workspaces !== undefined
-      ? config.workspaces
-      : detectWorkspacesFromPackageJson(workingDir);
+  if (hasConfigWorkspaces) {
+    if (typeof config.workspaces === "boolean") {
+      return config.workspaces;
+    }
 
+    throw new Error(
+      `workspaces must be a boolean in config at ${configFilePath}`,
+    );
+  }
+
+  return detectWorkspacesFromPackageJson(cwd);
+}
+
+export function applyDefaults(config: RawConfig, workspaces: boolean): Config {
   return {
     rulesDir: config.rulesDir,
     targets: config.targets || ["cursor"],
@@ -102,6 +124,19 @@ export function validateConfig(
 ): asserts config is Config {
   if (typeof config !== "object" || config === null) {
     throw new Error(`Config is not an object at ${configFilePath}`);
+  }
+
+  const unknownKeys = Object.keys(config).filter(
+    (key) =>
+      !ALLOWED_CONFIG_KEYS.includes(
+        key as (typeof ALLOWED_CONFIG_KEYS)[number],
+      ),
+  );
+
+  if (unknownKeys.length > 0) {
+    throw new Error(
+      `Invalid configuration at ${configFilePath}: unknown keys: ${unknownKeys.join(", ")}`,
+    );
   }
 
   // Validate that either rulesDir or presets is provided
@@ -406,15 +441,16 @@ export async function loadConfig(cwd?: string): Promise<ResolvedConfig | null> {
     return null;
   }
 
-  const configWithDefaults = applyDefaults(configResult.config, workingDir);
-  const isWorkspaceMode = configWithDefaults.workspaces;
-
-  validateConfig(
-    configResult.config,
+  const config = configResult.config;
+  const isWorkspaces = resolveWorkspaces(
+    config,
     configResult.filepath,
     workingDir,
-    isWorkspaceMode,
   );
+
+  validateConfig(config, configResult.filepath, workingDir, isWorkspaces);
+
+  const configWithDefaults = applyDefaults(config, isWorkspaces);
 
   const { rules, mcpServers } = await loadAllRules(
     configWithDefaults,
