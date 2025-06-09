@@ -1,5 +1,5 @@
 {
-  "ides": ["codex"],
+  "targets": ["cursor", "codex"],
   "rulesDir": "./rules",
   "mcpServers": {
     "context7": {
