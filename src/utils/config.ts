@@ -58,6 +58,15 @@ export interface ResolvedConfig {
   mcpServers: MCPServers;
 }
 
+export const ALLOWED_CONFIG_KEYS = [
+  "rulesDir",
+  "targets",
+  "presets",
+  "overrides",
+  "mcpServers",
+  "workspaces",
+] as const;
+
 export const SUPPORTED_TARGETS = ["cursor", "windsurf", "codex"] as const;
 export type SupportedTarget = (typeof SUPPORTED_TARGETS)[number];
 
@@ -102,6 +111,19 @@ export function validateConfig(
 ): asserts config is Config {
   if (typeof config !== "object" || config === null) {
     throw new Error(`Config is not an object at ${configFilePath}`);
+  }
+
+  const unknownKeys = Object.keys(config).filter(
+    (key) =>
+      !ALLOWED_CONFIG_KEYS.includes(
+        key as (typeof ALLOWED_CONFIG_KEYS)[number],
+      ),
+  );
+
+  if (unknownKeys.length > 0) {
+    throw new Error(
+      `Invalid configuration at ${configFilePath}: unknown keys: ${unknownKeys.join(", ")}`,
+    );
   }
 
   // Validate that either rulesDir or presets is provided
@@ -406,15 +428,11 @@ export async function loadConfig(cwd?: string): Promise<ResolvedConfig | null> {
     return null;
   }
 
-  const configWithDefaults = applyDefaults(configResult.config, workingDir);
+  const rawConfig = configResult.config as RawConfig;
+  const configWithDefaults = applyDefaults(rawConfig, workingDir);
   const isWorkspaceMode = configWithDefaults.workspaces;
 
-  validateConfig(
-    configResult.config,
-    configResult.filepath,
-    workingDir,
-    isWorkspaceMode,
-  );
+  validateConfig(rawConfig, configResult.filepath, workingDir, isWorkspaceMode);
 
   const { rules, mcpServers } = await loadAllRules(
     configWithDefaults,

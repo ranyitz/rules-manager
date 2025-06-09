@@ -57,6 +57,15 @@ test("show error when no rules exist in rulesDir", async () => {
   expect(stderr).toContain("No rules defined in configuration");
 });
 
+test("unknown config keys throw error", async () => {
+  await setupFromFixture("unknown-config");
+
+  const { stderr, code } = await runFailedCommand("install --ci");
+
+  expect(code).not.toBe(0);
+  expect(stderr).toMatch(/Invalid configuration/);
+});
+
 test("handle missing rule files", async () => {
   await setupFromFixture("missing-rules");
 
