@@ -247,6 +247,7 @@ Options:
 
 - `--ci`: run in CI environments (default: `false`)
 - `--verbose`: show detailed output and stack traces for debugging
+- `--dry-run`: simulate installation without writing files, useful for validating presets in CI
 
 ## Node.js API
 
@@ -290,6 +291,7 @@ Installs rules and MCP servers based on configuration.
 - `config`: Custom config object to use instead of loading from file
 - `installOnCI`: Run installation on CI environments (default: `false`)
 - `verbose`: Show verbose output and stack traces for debugging (default: `false`)
+- `dryRun`: Simulate installation without writing files, useful for preset validation in CI (default: `false`)
 
 **Returns:**
 

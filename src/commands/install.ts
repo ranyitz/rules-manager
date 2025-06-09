@@ -30,6 +30,10 @@ export interface InstallOptions {
    * Show verbose output during installation
    */
   verbose?: boolean;
+  /**
+   * Perform a dry run without writing any files
+   */
+  dryRun?: boolean;
 }
 
 /**
@@ -449,16 +453,18 @@ export async function installPackage(
     }
 
     try {
-      // Write rules to targets
-      writeRulesToTargets(rules, config.targets as SupportedTarget[]);
+      if (!options.dryRun) {
+        // Write rules to targets
+        writeRulesToTargets(rules, config.targets as SupportedTarget[]);
 
-      // Write MCP servers
-      if (mcpServers && Object.keys(mcpServers).length > 0) {
-        writeMcpServersToTargets(
-          mcpServers,
-          config.targets as SupportedTarget[],
-          cwd,
-        );
+        // Write MCP servers
+        if (mcpServers && Object.keys(mcpServers).length > 0) {
+          writeMcpServersToTargets(
+            mcpServers,
+            config.targets as SupportedTarget[],
+            cwd,
+          );
+        }
       }
 
       return {
@@ -550,6 +556,7 @@ async function installWorkspaces(
   cwd: string,
   installOnCI: boolean,
   verbose: boolean = false,
+  dryRun: boolean = false,
 ): Promise<InstallResult> {
   return withWorkingDirectory(cwd, async () => {
     if (verbose) {
@@ -594,6 +601,7 @@ async function installWorkspaces(
     const result = await installWorkspacesPackages(packages, {
       installOnCI,
       verbose,
+      dryRun,
     });
 
     if (verbose) {
@@ -685,7 +693,12 @@ export async function install(
       (!resolvedConfig && detectWorkspacesFromPackageJson(cwd));
 
     if (shouldUseWorkspaces) {
-      return await installWorkspaces(cwd, installOnCI, options.verbose);
+      return await installWorkspaces(
+        cwd,
+        installOnCI,
+        options.verbose,
+        options.dryRun,
+      );
     }
 
     return installPackage(options);
@@ -698,13 +711,22 @@ export async function install(
 export async function installCommand(
   installOnCI?: boolean,
   verbose?: boolean,
+  dryRun?: boolean,
 ): Promise<void> {
-  const result = await install({ installOnCI, verbose });
+  const result = await install({ installOnCI, verbose, dryRun });
 
   if (!result.success) {
     throw result.error ?? new Error("Installation failed with unknown error");
   } else {
-    if (result.packagesCount > 1) {
+    if (dryRun) {
+      if (result.packagesCount > 1) {
+        console.log(
+          `Dry run: ${result.installedRuleCount} rules across ${result.packagesCount} packages validated`,
+        );
+      } else {
+        console.log("Dry run: configuration validated");
+      }
+    } else if (result.packagesCount > 1) {
       console.log(
         `Successfully installed ${result.installedRuleCount} rules across ${result.packagesCount} packages`,
       );

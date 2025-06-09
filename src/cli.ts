@@ -17,6 +17,7 @@ export async function runCli() {
       "--version": Boolean,
       "--ci": Boolean,
       "--verbose": Boolean,
+      "--dry-run": Boolean,
       "-h": "--help",
       "-v": "--version",
     },
@@ -46,7 +47,11 @@ export async function runCli() {
         initCommand();
         break;
       case "install":
-        await installCommand(args["--ci"], args["--verbose"]);
+        await installCommand(
+          args["--ci"],
+          args["--verbose"],
+          args["--dry-run"],
+        );
         break;
       case "list":
         await listCommand();
@@ -78,10 +83,12 @@ ${chalk.bold("OPTIONS")}
   -v, --version       Show version number
   --ci                Run in CI environments (default: \`false\`)
   --verbose           Show detailed output and stack traces for debugging
+  --dry-run           Simulate installation without writing files, useful for validating presets in CI
 
 ${chalk.bold("EXAMPLES")}
   $ aicm init
   $ aicm install
+  $ aicm install --dry-run
   $ aicm list
 `);
 }
