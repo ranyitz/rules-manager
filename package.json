@@ -17,7 +17,7 @@
     "watch": "tsc --watch",
     "start": "node dist/bin/aicm.js",
     "dev": "ts-node src/bin/aicm.ts",
-    "test": "jest",
+    "test": "jest --config jest.e2e-v2.config.js",
     "test:watch": "jest --watch",
     "test:all": "npm run build && npm run test",
     "test:unit": "jest --config jest.unit.config.js",
