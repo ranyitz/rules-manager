@@ -20,17 +20,12 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:all": "npm run build && npm run test",
-    "test:unit": "jest --config jest.unit.config.js",
-    "test:e2e": "pnpm run build && jest tests/e2e",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint",
     "prepare": "husky install && npx ts-node src/bin/aicm.ts install",
     "version": "auto-changelog -p && git add CHANGELOG.md",
-    "release": "np"
-  },
-  "np": {
-    "tests": false
+    "release": "np --no-tests"
   },
   "keywords": [
     "ai",
@@ -44,7 +39,6 @@
   "license": "MIT",
   "dependencies": {
     "arg": "^5.0.2",
-    "args": "^5.0.3",
     "chalk": "^4.1.2",
     "cosmiconfig": "^9.0.0",
     "fast-glob": "^3.3.3",
@@ -60,8 +54,6 @@
     "husky": "^8.0.3",
     "jest": "^29.7.0",
     "lint-staged": "^15.2.0",
-    "mock-fs": "^5.2.0",
-    "nock": "^13.3.8",
     "np": "^10.2.0",
     "prettier": "^3.1.0",
     "rimraf": "^5.0.5",
