@@ -7,7 +7,7 @@ alwaysApply: false
 ## E2E Testing Best Practices
 
 - Store initial test state in fixtures
- - Reference documentation: @tests/E2E_TESTS.md
+- Reference documentation: [E2E_TESTS.md](mdc:tests/E2E_TESTS.md)
 - Include .gitkeep file in empty fixture directories
 - **Never** create test files on-the-fly with `fs.writeFileSync()` or similar methods
 
