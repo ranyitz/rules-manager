@@ -451,7 +451,7 @@ test("skip installation when skipInstall is true", async () => {
   const { stdout, code } = await runCommand("install --ci");
 
   expect(code).toBe(0);
-  expect(stdout).toContain("Successfully installed 0 rules");
+  expect(stdout).toContain("No rules installed");
 
   // Check that no rules were installed
   expect(fileExists(path.join(".cursor", "rules", "aicm"))).toBe(false);
