@@ -8,7 +8,8 @@ export type RuleMetadata = Record<string, string | boolean | string[]>;
  */
 export function parseRuleFrontmatter(content: string): RuleMetadata {
   const metadata: RuleMetadata = {};
-  const frontmatterRegex = /^---\n([\s\S]*?)\n---/gm;
+  // Support both LF and CRLF line endings
+  const frontmatterRegex = /^---\r?\n([\s\S]*?)\r?\n---/gm;
   let match: RegExpExecArray | null;
 
   while ((match = frontmatterRegex.exec(content)) !== null) {
