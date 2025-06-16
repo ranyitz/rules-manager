@@ -36,7 +36,7 @@ test("should install rules to .aicm directory and update .windsurfrules", async 
   expect(windsurfRulesContent).toContain("<!-- AICM:END -->");
 
   expect(windsurfRulesContent).toContain(
-    "The following rules are available for the AI to include when needed:",
+    "The following rules can be loaded when relevant. Check each file's description:",
   );
   expect(windsurfRulesContent).toContain("- .aicm/always-rule.md");
   expect(windsurfRulesContent).toContain("- .aicm/opt-in-rule.md");

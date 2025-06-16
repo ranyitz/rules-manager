@@ -26,9 +26,18 @@ describe("codex integration", () => {
     const agentsContent = readTestFile("AGENTS.md");
     expect(agentsContent).toContain("<!-- AICM:BEGIN -->");
     expect(agentsContent).toContain("<!-- AICM:END -->");
-    expect(agentsContent).toContain(".aicm/always-rule.md");
-    expect(agentsContent).toContain(".aicm/opt-in-rule.md");
-    expect(agentsContent).toContain(".aicm/file-pattern-rule.md");
+    expect(agentsContent).toContain(
+      "The following rules always apply to all files in the project:",
+    );
+    expect(agentsContent).toContain(
+      "The following rules can be loaded when relevant. Check each file's description:",
+    );
+    expect(agentsContent).toContain(
+      "The following rules are only included when explicitly referenced:",
+    );
+    expect(agentsContent).toContain("- .aicm/always-rule.md");
+    expect(agentsContent).toContain("- .aicm/file-pattern-rule.md");
+    expect(agentsContent).toContain("- .aicm/opt-in-rule.md");
   });
 
   test("should append markers to existing file without markers", async () => {
@@ -53,7 +62,10 @@ describe("codex integration", () => {
     expect(agentsContent).toContain("These are some existing rules.");
     expect(agentsContent).toContain("<!-- AICM:BEGIN -->");
     expect(agentsContent).toContain("<!-- AICM:END -->");
-    expect(agentsContent).toContain(".aicm/no-marker-rule.md");
+    expect(agentsContent).toContain(
+      "The following rules are only included when explicitly referenced:",
+    );
+    expect(agentsContent).toContain("- .aicm/no-marker-rule.md");
 
     // Verify that existing content comes before AICM markers
     const beginMarkerIndex = agentsContent.indexOf("<!-- AICM:BEGIN -->");

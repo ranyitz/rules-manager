@@ -12,6 +12,11 @@ import {
 } from "../utils/config";
 import { withWorkingDirectory } from "../utils/working-directory";
 import { isCIEnvironment } from "../utils/is-ci";
+import {
+  parseRuleFrontmatter,
+  generateRulesFileContent,
+  writeRulesFile,
+} from "../utils/rules-file-writer";
 
 export interface InstallOptions {
   /**
@@ -103,101 +108,6 @@ function extractNamespaceFromPresetPath(presetPath: string): string[] {
   return parts.filter((part) => part.length > 0); // Filter out empty segments
 }
 
-function generateRulesFileContent(
-  ruleFiles: Array<{
-    name: string;
-    path: string;
-    content: string;
-  }>,
-): string {
-  const alwaysApplyRules: string[] = [];
-  const optInRules: string[] = [];
-
-  for (const rule of ruleFiles) {
-    // Parse metadata to determine rule type
-    const metadata = rule.content.match(/^---\n([\s\S]*?)\n---/);
-    let alwaysApply = false;
-
-    if (metadata) {
-      try {
-        const frontmatter = metadata[1];
-        // Simple YAML parsing for alwaysApply field
-        const alwaysApplyMatch = frontmatter.match(
-          /alwaysApply:\s*(true|false)/,
-        );
-        if (alwaysApplyMatch) {
-          alwaysApply = alwaysApplyMatch[1] === "true";
-        }
-      } catch {
-        // If parsing fails, default to false
-      }
-    }
-
-    if (alwaysApply) {
-      alwaysApplyRules.push(`- ${rule.path}`);
-    } else {
-      optInRules.push(`- ${rule.path}`);
-    }
-  }
-
-  let content = "<!-- AICM:BEGIN -->\n";
-  if (alwaysApplyRules.length > 0) {
-    content +=
-      "The following rules always apply to all files in the project:\n";
-    content += alwaysApplyRules.join("\n") + "\n\n";
-  }
-
-  if (optInRules.length > 0) {
-    content +=
-      "The following rules are available for the AI to include when needed:\n";
-    content += optInRules.join("\n") + "\n\n";
-  }
-
-  content += "<!-- AICM:END -->";
-
-  return content;
-}
-
-/**
- * Write rules file content to a file, preserving existing content outside markers
- */
-function writeRulesFile(rulesContent: string, rulesFilePath: string): void {
-  const RULES_BEGIN = "<!-- AICM:BEGIN -->";
-  const RULES_END = "<!-- AICM:END -->";
-
-  let fileContent: string;
-
-  if (fs.existsSync(rulesFilePath)) {
-    const existingContent = fs.readFileSync(rulesFilePath, "utf8");
-
-    if (
-      existingContent.includes(RULES_BEGIN) &&
-      existingContent.includes(RULES_END)
-    ) {
-      const beforeMarker = existingContent.split(RULES_BEGIN)[0];
-      const afterMarker = existingContent.split(RULES_END)[1];
-      fileContent = beforeMarker + rulesContent + afterMarker;
-    } else {
-      // Preserve the existing content and append markers
-      let separator = "";
-      if (!existingContent.endsWith("\n")) {
-        separator += "\n";
-      }
-
-      if (!existingContent.endsWith("\n\n")) {
-        separator += "\n";
-      }
-
-      fileContent = existingContent + separator + rulesContent;
-    }
-  } else {
-    // Create new file with markers and content
-    fileContent = rulesContent + "\n";
-  }
-
-  fs.writeFileSync(rulesFilePath, fileContent);
-}
-
 /**
  * Write rules to a shared directory and update the given rules file
  */
@@ -245,7 +155,7 @@ function writeRulesForFile(
     return {
       name: rule.name,
       path: windsurfPathPosix,
-      content: rule.content,
+      metadata: parseRuleFrontmatter(rule.content),
     };
   });
 
