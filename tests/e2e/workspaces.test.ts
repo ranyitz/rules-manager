@@ -277,20 +277,19 @@ test("discover and install rules from mixed workspaces + Bazel structure", async
   ).toBe(true);
 });
 
-test("handle error scenarios with invalid configurations", async () => {
+test("handle package missing rules gracefully", async () => {
   await setupFromFixture("workspaces-error-scenarios");
 
-  const { stdout, code } = await runFailedCommand("install --ci --verbose");
+  const { stdout, code } = await runCommand("install --ci --verbose");
 
-  expect(code).not.toBe(0);
+  expect(code).toBe(0);
   expect(stdout).toContain("🔍 Discovering packages...");
   expect(stdout).toContain("Found 2 packages with aicm configurations:");
   expect(stdout).toContain("- valid-package");
   expect(stdout).toContain("- missing-rule");
   expect(stdout).toContain("📦 Installing configurations...");
   expect(stdout).toContain("✅ valid-package (1 rules)");
-  expect(stdout).toContain("❌ missing-rule:");
-  expect(stdout).toContain("Installation completed with errors");
+  expect(stdout).toContain("✅ missing-rule (0 rules)");
 
   // Check that the valid package still installed successfully
   expect(

@@ -48,13 +48,13 @@ test("show error when no config file exists", async () => {
   expect(stderr).toMatch(/config|configuration|not found/i);
 });
 
-test("show error when no rules exist in rulesDir", async () => {
+test("no rules prints message", async () => {
   await setupFromFixture("empty-rules");
 
-  const { stderr, code } = await runFailedCommand("install --ci");
+  const { stdout, code } = await runCommand("install --ci");
 
-  expect(code).not.toBe(0);
-  expect(stderr).toContain("No rules defined in configuration");
+  expect(code).toBe(0);
+  expect(stdout).toContain("No rules installed");
 });
 
 test("unknown config keys throw error", async () => {
@@ -425,4 +425,22 @@ test("dry run does not write files", async () => {
 
   const mcpPath = path.join(".cursor", "mcp.json");
   expect(fileExists(mcpPath)).toBe(false);
+});
+
+test("override deleting last rule does not error", async () => {
+  await setupFromFixture("override-delete-rule");
+
+  const { stdout, code } = await runCommand("install --ci");
+
+  expect(code).toBe(0);
+  expect(stdout).toContain("No rules installed");
+
+  // Rule should not be installed
+  expect(
+    fileExists(path.join(".cursor", "rules", "aicm", "test-rule.mdc")),
+  ).toBe(false);
+
+  // MCP server should still be installed
+  const mcpPath = path.join(".cursor", "mcp.json");
+  expect(fileExists(mcpPath)).toBe(true);
 });

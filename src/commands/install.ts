@@ -439,19 +439,6 @@ export async function installPackage(
 
     const { config, rules, mcpServers } = resolvedConfig;
 
-    // Check if rules are defined (either directly or through presets)
-    if (!rules || rules.length === 0) {
-      // If there are no presets defined either, show a message
-      if (!config.presets || config.presets.length === 0) {
-        return {
-          success: false,
-          error: new Error("No rules defined in configuration"),
-          installedRuleCount: 0,
-          packagesCount: 0,
-        };
-      }
-    }
-
     try {
       if (!options.dryRun) {
         // Write rules to targets
@@ -724,6 +711,8 @@ export async function installCommand(
       } else {
         console.log(`Dry run: validated ${rulesInstalledMessage}`);
       }
+    } else if (result.installedRuleCount === 0) {
+      console.log(chalk.yellow("No rules installed."));
     } else if (result.packagesCount > 1) {
       console.log(
         `Successfully installed ${rulesInstalledMessage} across ${result.packagesCount} packages`,
