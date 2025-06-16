@@ -412,7 +412,7 @@ test("no mcp servers", async () => {
 });
 
 test("dry run does not write files", async () => {
-  await setupFromFixture("single-rule");
+  await setupFromFixture("single-rule-clean");
 
   const { stdout, code } = await runCommand("install --ci --dry-run");
 
@@ -443,4 +443,21 @@ test("override deleting last rule does not error", async () => {
   // MCP server should still be installed
   const mcpPath = path.join(".cursor", "mcp.json");
   expect(fileExists(mcpPath)).toBe(true);
+});
+
+test("skip installation when skipInstall is true", async () => {
+  await setupFromFixture("skip-install-regular");
+
+  const { stdout, code } = await runCommand("install --ci");
+
+  expect(code).toBe(0);
+  expect(stdout).toContain("No rules installed");
+
+  // Check that no rules were installed
+  expect(fileExists(path.join(".cursor", "rules", "aicm"))).toBe(false);
+  expect(fileExists(path.join(".cursor"))).toBe(false);
+
+  // Check that no MCP config was created
+  const mcpPath = path.join(".cursor", "mcp.json");
+  expect(fileExists(mcpPath)).toBe(false);
 });

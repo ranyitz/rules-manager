@@ -1,0 +1,8 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Regular Package Rule
+
+This is a rule from a regular package that should have rules installed into it.

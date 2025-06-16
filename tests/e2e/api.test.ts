@@ -57,7 +57,7 @@ test("handle missing config", async () => {
 });
 
 test("dry run API", async () => {
-  const testDir = await setupFromFixture("single-rule");
+  const testDir = await setupFromFixture("single-rule-clean");
 
   const result = await install({
     cwd: testDir,

@@ -10,6 +10,7 @@ export interface RawConfig {
   overrides?: Record<string, string | false>;
   mcpServers?: MCPServers;
   workspaces?: boolean;
+  skipInstall?: boolean;
 }
 
 export interface Config {
@@ -19,6 +20,7 @@ export interface Config {
   overrides?: Record<string, string | false>;
   mcpServers?: MCPServers;
   workspaces?: boolean;
+  skipInstall?: boolean;
 }
 
 export type MCPServer =
@@ -65,6 +67,7 @@ export const ALLOWED_CONFIG_KEYS = [
   "overrides",
   "mcpServers",
   "workspaces",
+  "skipInstall",
 ] as const;
 
 export const SUPPORTED_TARGETS = ["cursor", "windsurf", "codex"] as const;
@@ -113,6 +116,7 @@ export function applyDefaults(config: RawConfig, workspaces: boolean): Config {
     overrides: config.overrides || {},
     mcpServers: config.mcpServers || {},
     workspaces,
+    skipInstall: config.skipInstall || false,
   };
 }
 

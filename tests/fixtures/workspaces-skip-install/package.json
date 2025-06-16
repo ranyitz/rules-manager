@@ -1,0 +1,6 @@
+{
+  "name": "workspaces-skip-install-test",
+  "workspaces": [
+    "packages/*"
+  ]
+}
