@@ -1,0 +1,6 @@
+{
+  "name": "workspaces-mcp-no-cursor-test",
+  "workspaces": [
+    "packages/*"
+  ]
+}
