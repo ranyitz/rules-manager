@@ -408,9 +408,6 @@ export async function installPackage(
       };
     }
 
-    // Allow installations with no rules (for configurations that only have MCP servers, etc.)
-    // This is valid - some packages might only configure MCP servers without rules
-
     try {
       if (!options.dryRun) {
         // Write rules to targets
@@ -646,7 +643,7 @@ export async function install(
 
   const inCI = isCIEnvironment();
   if (inCI && !installOnCI) {
-    console.log(chalk.yellow("Detected CI environment, skipping install"));
+    console.log(chalk.yellow("Detected CI environment, skipping install."));
 
     return {
       success: true,
@@ -705,13 +702,7 @@ export async function installCommand(
         console.log(`Dry run: validated ${rulesInstalledMessage}`);
       }
     } else if (result.installedRuleCount === 0) {
-      if (result.packagesCount > 1) {
-        console.log(
-          `Successfully installed 0 rules across ${result.packagesCount} packages`,
-        );
-      } else {
-        console.log("No rules installed");
-      }
+      console.log("No rules installed");
     } else if (result.packagesCount > 1) {
       console.log(
         `Successfully installed ${rulesInstalledMessage} across ${result.packagesCount} packages`,
