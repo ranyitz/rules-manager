@@ -1,0 +1,9 @@
+{
+  "rulesDir": "./rules",
+  "targets": ["cursor"],
+  "mcpServers": {
+    "backend-mcp": {
+      "url": "https://backend.example.com"
+    }
+  }
+}

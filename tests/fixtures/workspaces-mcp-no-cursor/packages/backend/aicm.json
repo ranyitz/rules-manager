@@ -1,0 +1,9 @@
+{
+  "rulesDir": "./rules",
+  "targets": ["codex"],
+  "mcpServers": {
+    "backend-mcp": {
+      "url": "https://backend.example.com"
+    }
+  }
+}

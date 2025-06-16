@@ -350,6 +350,59 @@ function writeMcpServersToFile(mcpServers: MCPServers, mcpPath: string): void {
   fs.writeJsonSync(mcpPath, mergedConfig, { spaces: 2 });
 }
 
+interface MergeConflict {
+  key: string;
+  packages: string[];
+  chosen: string;
+}
+
+function mergeWorkspaceMcpServers(
+  packages: Array<{ relativePath: string; config: ResolvedConfig }>,
+): { merged: MCPServers; conflicts: MergeConflict[] } {
+  const merged: MCPServers = {};
+  const info: Record<
+    string,
+    {
+      configs: Set<string>;
+      packages: string[];
+      chosen: string;
+    }
+  > = {};
+
+  for (const pkg of packages) {
+    for (const [key, value] of Object.entries(pkg.config.mcpServers)) {
+      if (value === false) continue;
+      const json = JSON.stringify(value);
+
+      if (!info[key]) {
+        info[key] = {
+          configs: new Set([json]),
+          packages: [pkg.relativePath],
+          chosen: pkg.relativePath,
+        };
+        merged[key] = value;
+      } else {
+        info[key].packages.push(pkg.relativePath);
+        info[key].configs.add(json);
+        if (info[key].configs.size > 1) {
+          merged[key] = value;
+          info[key].chosen = pkg.relativePath;
+        }
+      }
+    }
+  }
+
+  const conflicts: MergeConflict[] = [];
+
+  for (const [key, data] of Object.entries(info)) {
+    if (data.configs.size > 1) {
+      conflicts.push({ key, packages: data.packages, chosen: data.chosen });
+    }
+  }
+
+  return { merged, conflicts };
+}
+
 /**
  * Discover all packages with aicm configurations using git ls-files
  */
@@ -603,6 +656,23 @@ async function installWorkspaces(
       verbose,
       dryRun,
     });
+
+    const { merged: rootMcp, conflicts } = mergeWorkspaceMcpServers(packages);
+
+    const hasCursorTarget = packages.some((p) =>
+      p.config.config.targets.includes("cursor"),
+    );
+
+    if (!dryRun && hasCursorTarget && Object.keys(rootMcp).length > 0) {
+      const mcpPath = path.join(cwd, ".cursor", "mcp.json");
+      writeMcpServersToFile(rootMcp, mcpPath);
+    }
+
+    for (const conflict of conflicts) {
+      console.warn(
+        `Warning: MCP configuration conflict detected\n  Key: "${conflict.key}"\n  Packages: ${conflict.packages.join(", ")}\n  Using configuration from: ${conflict.chosen}`,
+      );
+    }
 
     if (verbose) {
       result.packages.forEach((pkg) => {

@@ -160,6 +160,9 @@ aicm automatically detects workspaces if your `package.json` contains a `workspa
 
 1. **Discover packages**: Automatically find all directories containing `aicm.json` files in your repository
 2. **Install per package**: Install rules and MCPs for each package individually in their respective directories
+3. **Merge MCP servers**: Write a merged `.cursor/mcp.json` at the repository root containing all MCP servers from every package.
+
+The merged file is only created when at least one workspace targets Cursor and provides MCP server configurations. If multiple packages define the same MCP server with different settings, a warning is printed and the configuration from the alphabetically last package is used.
 
 ### How It Works
 
