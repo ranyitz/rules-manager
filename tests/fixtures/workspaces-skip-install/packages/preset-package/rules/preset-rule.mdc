@@ -1,0 +1,8 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Preset Rule (Skip Install)
+
+This is a rule from a preset package that should not have rules installed into it.

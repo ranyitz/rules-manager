@@ -400,6 +400,17 @@ export async function installPackage(
 
     const { config, rules, mcpServers } = resolvedConfig;
 
+    if (config.skipInstall === true) {
+      return {
+        success: true,
+        installedRuleCount: 0,
+        packagesCount: 0,
+      };
+    }
+
+    // Allow installations with no rules (for configurations that only have MCP servers, etc.)
+    // This is valid - some packages might only configure MCP servers without rules
+
     try {
       if (!options.dryRun) {
         // Write rules to targets
@@ -514,6 +525,11 @@ async function installWorkspaces(
     const allPackages = await discoverPackagesWithAicm(cwd);
 
     const packages = allPackages.filter((pkg) => {
+      // Skip packages that have skipInstall set to true
+      if (pkg.config.config.skipInstall === true) {
+        return false;
+      }
+
       const isRoot = pkg.relativePath === ".";
       if (!isRoot) return true;
 
@@ -631,7 +647,7 @@ export async function install(
 
   const inCI = isCIEnvironment();
   if (inCI && !installOnCI) {
-    console.log(chalk.yellow("Detected CI environment, skipping install."));
+    console.log(chalk.yellow("Detected CI environment, skipping install"));
 
     return {
       success: true,
@@ -690,7 +706,13 @@ export async function installCommand(
         console.log(`Dry run: validated ${rulesInstalledMessage}`);
       }
     } else if (result.installedRuleCount === 0) {
-      console.log(chalk.yellow("No rules installed."));
+      if (result.packagesCount > 1) {
+        console.log(
+          `Successfully installed 0 rules across ${result.packagesCount} packages`,
+        );
+      } else {
+        console.log("No rules installed");
+      }
     } else if (result.packagesCount > 1) {
       console.log(
         `Successfully installed ${rulesInstalledMessage} across ${result.packagesCount} packages`,

@@ -186,6 +186,20 @@ Running `npx aicm install` will install rules for each package in their respecti
 - `packages/backend/.cursor/rules/aicm/`
 - `services/api/.cursor/rules/aicm/`
 
+### Preset Packages in Workspaces
+
+When you have a preset package within your workspace (a package that provides rules to be consumed by others), you can prevent aicm from installing rules into it by setting `skipInstall: true`:
+
+```json
+{
+  "skipInstall": true,
+  "rulesDir": "./rules",
+  "targets": ["cursor"]
+}
+```
+
+This is useful when your workspace contains both consumer packages (that need rules installed) and provider packages (that only export rules).
+
 ## Configuration
 
 Create an `aicm.json` file in your project root, or an `aicm` key in your project's `package.json`.
@@ -196,7 +210,8 @@ Create an `aicm.json` file in your project root, or an `aicm` key in your projec
   "targets": ["cursor"],
   "presets": [],
   "overrides": {},
-  "mcpServers": {}
+  "mcpServers": {},
+  "skipInstall": false
 }
 ```
 
@@ -206,6 +221,7 @@ Create an `aicm.json` file in your project root, or an `aicm` key in your projec
 - **overrides**: Map of rule names to `false` (disable) or a replacement file path.
 - **mcpServers**: MCP server configurations.
 - **workspaces**: Set to `true` to enable workspace mode. If not specified, aicm will automatically detect workspaces from your `package.json`.
+- **skipInstall**: Set to `true` to skip rule installation for this package. Useful for preset packages that provide rules but shouldn't have rules installed into them.
 
 ### MCP Server Installation
 

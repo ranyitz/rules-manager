@@ -604,3 +604,51 @@ test("skip root mcp file when no cursor target", async () => {
   expect(code).toBe(0);
   expect(fileExists(path.join(".cursor", "mcp.json"))).toBe(false);
 });
+
+test("skip installation for packages with skipInstall: true", async () => {
+  await setupFromFixture("workspaces-skip-install");
+
+  const { stdout, code } = await runCommand("install --ci --verbose");
+
+  expect(code).toBe(0);
+  expect(stdout).toContain("🔍 Discovering packages...");
+  expect(stdout).toContain("Found 1 packages with aicm configurations:");
+  expect(stdout).toContain("- packages/regular-package");
+  expect(stdout).not.toContain("- packages/preset-package");
+  expect(stdout).toContain("📦 Installing configurations...");
+  expect(stdout).toContain("✅ packages/regular-package (1 rules)");
+  expect(stdout).not.toContain("✅ packages/preset-package");
+  expect(stdout).toContain("Successfully installed 1 rule");
+
+  // Check that rules were installed only in the regular package
+  expect(
+    fileExists(
+      path.join(
+        "packages",
+        "regular-package",
+        ".cursor",
+        "rules",
+        "aicm",
+        "regular-rule.mdc",
+      ),
+    ),
+  ).toBe(true);
+
+  // Check that no rules were installed in the preset package
+  expect(fileExists(path.join("packages", "preset-package", ".cursor"))).toBe(
+    false,
+  );
+
+  // Verify rule content in regular package
+  const regularRule = readTestFile(
+    path.join(
+      "packages",
+      "regular-package",
+      ".cursor",
+      "rules",
+      "aicm",
+      "regular-rule.mdc",
+    ),
+  );
+  expect(regularRule).toContain("Regular Package Rule");
+});

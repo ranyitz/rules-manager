@@ -39,4 +39,6 @@ yarn-error.log*
 # Temporary test directory
 tmp-test/
 
+# ai workflow
 PRD
+tasks

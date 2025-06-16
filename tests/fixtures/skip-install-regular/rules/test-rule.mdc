@@ -1,0 +1,8 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Test Rule (Skip Install Regular)
+
+This rule should not be installed when skipInstall is true.

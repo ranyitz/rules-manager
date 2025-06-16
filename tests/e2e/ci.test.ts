@@ -17,7 +17,7 @@ describe("CI", () => {
   );
 
   test("should skip install on CI by default", async () => {
-    await setupFromFixture("single-rule");
+    await setupFromFixture("single-rule-clean");
 
     const { stdout } = await runCommandRaw("install", undefined, {
       env: { CI: "true" },
