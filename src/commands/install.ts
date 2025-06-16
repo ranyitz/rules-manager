@@ -525,7 +525,6 @@ async function installWorkspaces(
     const allPackages = await discoverPackagesWithAicm(cwd);
 
     const packages = allPackages.filter((pkg) => {
-      // Skip packages that have skipInstall set to true
       if (pkg.config.config.skipInstall === true) {
         return false;
       }
