@@ -296,7 +296,6 @@ function mergeWorkspaceMcpServers(
         info[key].chosen = pkg.relativePath;
       }
 
-      // Later packages override earlier ones deterministically
       merged[key] = value;
     }
   }
