@@ -1,6 +1,51 @@
 import fs from "fs-extra";
 import path from "path";
 
+export type RuleMetadata = Record<string, string | boolean | string[]>;
+
+/**
+ * Parse YAML frontmatter blocks from a rule file and return a flat metadata object
+ */
+export function parseRuleFrontmatter(content: string): RuleMetadata {
+  const metadata: RuleMetadata = {};
+  // Support both LF and CRLF line endings
+  const frontmatterRegex = /^---\r?\n([\s\S]*?)\r?\n---/gm;
+  let match: RegExpExecArray | null;
+
+  while ((match = frontmatterRegex.exec(content)) !== null) {
+    const lines = match[1].split("\n");
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+      const [key, ...rest] = trimmed.split(":");
+      if (!key) continue;
+      const raw = rest.join(":").trim();
+
+      if (raw === "") {
+        metadata[key] = "";
+      } else if (raw === "true" || raw === "false") {
+        metadata[key] = raw === "true";
+      } else if (raw.startsWith("[") && raw.endsWith("]")) {
+        try {
+          const parsed = JSON.parse(raw.replace(/'/g, '"'));
+          metadata[key] = parsed;
+        } catch {
+          metadata[key] = raw;
+        }
+      } else if (
+        (raw.startsWith('"') && raw.endsWith('"')) ||
+        (raw.startsWith("'") && raw.endsWith("'"))
+      ) {
+        metadata[key] = raw.slice(1, -1);
+      } else {
+        metadata[key] = raw;
+      }
+    }
+  }
+
+  return metadata;
+}
+
 const RULES_BEGIN = "<!-- AICM:BEGIN -->";
 const RULES_END = "<!-- AICM:END -->";
 const WARNING =
@@ -135,7 +180,7 @@ export function generateRulesFileContent(
   // Agent Requested rules
   if (agentRequestedRules.length > 0) {
     content +=
-      "The following rules are available for the AI to include when needed:\n";
+      "The following rules can be loaded when relevant. Check each file's description:\n";
     agentRequestedRules.forEach((rule) => {
       content += `- ${rule}\n`;
     });
