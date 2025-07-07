@@ -70,6 +70,7 @@ function getTargetPaths(): Record<string, string> {
     cursor: path.join(projectDir, ".cursor", "rules", "aicm"),
     windsurf: path.join(projectDir, ".aicm"),
     codex: path.join(projectDir, ".aicm"),
+    claude: path.join(projectDir, ".aicm"),
   };
 }
 
@@ -187,6 +188,11 @@ function writeRulesToTargets(
       case "codex":
         if (rules.length > 0) {
           writeRulesForFile(rules, targetPaths.codex, "AGENTS.md");
+        }
+        break;
+      case "claude":
+        if (rules.length > 0) {
+          writeRulesForFile(rules, targetPaths.claude, "CLAUDE.md");
         }
         break;
     }

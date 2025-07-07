@@ -22,6 +22,10 @@ dist/
 AGENTS.md
 !tests/fixtures/*/AGENTS.md
 
+# claude
+CLAUDE.md
+!tests/fixtures/*/CLAUDE.md
+
 # aicm
 .aicm
 !tests/fixtures/*/.aicm
