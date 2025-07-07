@@ -17,9 +17,9 @@ Modern AI-powered IDEs like Cursor and Agents like Codex enable developers to wr
 aicm accepts Cursor's `.mdc` format as it provides the most comprehensive feature set. For other AI tools and IDEs, aicm automatically generates compatible formats:
 
 - **Cursor**: Native `.mdc` files with full feature support
-- **Windsurf**: Generates `.windsurfrules` files with natural language adaptations
-- **Codex**: Generates `AGENTS.md` files with natural language adaptations
-- **Claude**: Generates `CLAUDE.md` files with natural language adaptations
+- **Windsurf**: Generates `.windsurfrules` file
+- **Codex**: Generates `AGENTS.md` file
+- **Claude**: Generates `CLAUDE.md` file
 
 This approach ensures you write your rules once in the richest format available, while maintaining compatibility across different AI development environments.
 
