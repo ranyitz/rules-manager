@@ -70,7 +70,12 @@ export const ALLOWED_CONFIG_KEYS = [
   "skipInstall",
 ] as const;
 
-export const SUPPORTED_TARGETS = ["cursor", "windsurf", "codex"] as const;
+export const SUPPORTED_TARGETS = [
+  "cursor",
+  "windsurf",
+  "codex",
+  "claude",
+] as const;
 export type SupportedTarget = (typeof SUPPORTED_TARGETS)[number];
 
 export function detectWorkspacesFromPackageJson(cwd: string): boolean {
