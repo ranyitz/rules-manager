@@ -70,6 +70,7 @@ function getTargetPaths(): Record<string, string> {
     cursor: path.join(projectDir, ".cursor", "rules", "aicm"),
     windsurf: path.join(projectDir, ".aicm"),
     codex: path.join(projectDir, ".aicm"),
+    jules: path.join(projectDir, ".aicm"),
     claude: path.join(projectDir, ".aicm"),
   };
 }
@@ -190,6 +191,11 @@ function writeRulesToTargets(
           writeRulesForFile(rules, targetPaths.codex, "AGENTS.md");
         }
         break;
+      case "jules":
+        if (rules.length > 0) {
+          writeRulesForFile(rules, targetPaths.jules, "AGENTS.md");
+        }
+        break;
       case "claude":
         if (rules.length > 0) {
           writeRulesForFile(rules, targetPaths.claude, "CLAUDE.md");
@@ -214,7 +220,7 @@ function writeMcpServersToTargets(
       const mcpPath = path.join(cwd, ".cursor", "mcp.json");
       writeMcpServersToFile(mcpServers, mcpPath);
     }
-    // Windsurf and Codex do not support project mcpServers, so skip
+    // Windsurf, Codex, and Jules do not support project mcpServers, so skip
   }
 }
 
